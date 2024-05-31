@@ -18,21 +18,21 @@ class LabelledFewShot:
     def candidates[
         I, O
     ](
-        examples: list[LMFunctionDemo[I, O]],
+        demos: list[LMFunctionDemo[I, O]],
         shots: int = 5,
         samples: int = 100,
         seed: int | None = None,
     ) -> Generator[LMFunctionDemo[I, O], None, None]:
-        assert len(examples) >= shots, "Not enough examples to train the predictor"
+        assert len(demos) >= shots, "Not enough examples to train the predictor"
 
         if seed is None:
             seed = int(getenv("RANDOM_SEED", 42))
 
-        example_sets = list(permutations(examples, shots))
+        example_sets = list(permutations(demos, shots))
         Random(seed).shuffle(example_sets)
 
-        for _, examples in zip(range(samples), example_sets):
-            yield {"examples": list(examples)}
+        for _, demos in zip(range(samples), example_sets):
+            yield {"examples": list(demos)}
 
     @classmethod
     async def optimize[

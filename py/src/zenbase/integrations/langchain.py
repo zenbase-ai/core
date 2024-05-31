@@ -59,15 +59,13 @@ class LangSmithZen:
         cls,
         data: str | uuid.UUID | Sequence[schemas.Example],
         evaluators: Sequence[EVALUATOR_T],
-        summary_evaluators: Sequence[SUMMARY_EVALUATOR_T],
+        summary_evaluators: Sequence[SUMMARY_EVALUATOR_T] = None,
         metadata: dict | None = None,
         description: str | None = None,
         max_concurrency: int | None = None,
         num_repetitions: int = 1,
         client: Client | None = None,
     ) -> LMEvaluator[I, O]:
-        assert any(summary_evaluators), "At least one summary evaluator is required"
-
         base_metadata = metadata or {}
         evaluate_params = dict_of(
             data,
@@ -105,11 +103,16 @@ class LangSmithZen:
                 for res in eval_results._results
             ]
 
+            if not eval_results._summary_results["results"]:
+                evals = {"score": sum(r["evals"]["score"] for r in runs) / len(runs)}
+            else:
+                evals = cls._eval_results_to_evals_dict(eval_results._summary_results)
+
             return LMEvaluatorRun(
                 prompt=prompt,
                 runs=runs,
                 metadata=metadata,
-                evals=cls._eval_results_to_evals_dict(eval_results._summary_results),
+                evals=evals,
             )
 
         return evaluator
@@ -117,6 +120,6 @@ class LangSmithZen:
     @classmethod
     def _eval_results_to_evals_dict(cls, eval_results) -> dict:
         return {
-            **{r.key: r.dict() for r in eval_results["results"]},
             "score": eval_results["results"][0].score,
+            **{r.key: r.dict() for r in eval_results["results"]},
         }

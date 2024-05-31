@@ -1,5 +1,4 @@
 import json
-from pprint import pprint
 
 from datasets import DatasetDict
 from langsmith import Client, traceable
@@ -9,10 +8,9 @@ import pytest
 import requests
 
 
-from zenbase.optimizers.labelled_few_shot import LabelledFewShot
 from zenbase.integrations.langchain import LangSmithZen
+from zenbase.optimizers.labelled_few_shot import LabelledFewShot
 from zenbase.types import LMPrompt
-
 
 TEST_SIZE = 5
 SAMPLE_SIZE = 2
@@ -113,7 +111,6 @@ async def test_langchain_labelled_few_shot(
         evaluator=LangSmithZen.evaluator(
             test_examples,
             evaluators=[score_answer],
-            summary_evaluators=[score_experiment],
             client=langsmith,
         ),
     )
