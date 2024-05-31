@@ -6500,4 +6500,40 @@ interactions:
     status:
       code: 200
       message: OK
+- request:
+    body: '{"id":"de37f694-c781-450d-8d08-866cb8e6e855","created_at":"2024-05-31T15:55:50.001431+00:00","modified_at":"2024-05-31T15:55:50.001433+00:00","key":"accuracy","score":0.4,"feedback_source":{"type":"api","metadata":{}},"session_id":"a732237e-2ade-402f-83db-4dc6abcc15d8"}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '270'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - langsmith-py/0.1.65
+    method: POST
+    uri: https://api.smith.langchain.com/feedback
+  response:
+    body:
+      string: '{"created_at":"2024-05-31T15:55:50.001431+00:00","modified_at":"2024-05-31T15:55:50.001433+00:00","session_id":"a732237e-2ade-402f-83db-4dc6abcc15d8","run_id":null,"key":"accuracy","score":0.4,"value":null,"comment":null,"correction":null,"feedback_group_id":null,"comparative_experiment_id":null,"id":"de37f694-c781-450d-8d08-866cb8e6e855","feedback_source":{"type":"api","metadata":{},"user_id":null}}'
+    headers:
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+      Via:
+      - 1.1 google
+      content-length:
+      - '403'
+      content-type:
+      - application/json
+      date:
+      - Fri, 31 May 2024 15:55:49 GMT
+      server:
+      - uvicorn
+    status:
+      code: 200
+      message: OK
 version: 1

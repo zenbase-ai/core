@@ -33,6 +33,8 @@ dev-dependencies = [
     "vcrpy>=6.0.1",
     "arize-phoenix[evals]>=4.2.4",
     "nest-asyncio>=1.6.0",
+    "langchain-openai>=0.1.8",
+    "langchain-core>=0.2.3",
 ]
 
 [tool.hatch.metadata]

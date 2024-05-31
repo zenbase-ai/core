@@ -1,5 +1,6 @@
+from typing import Sequence, Any
 import asyncio
-from typing import Sequence
+import datetime
 import uuid
 
 from asyncer import asyncify
@@ -24,13 +25,31 @@ from zenbase.types import (
 class LangSmithZen:
     @staticmethod
     def examples(
-        train_dataset: str,
+        dataset_id: str | uuid.UUID | None = None,
+        dataset_name: str | None = None,
+        example_ids: Sequence[str | uuid.UUID] | None = None,
+        as_of: datetime.datetime | str | None = None,
+        splits: Sequence[str] | None = None,
+        inline_s3_urls: bool = True,
+        limit: int | None = None,
+        metadata: dict | None = None,
         client: Client | None = None,
+        **kwargs: Any,
     ) -> list[LMFunctionDemo]:
         client = client or Client()
         return [
-            {"inputs": e.inputs, "outputs": e.outputs}
-            for e in client.list_examples(dataset_name=train_dataset)
+            LMFunctionDemo(inputs=e.inputs, outputs=e.outputs)
+            for e in client.list_examples(
+                dataset_id=dataset_id,
+                dataset_name=dataset_name,
+                example_ids=example_ids,
+                as_of=as_of,
+                splits=splits,
+                inline_s3_urls=inline_s3_urls,
+                limit=limit,
+                metadata=metadata,
+                **kwargs,
+            )
         ]
 
     @classmethod

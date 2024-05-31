@@ -114,7 +114,15 @@ joblib==1.4.2
     # via hdbscan
     # via pynndescent
     # via scikit-learn
+jsonpatch==1.33
+    # via langchain-core
+jsonpointer==2.4
+    # via jsonpatch
+langchain-core==0.2.3
+    # via langchain-openai
+langchain-openai==0.1.8
 langsmith==0.1.65
+    # via langchain-core
 littleutils==0.2.2
     # via sorcery
 llvmlite==0.42.0
@@ -152,6 +160,7 @@ numpy==1.26.4
     # via scipy
     # via umap-learn
 openai==1.30.5
+    # via langchain-openai
 openinference-instrumentation==0.1.7
     # via arize-phoenix
     # via openinference-instrumentation-langchain
@@ -209,9 +218,10 @@ opentelemetry-semantic-conventions==0.46b0
     # via opentelemetry-sdk
 orjson==3.10.3
     # via langsmith
-packaging==24.0
+packaging==23.2
     # via datasets
     # via huggingface-hub
+    # via langchain-core
     # via pytest
 pandas==2.2.2
     # via arize-phoenix
@@ -241,6 +251,7 @@ pyarrow==16.1.0
 pyarrow-hotfix==0.6
     # via datasets
 pydantic==2.7.2
+    # via langchain-core
     # via langsmith
     # via openai
 pydantic-core==2.18.3
@@ -265,13 +276,17 @@ pytz==2024.1
 pyyaml==6.0.1
     # via datasets
     # via huggingface-hub
+    # via langchain-core
     # via vcrpy
+regex==2024.5.15
+    # via tiktoken
 requests==2.32.3
     # via arize-phoenix
     # via datasets
     # via huggingface-hub
     # via langsmith
     # via opentelemetry-exporter-otlp-proto-http
+    # via tiktoken
 ruff==0.4.6
 scikit-learn==1.5.0
     # via arize-phoenix
@@ -307,8 +322,12 @@ starlette==0.37.2
 strawberry-graphql==0.227.2
     # via arize-phoenix
 syrupy==4.6.1
+tenacity==8.3.0
+    # via langchain-core
 threadpoolctl==3.5.0
     # via scikit-learn
+tiktoken==0.7.0
+    # via langchain-openai
 tqdm==4.66.4
     # via arize-phoenix
     # via arize-phoenix-evals
