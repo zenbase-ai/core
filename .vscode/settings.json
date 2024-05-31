@@ -6,8 +6,9 @@
     "**/CVS": true,
     "**/.DS_Store": true,
     "**/Thumbs.db": true,
-    "**/.ruby-lsp": true,
-    ".venv/": true,
-    "**/__pycache__": true
-  }
+    "py/.venv/": true,
+    "py/**/__pycache__": true,
+    "py/.pytest_cache/": true
+  },
+  "python.defaultInterpreterPath": "py/.venv/bin/python"
 }

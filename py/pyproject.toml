@@ -4,7 +4,6 @@ version = "0.1.0"
 description = "LLMs made Zen"
 authors = [{ name = "Cyrus Nouroozi", email = "cyrus@zenbase.ai" }]
 dependencies = [
-    "openai>=1.30.5",
     "asyncer>=0.0.7",
     "sorcery>=0.2.2",
 ]
@@ -24,6 +23,14 @@ dev-dependencies = [
     "langsmith>=0.1.65",
     "mypy>=1.10.0",
     "pyright>=1.1.365",
+    "datasets>=2.19.1",
+    "ipython>=8.24.0",
+    "ipdb>=0.13.13",
+    "openai>=1.30.5",
+    "syrupy>=4.6.1",
+    "pytest-recording>=0.13.1",
+    "python-dotenv>=1.0.1",
+    "vcrpy>=6.0.1",
 ]
 
 [tool.hatch.metadata]

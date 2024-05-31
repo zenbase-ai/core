@@ -8,6 +8,3 @@ wheels/
 
 # venv
 .venv
-.env*
-
-.DS_Store

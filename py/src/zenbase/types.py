@@ -1,39 +1,40 @@
 from typing import Awaitable, Callable, NotRequired, TypedDict
 
 
-type Predictor[I, O] = Callable[[I], Awaitable[O]]
+type LMFunction[I, O] = Callable[[I], Awaitable[O]]
 
 
-class FunctionDemo[I, O](TypedDict):
+class LMFunctionDemo[I, O](TypedDict):
     inputs: I
     outputs: O
 
 
-class FunctionRun[I, O](FunctionDemo[I, O]):
+class LMFunctionRun[I, O](LMFunctionDemo[I, O]):
     metadata: NotRequired[dict]
-    eval: NotRequired[dict]
+    evals: NotRequired[dict]
 
 
-class Candidate[I, O](TypedDict):
+class LMPrompt[I, O](TypedDict):
+    system: NotRequired[str]
     instructions: NotRequired[str]
-    examples: list[FunctionDemo[I, O]]
+    examples: list[LMFunctionDemo[I, O]]
 
 
-type Evaluator[I, O] = Callable[
-    [Predictor[I, O], Candidate[I, O]],
-    Awaitable[EvaluatorRun[I, O]],
+type LMEvaluator[I, O] = Callable[
+    [LMFunction[I, O], LMPrompt[I, O]],
+    Awaitable[LMEvaluatorRun[I, O]],
 ]
 
-type Scorer = Callable[..., float]
+type LMScorer[I, O] = Callable[[list[LMFunctionRun[I, O]]], float]
 
 
-class EvaluatorRun[I, O](TypedDict):
-    candidate: Candidate[I, O]
-    eval: dict
-    metadata: dict
-    function_runs: list[FunctionRun]
+class LMEvaluatorRun[I, O](TypedDict):
+    prompt: LMPrompt[I, O]
+    evals: dict
+    metadata: NotRequired[dict]
+    function_runs: list[LMFunctionRun[I, O]]
 
 
-class OptimizerRun[I, O](TypedDict):
-    winner: EvaluatorRun[I, O]
-    candidates: list[EvaluatorRun[I, O]]
+class LMOptimizerRun[I, O](TypedDict):
+    winner: LMEvaluatorRun[I, O]
+    candidates: list[LMEvaluatorRun[I, O]]

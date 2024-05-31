@@ -8,6 +8,11 @@
 #   with-sources: false
 
 -e file:.
+aiohttp==3.9.5
+    # via datasets
+    # via fsspec
+aiosignal==1.3.1
+    # via aiohttp
 annotated-types==0.7.0
     # via pydantic
 anyio==4.4.0
@@ -16,74 +21,168 @@ anyio==4.4.0
     # via openai
 asttokens==2.4.1
     # via sorcery
+    # via stack-data
 asyncer==0.0.7
     # via zenbase
+attrs==23.2.0
+    # via aiohttp
 certifi==2024.2.2
     # via httpcore
     # via httpx
     # via requests
 charset-normalizer==3.3.2
     # via requests
+datasets==2.19.1
+decorator==5.1.1
+    # via ipdb
+    # via ipython
+dill==0.3.8
+    # via datasets
+    # via multiprocess
 distro==1.9.0
     # via openai
 executing==2.0.1
     # via sorcery
+    # via stack-data
+filelock==3.14.0
+    # via datasets
+    # via huggingface-hub
+frozenlist==1.4.1
+    # via aiohttp
+    # via aiosignal
+fsspec==2024.3.1
+    # via datasets
+    # via huggingface-hub
 h11==0.14.0
     # via httpcore
 httpcore==1.0.5
     # via httpx
 httpx==0.27.0
     # via openai
+huggingface-hub==0.23.2
+    # via datasets
 idna==3.7
     # via anyio
     # via httpx
     # via requests
+    # via yarl
 iniconfig==2.0.0
     # via pytest
+ipdb==0.13.13
+ipython==8.24.0
+    # via ipdb
+jedi==0.19.1
+    # via ipython
 langsmith==0.1.65
 littleutils==0.2.2
     # via sorcery
+matplotlib-inline==0.1.7
+    # via ipython
+multidict==6.0.5
+    # via aiohttp
+    # via yarl
+multiprocess==0.70.16
+    # via datasets
 mypy==1.10.0
 mypy-extensions==1.0.0
     # via mypy
 nodeenv==1.9.0
     # via pyright
+numpy==1.26.4
+    # via datasets
+    # via pandas
+    # via pyarrow
 openai==1.30.5
-    # via zenbase
 orjson==3.10.3
     # via langsmith
 packaging==24.0
+    # via datasets
+    # via huggingface-hub
     # via pytest
+pandas==2.2.2
+    # via datasets
+parso==0.8.4
+    # via jedi
+pexpect==4.9.0
+    # via ipython
 pluggy==1.5.0
     # via pytest
+prompt-toolkit==3.0.45
+    # via ipython
+ptyprocess==0.7.0
+    # via pexpect
+pure-eval==0.2.2
+    # via stack-data
+pyarrow==16.1.0
+    # via datasets
+pyarrow-hotfix==0.6
+    # via datasets
 pydantic==2.7.2
     # via langsmith
     # via openai
 pydantic-core==2.18.3
     # via pydantic
+pygments==2.18.0
+    # via ipython
 pyright==1.1.365
 pytest==8.2.1
     # via pytest-asyncio
+    # via pytest-recording
+    # via syrupy
 pytest-asyncio==0.23.7
+pytest-recording==0.13.1
+python-dateutil==2.9.0.post0
+    # via pandas
+python-dotenv==1.0.1
+pytz==2024.1
+    # via pandas
+pyyaml==6.0.1
+    # via datasets
+    # via huggingface-hub
+    # via vcrpy
 requests==2.32.3
+    # via datasets
+    # via huggingface-hub
     # via langsmith
 ruff==0.4.6
 six==1.16.0
     # via asttokens
+    # via python-dateutil
 sniffio==1.3.1
     # via anyio
     # via httpx
     # via openai
 sorcery==0.2.2
     # via zenbase
+stack-data==0.6.3
+    # via ipython
+syrupy==4.6.1
 tqdm==4.66.4
+    # via datasets
+    # via huggingface-hub
     # via openai
+traitlets==5.14.3
+    # via ipython
+    # via matplotlib-inline
 typing-extensions==4.12.0
+    # via huggingface-hub
     # via mypy
     # via openai
     # via pydantic
     # via pydantic-core
+tzdata==2024.1
+    # via pandas
 urllib3==2.2.1
     # via requests
+vcrpy==6.0.1
+    # via pytest-recording
+wcwidth==0.2.13
+    # via prompt-toolkit
 wrapt==1.16.0
     # via sorcery
+    # via vcrpy
+xxhash==3.4.1
+    # via datasets
+yarl==1.9.4
+    # via aiohttp
+    # via vcrpy
