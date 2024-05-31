@@ -1,9 +1,8 @@
 import asyncio
-from inspect import iscoroutinefunction
 from typing import Sequence
 import uuid
 
-from asyncer import asyncify, syncify
+from asyncer import asyncify
 from langsmith import Client, evaluate, schemas
 from langsmith.evaluation._runner import (
     _get_random_name,
@@ -74,7 +73,7 @@ class LangSmithZen:
                 experiment_prefix=f"zenbase-{_get_random_name()}",
                 **evaluate_params,
             )
-            function_runs = [
+            runs = [
                 LMFunctionRun(
                     inputs=res["run"].inputs["inputs"],
                     outputs=res["run"].outputs,
@@ -89,7 +88,7 @@ class LangSmithZen:
 
             return LMEvaluatorRun(
                 prompt=prompt,
-                function_runs=function_runs,
+                runs=runs,
                 metadata=metadata,
                 evals=cls._eval_results_to_evals_dict(eval_results._summary_results),
             )

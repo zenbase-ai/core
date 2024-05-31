@@ -51,7 +51,7 @@ class TestOptimizer:
             return {
                 "prompt": prompt,
                 "evals": {"score": random()},
-                "function_runs": [],
+                "runs": [],
             }
 
         optimized_predictor, run = await LabelledFewShot.optimize(
