@@ -17,6 +17,13 @@ def gsm8k_dataset():
 
 
 @pytest.fixture(scope="session", autouse=True)
+def nest_asyncio():
+    import nest_asyncio
+
+    nest_asyncio.apply()
+
+
+@pytest.fixture(scope="session", autouse=True)
 def vcr_config():
     return {
         "filter_headers": ["authorization", "x-api-key"],

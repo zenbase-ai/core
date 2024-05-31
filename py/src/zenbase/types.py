@@ -32,7 +32,7 @@ class LMEvaluatorRun[I, O](TypedDict):
     prompt: LMPrompt[I, O]
     evals: dict
     metadata: NotRequired[dict]
-    function_runs: list[LMFunctionRun[I, O]]
+    runs: list[LMFunctionRun[I, O]]
 
 
 class LMOptimizerRun[I, O](TypedDict):
