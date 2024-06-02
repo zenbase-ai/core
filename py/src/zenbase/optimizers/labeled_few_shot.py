@@ -1,5 +1,4 @@
 from functools import wraps
-from itertools import permutations
 from os import getenv
 from random import Random
 from typing import Generator
@@ -10,29 +9,31 @@ from ..types import (
     LMFunctionDemo,
     LMOptimizerRun,
     LMFunction,
+    LMPrompt,
 )
 
 
-class LabelledFewShot:
+class LabeledFewShot:
     @staticmethod
-    def candidates[
-        I, O
-    ](
-        demos: list[LMFunctionDemo[I, O]],
+    def candidates(
+        demos: list[LMFunctionDemo],
         shots: int = 5,
         samples: int = 100,
         seed: int | None = None,
-    ) -> Generator[LMFunctionDemo[I, O], None, None]:
+    ) -> Generator[LMPrompt, None, None]:
         assert len(demos) >= shots, "Not enough examples to train the predictor"
 
         if seed is None:
             seed = int(getenv("RANDOM_SEED", 42))
 
-        example_sets = list(permutations(demos, shots))
-        Random(seed).shuffle(example_sets)
+        rng = Random(seed)
+        seen = set()
 
-        for _, demos in zip(range(samples), example_sets):
-            yield {"examples": list(demos)}
+        for _ in range(samples):
+            examples = rng.sample(demos, k=shots)
+            if examples in seen:
+                seen.add(examples)
+                yield LMPrompt(examples=examples)
 
     @classmethod
     async def optimize[

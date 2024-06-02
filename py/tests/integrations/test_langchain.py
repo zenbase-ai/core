@@ -9,7 +9,7 @@ import requests
 
 
 from zenbase.integrations.langchain import LangSmithZen
-from zenbase.optimizers.labelled_few_shot import LabelledFewShot
+from zenbase.optimizers.labeled_few_shot import LabeledFewShot
 from zenbase.types import LMPrompt
 
 TEST_SIZE = 5
@@ -104,7 +104,7 @@ async def test_langchain_labelled_few_shot(
         answer = await chain.ainvoke({"question": question})
         return {"answer": answer}
 
-    optimized_function, run = await LabelledFewShot.optimize(
+    optimized_function, run = await LabeledFewShot.optimize(
         function,
         samples=SAMPLE_SIZE,
         demos=golden_demos,
@@ -162,7 +162,7 @@ async def test_langsmith_zen_labelled_few_shot(
 
         return json.loads(response.choices[0].message.content)
 
-    optimized_function, run = await LabelledFewShot.optimize(
+    optimized_function, run = await LabeledFewShot.optimize(
         function,
         samples=SAMPLE_SIZE,
         demos=golden_demos,

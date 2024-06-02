@@ -1,40 +1,53 @@
-from typing import Awaitable, Callable, NotRequired, TypedDict
+from typing import Awaitable, Callable, NotRequired, ParamSpecKwargs, TypeVar, TypedDict
+from inspect import iscoroutinefunction
+
+from asyncer import asyncify
+
+I = ParamSpecKwargs("I")  # noqa: E741
+O = TypeVar("O")  # noqa: E741
 
 
-type LMFunction[I, O] = Callable[[I], Awaitable[O]]
+class LMFunction:
+    def __init__(self, function: Callable[[I.args, *I.kwargs], Awaitable[O]]):
+        self._function = (
+            function if iscoroutinefunction(function) else asyncify(function)
+        )
+
+    async def __call__(self, *args: I.args, **kwargs: I.kwargs) -> O:
+        return await self._function(*args, **kwargs)
 
 
-class LMFunctionDemo[I, O](TypedDict):
+class LMFunctionDemo(TypedDict):
     inputs: I
     outputs: O
 
 
-class LMFunctionRun[I, O](LMFunctionDemo[I, O]):
+class LMFunctionRun(LMFunctionDemo):
     metadata: NotRequired[dict]
     evals: NotRequired[dict]
 
 
-class LMPrompt[I, O](TypedDict):
+class LMPrompt(TypedDict):
     system: NotRequired[str]
     instructions: NotRequired[str]
-    examples: list[LMFunctionDemo[I, O]]
+    examples: list[LMFunctionDemo]
 
 
-type LMEvaluator[I, O] = Callable[
-    [LMFunction[I, O], LMPrompt[I, O]],
-    Awaitable[LMEvaluatorRun[I, O]],
+type LMEvaluator = Callable[
+    [LMFunction, LMPrompt],
+    Awaitable[LMEvaluatorRun],
 ]
 
-type LMScorer[I, O] = Callable[[list[LMFunctionRun[I, O]]], float]
+type LMScorer = Callable[[list[LMFunctionRun]], float]
 
 
-class LMEvaluatorRun[I, O](TypedDict):
-    prompt: LMPrompt[I, O]
+class LMEvaluatorRun(TypedDict):
+    prompt: LMPrompt
     evals: dict
     metadata: NotRequired[dict]
     runs: list[LMFunctionRun[I, O]]
 
 
-class LMOptimizerRun[I, O](TypedDict):
-    winner: LMEvaluatorRun[I, O]
-    candidates: list[LMEvaluatorRun[I, O]]
+class LMOptimizerRun(TypedDict):
+    winner: LMEvaluatorRun
+    candidates: list[LMEvaluatorRun]

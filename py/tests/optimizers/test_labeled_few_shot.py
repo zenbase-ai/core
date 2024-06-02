@@ -1,7 +1,7 @@
 from random import random
 import pytest
 
-from zenbase.optimizers.labelled_few_shot import LabelledFewShot
+from zenbase.optimizers.labeled_few_shot import LabeledFewShot
 from zenbase.types import LMPrompt, LMEvaluatorRun, LMFunctionDemo
 
 
@@ -13,9 +13,9 @@ class TestCandidates:
     ]
 
     def test_seed_idempotency(self):
-        run_1 = list(LabelledFewShot.candidates(self.examples, shots=2))
-        run_2 = list(LabelledFewShot.candidates(self.examples, shots=2))
-        run_3 = list(LabelledFewShot.candidates(self.examples, shots=2, seed=41))
+        run_1 = list(LabeledFewShot.candidates(self.examples, shots=2))
+        run_2 = list(LabeledFewShot.candidates(self.examples, shots=2))
+        run_3 = list(LabeledFewShot.candidates(self.examples, shots=2, seed=41))
 
         assert run_1 == run_2
         assert run_1 != run_3
@@ -23,10 +23,10 @@ class TestCandidates:
 
     def test_insufficient_examples(self):
         with pytest.raises(AssertionError):
-            list(LabelledFewShot.candidates(self.examples, shots=5))
+            list(LabeledFewShot.candidates(self.examples, shots=5))
 
     def test_example_count(self):
-        candidates = list(LabelledFewShot.candidates(self.examples, shots=2))
+        candidates = list(LabeledFewShot.candidates(self.examples, shots=2))
 
         assert all(len(candidate["examples"]) == 2 for candidate in candidates)
         assert len(candidates) == 6
@@ -54,7 +54,7 @@ class TestOptimizer:
                 "runs": [],
             }
 
-        optimized_predictor, run = await LabelledFewShot.optimize(
+        optimized_predictor, run = await LabeledFewShot.optimize(
             fn=dummy_predictor,
             evaluator=dummy_evaluator,
             demos=self.examples,
