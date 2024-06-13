@@ -8,23 +8,95 @@
 #   with-sources: false
 
 -e file:.
+alembic==1.13.1
+    # via optuna
+annotated-types==0.7.0
+    # via pydantic
 anyio==4.4.0
-    # via asyncer
+    # via zenbase
 asttokens==2.4.1
     # via sorcery
-asyncer==0.0.7
-    # via zenbase
+colorlog==6.8.2
+    # via optuna
+deprecated==1.2.14
+    # via opentelemetry-api
 executing==2.0.1
     # via sorcery
+faker==25.4.0
+    # via zenbase
+greenlet==3.0.3
+    # via sqlalchemy
 idna==3.7
     # via anyio
+importlib-metadata==7.1.0
+    # via opentelemetry-api
 littleutils==0.2.2
     # via sorcery
+mako==1.3.5
+    # via alembic
+markdown-it-py==3.0.0
+    # via rich
+markupsafe==2.1.5
+    # via mako
+mdurl==0.1.2
+    # via markdown-it-py
+metadict==0.1.3
+    # via zenbase
+numpy==1.26.4
+    # via optuna
+opentelemetry-api==1.25.0
+    # via opentelemetry-sdk
+    # via opentelemetry-semantic-conventions
+    # via zenbase
+opentelemetry-sdk==1.25.0
+    # via zenbase
+opentelemetry-semantic-conventions==0.46b0
+    # via opentelemetry-sdk
+optuna==3.6.1
+    # via zenbase
+packaging==24.1
+    # via optuna
+pksuid==1.1.2
+    # via zenbase
+pybase62==0.4.3
+    # via pksuid
+pydantic==2.7.3
+    # via zenbase
+pydantic-core==2.18.4
+    # via pydantic
+pyee==11.1.0
+    # via zenbase
+pygments==2.18.0
+    # via rich
+python-dateutil==2.9.0.post0
+    # via faker
+pyyaml==6.0.1
+    # via optuna
+rich==13.7.1
+    # via zenbase
 six==1.16.0
     # via asttokens
+    # via python-dateutil
 sniffio==1.3.1
     # via anyio
 sorcery==0.2.2
     # via zenbase
+sqlalchemy==2.0.30
+    # via alembic
+    # via optuna
+structlog==24.2.0
+    # via zenbase
+tqdm==4.66.4
+    # via optuna
+typing-extensions==4.12.1
+    # via alembic
+    # via opentelemetry-sdk
+    # via pydantic
+    # via pydantic-core
+    # via pyee
+    # via sqlalchemy
 wrapt==1.16.0
+    # via deprecated
     # via sorcery
+zipp==3.19.2
+    # via importlib-metadata

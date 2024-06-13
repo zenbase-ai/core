@@ -17,5 +17,5 @@ And activate the virtualenv with:
 ## Running tests
 
 ```bash
-pytest # pytest -sv to see prints and verbose output
+rye test # pytest -sv to see prints and verbose output
 ```

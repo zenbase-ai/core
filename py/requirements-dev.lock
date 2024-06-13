@@ -11,6 +11,8 @@
 aiohttp==3.9.5
     # via datasets
     # via fsspec
+    # via langchain
+    # via lunary
 aioitertools==0.11.0
     # via arize-phoenix
 aiosignal==1.3.1
@@ -19,39 +21,94 @@ aiosqlite==0.20.0
     # via arize-phoenix
 alembic==1.13.1
     # via arize-phoenix
+    # via optuna
 annotated-types==0.7.0
     # via pydantic
 anyio==4.4.0
-    # via asyncer
     # via httpx
+    # via jupyter-server
     # via openai
     # via starlette
+    # via zenbase
+appnope==0.1.4
+    # via ipykernel
+argon2-cffi==23.1.0
+    # via jupyter-server
+argon2-cffi-bindings==21.2.0
+    # via argon2-cffi
 arize-phoenix==4.2.4
 arize-phoenix-evals==0.10.0
     # via arize-phoenix
+arrow==1.3.0
+    # via isoduration
 asttokens==2.4.1
     # via sorcery
     # via stack-data
-asyncer==0.0.7
-    # via zenbase
+async-lru==2.0.4
+    # via jupyterlab
 attrs==23.2.0
     # via aiohttp
+    # via cattrs
+    # via jsonschema
+    # via referencing
+autoevals==0.0.68
+babel==2.15.0
+    # via jupyterlab-server
+backoff==2.2.1
+    # via langfuse
+beautifulsoup4==4.12.3
+    # via nbconvert
+bleach==6.1.0
+    # via nbconvert
+braintrust==0.0.131
+braintrust-core==0.0.37
+    # via autoevals
+    # via braintrust
+build==1.2.1
+    # via poetry
+cachecontrol==0.14.0
+    # via poetry
 cachetools==5.3.3
     # via arize-phoenix
+cattrs==23.2.3
+    # via parea-ai
 certifi==2024.2.2
     # via httpcore
     # via httpx
     # via requests
+cffi==1.16.0
+    # via argon2-cffi-bindings
+    # via xattr
 charset-normalizer==3.3.2
     # via requests
+chevron==0.14.0
+    # via autoevals
+    # via braintrust
+    # via lunary
+cleo==2.1.0
+    # via poetry
 click==8.1.7
     # via uvicorn
+colorlog==6.8.2
+    # via optuna
+comm==0.2.2
+    # via ipykernel
+    # via ipywidgets
+contextvars==2.4
+    # via parea-ai
+crashtest==0.4.1
+    # via cleo
+    # via poetry
 cython==0.29.37
     # via hdbscan
 datasets==2.19.1
+debugpy==1.8.1
+    # via ipykernel
 decorator==5.1.1
     # via ipdb
     # via ipython
+defusedxml==0.7.1
+    # via nbconvert
 deprecated==1.2.14
     # via opentelemetry-api
     # via opentelemetry-exporter-otlp-proto-grpc
@@ -59,20 +116,39 @@ deprecated==1.2.14
 dill==0.3.8
     # via datasets
     # via multiprocess
+distlib==0.3.8
+    # via virtualenv
 distro==1.9.0
     # via openai
+dulwich==0.21.7
+    # via poetry
+exceptiongroup==1.2.0
+    # via braintrust
 executing==2.0.1
     # via sorcery
     # via stack-data
+faker==25.4.0
+    # via zenbase
+fastjsonschema==2.19.1
+    # via nbformat
+    # via poetry
 filelock==3.14.0
+    # via cachecontrol
     # via datasets
     # via huggingface-hub
+    # via virtualenv
+fqdn==1.5.1
+    # via jsonschema
 frozenlist==1.4.1
     # via aiohttp
     # via aiosignal
 fsspec==2024.3.1
     # via datasets
     # via huggingface-hub
+gitdb==4.0.11
+    # via gitpython
+gitpython==3.1.43
+    # via braintrust
 googleapis-common-protos==1.63.0
     # via opentelemetry-exporter-otlp-proto-grpc
     # via opentelemetry-exporter-otlp-proto-http
@@ -91,61 +167,180 @@ hdbscan==0.8.36
 httpcore==1.0.5
     # via httpx
 httpx==0.27.0
+    # via jupyterlab
+    # via langfuse
     # via openai
+    # via parea-ai
 huggingface-hub==0.23.2
     # via datasets
 idna==3.7
     # via anyio
     # via httpx
+    # via jsonschema
+    # via langfuse
     # via requests
     # via yarl
+immutables==0.20
+    # via contextvars
 importlib-metadata==7.1.0
     # via opentelemetry-api
 iniconfig==2.0.0
     # via pytest
+installer==0.7.0
+    # via poetry
 ipdb==0.13.13
+ipykernel==6.29.4
+    # via jupyter
+    # via jupyter-console
+    # via jupyterlab
+    # via qtconsole
 ipython==8.24.0
     # via ipdb
+    # via ipykernel
+    # via ipywidgets
+    # via jupyter-console
+ipywidgets==8.1.3
+    # via jupyter
+isoduration==20.11.0
+    # via jsonschema
+jaraco-classes==3.4.0
+    # via keyring
 jedi==0.19.1
     # via ipython
 jinja2==3.1.4
     # via arize-phoenix
+    # via jupyter-server
+    # via jupyterlab
+    # via jupyterlab-server
+    # via nbconvert
 joblib==1.4.2
     # via hdbscan
     # via pynndescent
     # via scikit-learn
+json5==0.9.25
+    # via jupyterlab-server
 jsonpatch==1.33
     # via langchain-core
+jsonpickle==3.0.4
+    # via lunary
 jsonpointer==2.4
     # via jsonpatch
+    # via jsonschema
+jsonschema==4.22.0
+    # via autoevals
+    # via jupyter-events
+    # via jupyterlab-server
+    # via nbformat
+jsonschema-specifications==2023.12.1
+    # via jsonschema
+jupyter==1.0.0
+    # via parea-ai
+jupyter-client==8.6.2
+    # via ipykernel
+    # via jupyter-console
+    # via jupyter-server
+    # via nbclient
+    # via qtconsole
+jupyter-console==6.6.3
+    # via jupyter
+jupyter-core==5.7.2
+    # via ipykernel
+    # via jupyter-client
+    # via jupyter-console
+    # via jupyter-server
+    # via jupyterlab
+    # via nbclient
+    # via nbconvert
+    # via nbformat
+    # via qtconsole
+jupyter-events==0.10.0
+    # via jupyter-server
+jupyter-lsp==2.2.5
+    # via jupyterlab
+jupyter-server==2.14.1
+    # via jupyter-lsp
+    # via jupyterlab
+    # via jupyterlab-server
+    # via notebook
+    # via notebook-shim
+jupyter-server-terminals==0.5.3
+    # via jupyter-server
+jupyterlab==4.2.1
+    # via notebook
+jupyterlab-pygments==0.3.0
+    # via nbconvert
+jupyterlab-server==2.27.2
+    # via jupyterlab
+    # via notebook
+jupyterlab-widgets==3.0.11
+    # via ipywidgets
+keyring==24.3.1
+    # via poetry
+langchain==0.2.1
 langchain-core==0.2.3
+    # via langchain
     # via langchain-openai
+    # via langchain-text-splitters
 langchain-openai==0.1.8
-langsmith==0.1.65
+langchain-text-splitters==0.2.0
+    # via langchain
+langfuse==2.35.0
+langsmith==0.1.72
+    # via langchain
     # via langchain-core
+levenshtein==0.25.1
+    # via autoevals
+    # via parea-ai
 littleutils==0.2.2
     # via sorcery
 llvmlite==0.42.0
     # via numba
     # via pynndescent
+lunary==1.0.30
 mako==1.3.5
     # via alembic
+markdown-it-py==3.0.0
+    # via rich
 markupsafe==2.1.5
     # via jinja2
     # via mako
+    # via nbconvert
 matplotlib-inline==0.1.7
+    # via ipykernel
     # via ipython
+mdurl==0.1.2
+    # via markdown-it-py
+metadict==0.1.3
+    # via zenbase
+mistune==3.0.2
+    # via nbconvert
+more-itertools==10.2.0
+    # via jaraco-classes
+msgpack==1.0.8
+    # via cachecontrol
 multidict==6.0.5
     # via aiohttp
     # via yarl
 multiprocess==0.70.16
     # via datasets
-mypy==1.10.0
-mypy-extensions==1.0.0
-    # via mypy
+nbclient==0.10.0
+    # via nbconvert
+nbconvert==7.16.4
+    # via jupyter
+    # via jupyter-server
+nbformat==5.10.4
+    # via jupyter-server
+    # via nbclient
+    # via nbconvert
 nest-asyncio==1.6.0
+    # via ipykernel
 nodeenv==1.9.0
     # via pyright
+notebook==7.2.0
+    # via jupyter
+notebook-shim==0.2.4
+    # via jupyterlab
+    # via notebook
 numba==0.59.1
     # via pynndescent
     # via umap-learn
@@ -153,7 +348,9 @@ numpy==1.26.4
     # via arize-phoenix
     # via datasets
     # via hdbscan
+    # via langchain
     # via numba
+    # via optuna
     # via pandas
     # via pyarrow
     # via scikit-learn
@@ -161,6 +358,7 @@ numpy==1.26.4
     # via umap-learn
 openai==1.30.5
     # via langchain-openai
+    # via parea-ai
 openinference-instrumentation==0.1.7
     # via arize-phoenix
     # via openinference-instrumentation-langchain
@@ -179,6 +377,7 @@ openinference-semantic-conventions==0.1.6
     # via openinference-instrumentation-llama-index
     # via openinference-instrumentation-openai
 opentelemetry-api==1.25.0
+    # via lunary
     # via openinference-instrumentation
     # via openinference-instrumentation-langchain
     # via openinference-instrumentation-llama-index
@@ -188,6 +387,7 @@ opentelemetry-api==1.25.0
     # via opentelemetry-instrumentation
     # via opentelemetry-sdk
     # via opentelemetry-semantic-conventions
+    # via zenbase
 opentelemetry-exporter-otlp==1.25.0
     # via arize-phoenix
 opentelemetry-exporter-otlp-proto-common==1.25.0
@@ -208,41 +408,86 @@ opentelemetry-proto==1.25.0
     # via opentelemetry-exporter-otlp-proto-http
 opentelemetry-sdk==1.25.0
     # via arize-phoenix
+    # via lunary
     # via opentelemetry-exporter-otlp-proto-grpc
     # via opentelemetry-exporter-otlp-proto-http
+    # via zenbase
 opentelemetry-semantic-conventions==0.46b0
     # via arize-phoenix
     # via openinference-instrumentation-langchain
     # via openinference-instrumentation-llama-index
     # via openinference-instrumentation-openai
     # via opentelemetry-sdk
+optuna==3.6.1
+    # via zenbase
 orjson==3.10.3
     # via langsmith
+overrides==7.7.0
+    # via jupyter-server
 packaging==23.2
+    # via build
     # via datasets
     # via huggingface-hub
+    # via ipykernel
+    # via jupyter-server
+    # via jupyterlab
+    # via jupyterlab-server
     # via langchain-core
+    # via langfuse
+    # via lunary
+    # via nbconvert
+    # via optuna
+    # via poetry
     # via pytest
+    # via qtconsole
+    # via qtpy
 pandas==2.2.2
     # via arize-phoenix
     # via arize-phoenix-evals
     # via datasets
+pandocfilters==1.5.1
+    # via nbconvert
+parea-ai==0.2.164
 parso==0.8.4
     # via jedi
 pexpect==4.9.0
     # via ipython
+    # via poetry
+pkginfo==1.11.0
+    # via poetry
+pksuid==1.1.2
+    # via zenbase
+platformdirs==4.2.2
+    # via jupyter-core
+    # via poetry
+    # via virtualenv
 pluggy==1.5.0
     # via pytest
+poetry==1.8.3
+    # via poetry-plugin-dotenv
+    # via poetry-plugin-export
+poetry-core==1.9.0
+    # via poetry
+    # via poetry-plugin-export
+poetry-plugin-dotenv==0.6.33
+    # via parea-ai
+poetry-plugin-export==1.8.0
+    # via poetry
+prometheus-client==0.20.0
+    # via jupyter-server
 prompt-toolkit==3.0.45
     # via ipython
+    # via jupyter-console
 protobuf==4.25.3
     # via arize-phoenix
     # via googleapis-common-protos
     # via opentelemetry-proto
 psutil==5.9.8
     # via arize-phoenix
+    # via ipykernel
 ptyprocess==0.7.0
     # via pexpect
+    # via terminado
 pure-eval==0.2.2
     # via stack-data
 pyarrow==16.1.0
@@ -250,43 +495,111 @@ pyarrow==16.1.0
     # via datasets
 pyarrow-hotfix==0.6
     # via datasets
-pydantic==2.7.2
+pybase62==0.4.3
+    # via pksuid
+pycparser==2.22
+    # via cffi
+pydantic==2.7.3
+    # via langchain
     # via langchain-core
+    # via langfuse
     # via langsmith
     # via openai
-pydantic-core==2.18.3
+    # via zenbase
+pydantic-core==2.18.4
     # via pydantic
+pyee==11.1.0
+    # via zenbase
 pygments==2.18.0
     # via ipython
+    # via jupyter-console
+    # via nbconvert
+    # via qtconsole
+    # via rich
+pyhumps==3.8.0
+    # via lunary
 pynndescent==0.5.12
     # via umap-learn
+pyproject-hooks==1.1.0
+    # via build
+    # via poetry
 pyright==1.1.365
+pysbd==0.3.4
+    # via parea-ai
 pytest==8.2.1
-    # via pytest-asyncio
     # via pytest-recording
-    # via syrupy
-pytest-asyncio==0.23.7
 pytest-recording==0.13.1
 python-dateutil==2.9.0.post0
+    # via arrow
+    # via faker
+    # via jupyter-client
     # via pandas
     # via strawberry-graphql
 python-dotenv==1.0.1
+    # via braintrust
+    # via parea-ai
+python-json-logger==2.0.7
+    # via jupyter-events
 pytz==2024.1
     # via pandas
+    # via parea-ai
+pyupgrade==3.15.2
+    # via parea-ai
 pyyaml==6.0.1
+    # via autoevals
     # via datasets
     # via huggingface-hub
+    # via jupyter-events
+    # via langchain
     # via langchain-core
+    # via optuna
     # via vcrpy
+pyzmq==26.0.3
+    # via ipykernel
+    # via jupyter-client
+    # via jupyter-console
+    # via jupyter-server
+    # via qtconsole
+qtconsole==5.5.2
+    # via jupyter
+qtpy==2.4.1
+    # via qtconsole
+rapidfuzz==3.9.3
+    # via cleo
+    # via levenshtein
+referencing==0.35.1
+    # via jsonschema
+    # via jsonschema-specifications
+    # via jupyter-events
 regex==2024.5.15
     # via tiktoken
 requests==2.32.3
     # via arize-phoenix
+    # via braintrust
+    # via cachecontrol
     # via datasets
     # via huggingface-hub
+    # via jupyterlab-server
+    # via langchain
     # via langsmith
+    # via lunary
     # via opentelemetry-exporter-otlp-proto-http
+    # via poetry
+    # via requests-toolbelt
     # via tiktoken
+requests-toolbelt==1.0.0
+    # via poetry
+rfc3339-validator==0.1.4
+    # via jsonschema
+    # via jupyter-events
+rfc3986-validator==0.1.1
+    # via jsonschema
+    # via jupyter-events
+rich==13.7.1
+    # via zenbase
+rpds-py==0.18.1
+    # via jsonschema
+    # via referencing
 ruff==0.4.6
 scikit-learn==1.5.0
     # via arize-phoenix
@@ -299,20 +612,33 @@ scipy==1.13.1
     # via pynndescent
     # via scikit-learn
     # via umap-learn
-setuptools==70.0.0
+send2trash==1.8.3
+    # via jupyter-server
+setuptools==67.8.0
+    # via lunary
     # via opentelemetry-instrumentation
+shellingham==1.5.4
+    # via poetry
 six==1.16.0
     # via asttokens
+    # via bleach
     # via python-dateutil
+    # via rfc3339-validator
+smmap==5.0.1
+    # via gitdb
 sniffio==1.3.1
     # via anyio
     # via httpx
     # via openai
 sorcery==0.2.2
     # via zenbase
+soupsieve==2.5
+    # via beautifulsoup4
 sqlalchemy==2.0.30
     # via alembic
     # via arize-phoenix
+    # via langchain
+    # via optuna
 sqlean-py==3.45.1
     # via arize-phoenix
 stack-data==0.6.3
@@ -321,59 +647,116 @@ starlette==0.37.2
     # via arize-phoenix
 strawberry-graphql==0.227.2
     # via arize-phoenix
-syrupy==4.6.1
+structlog==24.2.0
+    # via zenbase
 tenacity==8.3.0
+    # via langchain
     # via langchain-core
+    # via lunary
+terminado==0.18.1
+    # via jupyter-server
+    # via jupyter-server-terminals
 threadpoolctl==3.5.0
     # via scikit-learn
 tiktoken==0.7.0
     # via langchain-openai
+    # via parea-ai
+tinycss2==1.3.0
+    # via nbconvert
+tokenize-rt==5.2.0
+    # via pyupgrade
+tomlkit==0.12.5
+    # via poetry
+tornado==6.4
+    # via ipykernel
+    # via jupyter-client
+    # via jupyter-server
+    # via jupyterlab
+    # via notebook
+    # via terminado
 tqdm==4.66.4
     # via arize-phoenix
     # via arize-phoenix-evals
+    # via braintrust
     # via datasets
     # via huggingface-hub
     # via openai
+    # via optuna
     # via umap-learn
 traitlets==5.14.3
+    # via comm
+    # via ipykernel
     # via ipython
+    # via ipywidgets
+    # via jupyter-client
+    # via jupyter-console
+    # via jupyter-core
+    # via jupyter-events
+    # via jupyter-server
+    # via jupyterlab
     # via matplotlib-inline
+    # via nbclient
+    # via nbconvert
+    # via nbformat
+    # via qtconsole
+trove-classifiers==2024.5.22
+    # via poetry
+types-python-dateutil==2.9.0.20240316
+    # via arrow
 typing-extensions==4.12.0
     # via aiosqlite
     # via alembic
     # via arize-phoenix
     # via arize-phoenix-evals
     # via huggingface-hub
-    # via mypy
     # via openai
     # via openinference-instrumentation-llama-index
     # via openinference-instrumentation-openai
     # via opentelemetry-sdk
     # via pydantic
     # via pydantic-core
+    # via pyee
     # via sqlalchemy
     # via strawberry-graphql
 tzdata==2024.1
     # via pandas
 umap-learn==0.5.6
     # via arize-phoenix
+uri-template==1.3.0
+    # via jsonschema
 urllib3==2.2.1
+    # via dulwich
     # via requests
 uvicorn==0.30.0
     # via arize-phoenix
 vcrpy==6.0.1
     # via pytest-recording
+virtualenv==20.26.2
+    # via poetry
 wcwidth==0.2.13
     # via prompt-toolkit
+webcolors==1.13
+    # via jsonschema
+webencodings==0.5.1
+    # via bleach
+    # via tinycss2
+websocket-client==1.8.0
+    # via jupyter-server
+widgetsnbextension==4.0.11
+    # via ipywidgets
 wrapt==1.16.0
     # via arize-phoenix
     # via deprecated
+    # via langfuse
     # via openinference-instrumentation-langchain
     # via openinference-instrumentation-llama-index
     # via openinference-instrumentation-openai
     # via opentelemetry-instrumentation
+    # via parea-ai
     # via sorcery
     # via vcrpy
+xattr==1.1.0
+    # via poetry
 xxhash==3.4.1
     # via datasets
 yarl==1.9.4

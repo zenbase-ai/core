@@ -10,5 +10,6 @@
     "py/**/__pycache__": true,
     "py/.pytest_cache/": true
   },
-  "python.defaultInterpreterPath": "py/.venv/bin/python"
+  "python.defaultInterpreterPath": "py/.venv/bin/python",
+  "python.analysis.extraPaths": ["./py/src"]
 }
