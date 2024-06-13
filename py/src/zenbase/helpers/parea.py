@@ -2,7 +2,6 @@ import json
 
 from dataclasses import asdict
 from typing import Callable
-from unittest import case
 
 from parea import Parea
 from parea.schemas import ExperimentStatsSchema, TestCaseCollection
@@ -17,10 +16,10 @@ from zenbase.utils import random_name_generator
 
 
 class ZenParea:
-    type MetricEvaluator = Callable[[dict[str, float]], MetricEvals]
+    MetricEvaluator = Callable[[dict[str, float]], MetricEvals]
 
     @staticmethod
-    def test_collection_demos(collection: TestCaseCollection) -> list[LMDemo]:
+    def collection_demos(collection: TestCaseCollection) -> list[LMDemo]:
         return [
             LMDemo(inputs=case.inputs, outputs={"target": case.target})
             for case in collection.test_cases.values()
@@ -31,9 +30,7 @@ class ZenParea:
         return {**stats.avg_scores, "score": sum(stats.avg_scores.values())}
 
     @classmethod
-    def metric_evaluator[
-        Inputs: dict, Outputs: dict
-    ](
+    def metric_evaluator(
         cls,
         *args,
         p: Parea | None = None,
@@ -46,9 +43,7 @@ class ZenParea:
         base_metadata = kwargs.pop("metadata", {})
         gen_random_name = random_name_generator(kwargs.pop("name", None))
 
-        def evaluate_candidate(
-            function: LMFunction[Inputs, Outputs]
-        ) -> CandidateMetricResult[Inputs, Outputs]:
+        def evaluate_candidate(function: LMFunction) -> CandidateMetricResult:
             experiment = p.experiment(
                 func=function,
                 *args,

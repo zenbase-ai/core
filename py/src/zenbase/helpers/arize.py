@@ -12,14 +12,10 @@ if TYPE_CHECKING:
 
 
 class ZenPhoenix:
-    type MetricEvaluator = Callable[
-        [list["LLMEvaluator"], list[pd.DataFrame]], MetricEvals
-    ]
+    MetricEvaluator = Callable[[list["LLMEvaluator"], list[pd.DataFrame]], MetricEvals]
 
     @staticmethod
-    def df_to_demos[
-        Inputs: dict, Outputs: dict
-    ](df: pd.DataFrame) -> list[LMDemo[Inputs, Outputs]]:
+    def df_to_demos(df: pd.DataFrame) -> list[LMDemo]:
         raise NotImplementedError()
 
     @staticmethod
@@ -33,10 +29,7 @@ class ZenPhoenix:
         return evals
 
     @classmethod
-    def metric_evaluator[
-        Inputs: dict,
-        Outputs: dict,
-    ](
+    def metric_evaluator(
         cls,
         dataset: pd.DataFrame,
         evaluators: list["LLMEvaluator"],
@@ -47,9 +40,7 @@ class ZenPhoenix:
     ):
         from phoenix.evals import run_evals
 
-        async def run_experiment(
-            function: LMFunction[Inputs, Outputs],
-        ) -> CandidateMetricResult[Inputs, Outputs]:
+        async def run_experiment(function: LMFunction) -> CandidateMetricResult:
             nonlocal dataset
             run_df = dataset.copy()
             # TODO: Is it typical for there to only be 1 value?

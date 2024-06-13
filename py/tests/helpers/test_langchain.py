@@ -91,7 +91,7 @@ def test_langsmith_lcel_labeled_few_shot(
                 "You are an expert math solver. Your answer must be just the number with no separators, and nothing else. Follow the format of the examples.",
             )
         ]
-        for demo in request.zenbase.demos:
+        for demo in request.zenbase.task_demos:
             messages += [
                 ("user", demo.inputs["question"]),
                 ("assistant", demo.outputs["answer"]),
@@ -149,7 +149,7 @@ async def test_langsmith_openai_json_response_labeled_few_shot(
             },
         ]
 
-        for demo in request.zenbase.demos:
+        for demo in request.zenbase.task_demos:
             messages += [
                 {"role": "user", "content": json.dumps(demo.inputs)},
                 {"role": "assistant", "content": json.dumps(demo.outputs)},

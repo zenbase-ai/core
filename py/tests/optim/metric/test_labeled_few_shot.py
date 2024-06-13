@@ -53,7 +53,7 @@ def test_candidate_generation(optim: LabeledFewShot):
 
     candidates = list(optim.candidates(lmfn, samples))
 
-    assert all(len(c.demos) == optim.shots for c in candidates)
+    assert all(len(c.task_demos) == optim.shots for c in candidates)
     assert len(candidates) == samples
 
 
@@ -79,7 +79,7 @@ def test_training(optim: LabeledFewShot):
     best_function = max(candidates, key=lambda r: r.evals["score"]).function
     assert trained_lmfn == best_function
 
-    for demo in trained_lmfn.zenbase.demos:
+    for demo in trained_lmfn.zenbase.task_demos:
         assert demo in demoset
 
 

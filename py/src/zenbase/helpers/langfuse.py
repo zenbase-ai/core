@@ -8,12 +8,12 @@ from zenbase.optim.metric.types import (
     CandidateMetricResult,
     CandidateMetricEvaluator,
 )
-from zenbase.types import LMDemo, LMFunction
+from zenbase.types import LMDemo, LMFunction, Outputs
 from zenbase.utils import pmap
 
 
 class ZenLangfuse:
-    type MetricEvaluator = Callable[[list[MetricEvals]], MetricEvals]
+    MetricEvaluator = Callable[[list[MetricEvals]], MetricEvals]
 
     @staticmethod
     def default_candidate_evals(item_evals: list[MetricEvals]) -> MetricEvals:
@@ -31,9 +31,7 @@ class ZenLangfuse:
         ]
 
     @classmethod
-    def metric_evaluator[
-        Inputs: dict, Outputs: dict
-    ](
+    def metric_evaluator(
         cls,
         evalset: Dataset,
         evaluate: Callable[[Outputs, LMDemo, Langfuse], MetricEvals],
@@ -46,9 +44,7 @@ class ZenLangfuse:
 
         langfuse = langfuse or Langfuse()
 
-        def evaluate_candidate(
-            function: LMFunction[Inputs, Outputs],
-        ) -> CandidateMetricResult[Inputs, Outputs]:
+        def evaluate_candidate(function: LMFunction) -> CandidateMetricResult:
             @observe()
             def run_and_evaluate(demo: LMDemo):
                 outputs = function(demo.inputs)

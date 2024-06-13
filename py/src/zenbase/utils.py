@@ -1,5 +1,5 @@
 from anyio._core._eventloop import threadlocals
-from typing import AsyncIterable, Awaitable, Callable, ParamSpec, TypeVar
+from typing import AsyncIterable, Awaitable, Callable, ParamSpec, TypeVar, TypedDict
 from random import Random
 from concurrent.futures import ThreadPoolExecutor
 import anyio
@@ -12,11 +12,24 @@ import os
 from faker import Faker
 from opentelemetry import trace
 from pksuid import PKSUID
+from posthog import Posthog
 from structlog import get_logger
 
-
 get_logger: Callable[..., logging.Logger] = get_logger
-tracer = trace.get_tracer("zenbase")
+ot_tracer = trace.get_tracer("zenbase")
+
+
+def posthog() -> Posthog:
+    if project_api_key := os.getenv("ZENBASE_ANALYTICS_KEY"):
+        client = Posthog(
+            project_api_key=project_api_key,
+            host="https://us.i.posthog.com",
+        )
+        client.identify(os.environ["ZENBASE_ANALYTICS_ID"])
+    else:
+        client = Posthog("")
+        client.disabled = True
+    return client
 
 
 def get_seed(seed: int | None = None) -> int:
@@ -90,9 +103,15 @@ def syncify(
     return wrapper
 
 
-async def amap[
-    O
-](func: Callable[..., Awaitable[O]], iterable, *iterables, concurrency=10) -> list[O]:
+ReturnValue = TypeVar("ReturnValue", covariant=True)
+
+
+async def amap(
+    func: Callable[..., Awaitable[ReturnValue]],
+    iterable,
+    *iterables,
+    concurrency=10,
+) -> list[ReturnValue]:
     assert concurrency >= 1, "Concurrency must be greater than or equal to 1"
 
     if concurrency == 1:
@@ -113,10 +132,15 @@ async def amap[
     return await asyncio.gather(*[mapper(*args) for args in zip(iterable, *iterables)])
 
 
-def pmap[O](func: Callable[..., O], iterable, *iterables, concurrency=10) -> list[O]:
+def pmap(
+    func: Callable[..., ReturnValue],
+    iterable,
+    *iterables,
+    concurrency=10,
+) -> list[ReturnValue]:
     with ThreadPoolExecutor(max_workers=concurrency) as pool:
         return list(pool.map(func, iterable, *iterables))
 
 
-async def alist[O](aiterable: AsyncIterable[O]) -> list[O]:
+async def alist(aiterable: AsyncIterable[ReturnValue]) -> list[ReturnValue]:
     return [x async for x in aiterable]

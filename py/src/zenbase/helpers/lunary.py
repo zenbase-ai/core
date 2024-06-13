@@ -12,7 +12,7 @@ from zenbase.utils import pmap
 
 
 class ZenLunary:
-    type MetricEvaluator = Callable[[list[tuple[bool, Any]]], MetricEvals]
+    MetricEvaluator = Callable[[list[tuple[bool, Any]]], MetricEvals]
 
     @staticmethod
     def default_metric(batch_results: list[tuple[bool, Any]]) -> MetricEvals:
@@ -26,9 +26,7 @@ class ZenLunary:
         ]
 
     @classmethod
-    def metric_evaluator[
-        Inputs: dict, Outputs: dict
-    ](
+    def metric_evaluator(
         cls,
         *args,
         checklist: str,
@@ -37,9 +35,7 @@ class ZenLunary:
         concurrency: int = 20,
         **kwargs,
     ) -> CandidateMetricEvaluator:
-        def evaluate_metric(
-            function: LMFunction[Inputs, Outputs]
-        ) -> CandidateMetricResult[Inputs, Outputs]:
+        def evaluate_metric(function: LMFunction) -> CandidateMetricResult:
             def run_and_evaluate(item: lunary.DatasetItem):
                 response = function(item.input)
                 return lunary.evaluate(

@@ -81,7 +81,7 @@ def langchain_chain(request: LMRequest):
             "You are an expert math solver. Your answer must be just the number with no separators, and nothing else. Follow the format of the examples.",
         )
     ]
-    for demo in request.zenbase.demos:
+    for demo in request.zenbase.task_demos:
         messages += [
             ("user", demo.inputs["question"]),
             ("assistant", demo.outputs["answer"]),
@@ -105,7 +105,10 @@ def langchain_chain(request: LMRequest):
                     "system",
                     "You are the verifier",
                 ),
-                ("user", "the question is: {question} and the answer is {answer}, is it right? answer with yes or no."),
+                (
+                    "user",
+                    "the question is: {question} and the answer is {answer}, is it right? answer with yes or no.",
+                ),
             ]
         )
         | ChatOpenAI(model="gpt-3.5-turbo")
@@ -113,7 +116,9 @@ def langchain_chain(request: LMRequest):
     )
 
     print("Mathing...")
-    new_answer = chain_2.invoke({'question': request.inputs['question'], 'answer': answer})
+    new_answer = chain_2.invoke(
+        {"question": request.inputs["question"], "answer": answer}
+    )
     print(new_answer)
 
     return answer
@@ -135,5 +140,3 @@ def test_parea_lcel_labeled_few_shot(
     assert fn is not None
     assert any(candidates)
     assert next(e for e in candidates if 0.5 <= e.evals["score"] <= 1)
-
-

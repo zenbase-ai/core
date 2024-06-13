@@ -2,17 +2,19 @@ from collections import deque
 from copy import copy
 from dataclasses import dataclass, field, replace
 from functools import partial
-from typing import Awaitable, Callable
+from typing import Awaitable, Callable, Generic, TypeVar
 import inspect
-
-from pyee import AsyncIOEventEmitter
 
 
 from zenbase.utils import asyncify, id_generator, syncify
 
 
+Inputs = TypeVar("Inputs", covariant=True, bound=dict)
+Outputs = TypeVar("Outputs", covariant=True, bound=dict)
+
+
 @dataclass(frozen=True)
-class LMDemo[Inputs: dict, Outputs: dict]:
+class LMDemo(Generic[Inputs, Outputs]):
     inputs: Inputs
     outputs: Outputs
 
@@ -21,40 +23,47 @@ class LMDemo[Inputs: dict, Outputs: dict]:
 
 
 @dataclass(frozen=True)
-class LMZenbase[Inputs: dict, Outputs: dict]:
-    # TODO: These are the thing that you can optimize later (for later inspiration)
-    # instructions: list[str] = field(default_factory=list)
-    # dos: list[str] = field(default_factory=list)
-    # donts: list[str] = field(default_factory=list)
-    demos: list[LMDemo[Inputs, Outputs]] = field(default_factory=list)
+class LMZenbase(Generic[Inputs, Outputs]):
+    task_demos: list[LMDemo[Inputs, Outputs]] = field(default_factory=list)
+    model_params: dict = field(default_factory=dict)  # OpenAI-compatible model params
 
 
 @dataclass(frozen=True)
-class LMRequest[Inputs: dict, Outputs: dict]:
+class LMRequest(Generic[Inputs, Outputs]):
     zenbase: LMZenbase[Inputs, Outputs]
     inputs: Inputs = field(default_factory=dict)
     id: str = field(default_factory=id_generator("request"))
 
 
 @dataclass(frozen=True)
-class LMCall[Inputs: dict, Outputs: dict]:
+class LMResponse(Generic[Outputs]):
+    outputs: Outputs
+    attributes: dict = field(
+        default_factory=dict
+    )  # token_count, cost, inference_time, etc.
+    id: str = field(default_factory=id_generator("response"))
+
+
+@dataclass(frozen=True)
+class LMCall(Generic[Inputs, Outputs]):
     function: "LMFunction[Inputs, Outputs]"
     request: LMRequest[Inputs, Outputs]
-    outputs: Outputs
+    response: LMResponse[Outputs]
     id: str = field(default_factory=id_generator("call"))
 
 
-type SyncDef[Inputs: dict, Outputs: dict] = Callable[
+SyncDef = Callable[
     [LMRequest[Inputs, Outputs]],
     Outputs,
 ]
-type AsyncDef[Inputs: dict, Outputs: dict] = Callable[
+
+AsyncDef = Callable[
     [LMRequest[Inputs, Outputs]],
     Awaitable[Outputs],
 ]
 
 
-class LMFunction[Inputs: dict, Outputs: dict]:
+class LMFunction(Generic[Inputs, Outputs]):
     gen_id = staticmethod(id_generator("fn"))
 
     id: str
@@ -72,11 +81,17 @@ class LMFunction[Inputs: dict, Outputs: dict]:
         zenbase: LMZenbase | None = None,
         maxhistory: int = 1,
     ):
-        self.id = self.gen_id()
         self.fn = fn
 
-        self.__name__ = getattr(fn, "__name__", "zenbase_lm_fn")
-        self.__qualname__ = getattr(fn, "__qualname__", "zenbase_lm_fn")
+        if qualname := getattr(fn, "__qualname__", None):
+            self.id = qualname
+            self.__qualname__ = qualname
+        else:
+            self.id = self.gen_id()
+            self.__qualname__ = f"zenbase_{self.id}"
+
+        self.__name__ = getattr(fn, "__name__", f"zenbase_{self.id}")
+
         self.__doc__ = getattr(fn, "__doc__", "")
         self.__signature__ = inspect.signature(fn)
 
@@ -94,25 +109,21 @@ class LMFunction[Inputs: dict, Outputs: dict]:
         return LMRequest(zenbase=self.zenbase, inputs=inputs)
 
     def process_response(
-        self, request: LMRequest[Inputs, Outputs], response: Outputs
+        self,
+        request: LMRequest[Inputs, Outputs],
+        outputs: Outputs,
     ) -> Outputs:
-        self.history.append(
-            LMCall(
-                function=self,
-                request=request,
-                outputs=response,
-            ),
-        )
-        return response
+        self.history.append(LMCall(self, request, LMResponse(outputs)))
+        return outputs
 
-    def __call__(self, inputs: Inputs = {}, *args, **kwargs) -> Outputs:
+    def __call__(self, inputs: Inputs, *args, **kwargs) -> Outputs:
         request = self.prepare_request(inputs)
         response = syncify(self.fn)(request, *args, **kwargs)
         return self.process_response(request, response)
 
     async def coroutine(
         self,
-        inputs: Inputs = {},
+        inputs: Inputs,
         *args,
         **kwargs,
     ) -> Outputs:
@@ -121,12 +132,9 @@ class LMFunction[Inputs: dict, Outputs: dict]:
         return self.process_response(request, response)
 
 
-def deflm[
-    Inputs: dict,
-    Outputs: dict,
-](
+def deflm(
     function: SyncDef[Inputs, Outputs] | AsyncDef[Inputs, Outputs] | None = None,
-    zenbase: LMRequest[Inputs, Outputs] | None = None,
+    zenbase: LMZenbase[Inputs, Outputs] | None = None,
 ) -> LMFunction[Inputs, Outputs]:
     if function is None:
         return partial(deflm, zenbase=zenbase)

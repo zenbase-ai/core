@@ -4,15 +4,15 @@ from typing import NamedTuple
 
 from zenbase.optim.abc import LMOptim
 from zenbase.optim.metric.types import CandidateMetricEvaluator, CandidateMetricResult
-from zenbase.types import LMDemo, LMFunction, LMZenbase
-from zenbase.utils import asyncify, pmap, tracer, get_logger
+from zenbase.types import Inputs, LMDemo, LMFunction, LMZenbase, Outputs
+from zenbase.utils import asyncify, pmap, ot_tracer, get_logger, posthog
 
 
 log = get_logger(__name__)
 
 
 @dataclass(kw_only=True)
-class LabeledFewShot[Inputs: dict, Outputs: dict](LMOptim):
+class LabeledFewShot(LMOptim[Inputs, Outputs]):
     class Result(NamedTuple):
         best_function: LMFunction[Inputs, Outputs]
         candidate_results: list[CandidateMetricResult]
@@ -23,12 +23,11 @@ class LabeledFewShot[Inputs: dict, Outputs: dict](LMOptim):
     def __post_init__(self):
         assert 1 <= self.shots <= len(self.demoset)
 
-    @tracer.start_as_current_span("perform")
+    @ot_tracer.start_as_current_span("perform")
     def perform(
         self,
         lmfn: LMFunction[Inputs, Outputs],
         evaluator: CandidateMetricEvaluator[Inputs, Outputs],
-        deps: list[LMFunction[Inputs, Outputs]] = [],
         samples: int = 0,
         rounds: int = 1,
         concurrency: int = 1,
@@ -38,7 +37,7 @@ class LabeledFewShot[Inputs: dict, Outputs: dict](LMOptim):
         best_score = float("-inf")
         best_lmfn = lmfn
 
-        @tracer.start_as_current_span("run_experiment")
+        @ot_tracer.start_as_current_span("run_experiment")
         def run_candidate_zenbase(zenbase: LMZenbase):
             nonlocal best_score, best_lmfn
 
@@ -60,6 +59,13 @@ class LabeledFewShot[Inputs: dict, Outputs: dict](LMOptim):
                 self.candidates(best_lmfn, samples),
                 concurrency=concurrency,
             )
+
+        posthog().capture(
+            event="optimize_labeled_few_shot",
+            properties={
+                "evals": {c.function.id: c.evals for c in candidates},
+            },
+        )
 
         return self.Result(best_lmfn, candidates)
 
@@ -87,4 +93,4 @@ class LabeledFewShot[Inputs: dict, Outputs: dict](LMOptim):
 
         for _ in range(samples):
             demos = tuple(self.random.sample(self.demoset, k=self.shots))
-            yield LMZenbase(demos=demos)
+            yield LMZenbase(task_demos=demos)

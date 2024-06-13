@@ -19,9 +19,7 @@ class ZenLangSmith:
         return [LMDemo(inputs=e.inputs, outputs=e.outputs) for e in examples]
 
     @classmethod
-    def metric_evaluator[
-        Inputs: dict, Outputs: dict
-    ](cls, **evaluate_kwargs) -> CandidateMetricEvaluator:
+    def metric_evaluator(cls, **evaluate_kwargs) -> CandidateMetricEvaluator:
         from langsmith import evaluate
 
         metadata = evaluate_kwargs.pop("metadata", {})
@@ -29,9 +27,7 @@ class ZenLangSmith:
             evaluate_kwargs.pop("experiment_prefix", None)
         )
 
-        def evaluate_candidate(
-            function: LMFunction[Inputs, Outputs],
-        ) -> CandidateMetricResult[Inputs, Outputs]:
+        def evaluate_candidate(function: LMFunction) -> CandidateMetricResult:
             experiment_results = evaluate(
                 function,
                 experiment_prefix=gen_random_name(),
