@@ -5,7 +5,7 @@ from typing import NamedTuple
 from zenbase.optim.abc import LMOptim
 from zenbase.optim.metric.types import CandidateMetricEvaluator, CandidateMetricResult
 from zenbase.types import Inputs, LMDemo, LMFunction, LMZenbase, Outputs
-from zenbase.utils import asyncify, pmap, ot_tracer, get_logger, posthog
+from zenbase.utils import asyncify, ksuid, pmap, ot_tracer, get_logger, posthog
 
 
 log = get_logger(__name__)
@@ -61,6 +61,7 @@ class LabeledFewShot(LMOptim[Inputs, Outputs]):
             )
 
         posthog().capture(
+            distinct_id=ksuid(),
             event="optimize_labeled_few_shot",
             properties={
                 "evals": {c.function.id: c.evals for c in candidates},

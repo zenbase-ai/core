@@ -1,6 +1,6 @@
 [project]
 name = "zenbase"
-version = "0.0.2"
+version = "0.0.3"
 description = "LLMs made Zen"
 authors = [{ name = "Cyrus Nouroozi", email = "cyrus@zenbase.ai" }]
 dependencies = [

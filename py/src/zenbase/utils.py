@@ -40,8 +40,12 @@ def random_factory(seed: int | None = None) -> Random:
     return Random(get_seed(seed))
 
 
-def id_generator(prefix: str) -> Callable[[], str]:
-    return lambda: str(PKSUID(prefix))
+def ksuid_generator(prefix: str) -> Callable[[], str]:
+    return lambda: ksuid(prefix)
+
+
+def ksuid(prefix: str | None = None) -> str:
+    return str(PKSUID(prefix))
 
 
 def random_name_generator(
@@ -51,8 +55,7 @@ def random_name_generator(
     head = f"zenbase-{prefix}" if prefix else "zenbase"
 
     def gen():
-        tail = random_name_generator().lower().replace(" ", "-")
-        return f"{head}-{tail}"
+        return "-".join([head, *random_name_generator().lower().split(" ")[:2]])
 
     return gen
 

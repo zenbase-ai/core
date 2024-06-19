@@ -1,20 +1,89 @@
 from collections import deque
 from copy import copy
-from dataclasses import dataclass, field, replace
 from functools import partial
-from typing import Awaitable, Callable, Generic, TypeVar
+from typing import Awaitable, Callable, Generic, TypeVar, Union, get_origin
+import dataclasses
 import inspect
+import json
+import yaml
 
 
-from zenbase.utils import asyncify, id_generator, syncify
+from zenbase.utils import asyncify, ksuid_generator, syncify
+
+
+class Dataclass:
+    """
+    Modified from Braintrust's SerializableDataClass
+    """
+
+    def copy(self, **changes):
+        return dataclasses.replace(self, **changes)
+
+    def as_dict(self):
+        """Serialize the object to a dictionary."""
+        return dataclasses.asdict(self)
+
+    def as_json(self, **kwargs):
+        """Serialize the object to JSON."""
+        return json.dumps(self.as_dict(), **kwargs)
+
+    def as_yaml(self):
+        """Serialize the object to YAML."""
+        return yaml.dumps(self.as_dict())
+
+    @classmethod
+    def from_dict(cls, d: dict):
+        """Deserialize the object from a dictionary. This method
+        is shallow and will not call from_dict() on nested objects."""
+        fields = set(f.name for f in dataclasses.fields(cls))
+        filtered = {k: v for k, v in d.items() if k in fields}
+        return cls(**filtered)
+
+    @classmethod
+    def from_dict_deep(cls, d: dict):
+        """Deserialize the object from a dictionary. This method
+        is deep and will call from_dict_deep() on nested objects."""
+        fields = {f.name: f for f in dataclasses.fields(cls)}
+        filtered = {}
+        for k, v in d.items():
+            if k not in fields:
+                continue
+
+            if (
+                isinstance(v, dict)
+                and isinstance(fields[k].type, type)
+                and issubclass(fields[k].type, Dataclass)
+            ):
+                filtered[k] = fields[k].type.from_dict_deep(v)
+            elif get_origin(fields[k].type) == Union:
+                for t in fields[k].type.__args__:
+                    if isinstance(t, type) and issubclass(t, Dataclass):
+                        try:
+                            filtered[k] = t.from_dict_deep(v)
+                            break
+                        except TypeError:
+                            pass
+                else:
+                    filtered[k] = v
+            elif (
+                isinstance(v, list)
+                and get_origin(fields[k].type) == list
+                and len(fields[k].type.__args__) == 1
+                and isinstance(fields[k].type.__args__[0], type)
+                and issubclass(fields[k].type.__args__[0], Dataclass)
+            ):
+                filtered[k] = [fields[k].type.__args__[0].from_dict_deep(i) for i in v]
+            else:
+                filtered[k] = v
+        return cls(**filtered)
 
 
 Inputs = TypeVar("Inputs", covariant=True, bound=dict)
 Outputs = TypeVar("Outputs", covariant=True, bound=dict)
 
 
-@dataclass(frozen=True)
-class LMDemo(Generic[Inputs, Outputs]):
+@dataclasses.dataclass(frozen=True)
+class LMDemo(Dataclass, Generic[Inputs, Outputs]):
     inputs: Inputs
     outputs: Outputs
 
@@ -22,34 +91,36 @@ class LMDemo(Generic[Inputs, Outputs]):
         return hash((frozenset(self.inputs.items()), frozenset(self.outputs.items())))
 
 
-@dataclass(frozen=True)
-class LMZenbase(Generic[Inputs, Outputs]):
-    task_demos: list[LMDemo[Inputs, Outputs]] = field(default_factory=list)
-    model_params: dict = field(default_factory=dict)  # OpenAI-compatible model params
+@dataclasses.dataclass(frozen=True)
+class LMZenbase(Dataclass, Generic[Inputs, Outputs]):
+    task_demos: list[LMDemo[Inputs, Outputs]] = dataclasses.field(default_factory=list)
+    model_params: dict = dataclasses.field(
+        default_factory=dict
+    )  # OpenAI-compatible model params
 
 
-@dataclass(frozen=True)
-class LMRequest(Generic[Inputs, Outputs]):
+@dataclasses.dataclass(frozen=True)
+class LMRequest(Dataclass, Generic[Inputs, Outputs]):
     zenbase: LMZenbase[Inputs, Outputs]
-    inputs: Inputs = field(default_factory=dict)
-    id: str = field(default_factory=id_generator("request"))
+    inputs: Inputs = dataclasses.field(default_factory=dict)
+    id: str = dataclasses.field(default_factory=ksuid_generator("request"))
 
 
-@dataclass(frozen=True)
-class LMResponse(Generic[Outputs]):
+@dataclasses.dataclass(frozen=True)
+class LMResponse(Dataclass, Generic[Outputs]):
     outputs: Outputs
-    attributes: dict = field(
+    attributes: dict = dataclasses.field(
         default_factory=dict
     )  # token_count, cost, inference_time, etc.
-    id: str = field(default_factory=id_generator("response"))
+    id: str = dataclasses.field(default_factory=ksuid_generator("response"))
 
 
-@dataclass(frozen=True)
-class LMCall(Generic[Inputs, Outputs]):
+@dataclasses.dataclass(frozen=True)
+class LMCall(Dataclass, Generic[Inputs, Outputs]):
     function: "LMFunction[Inputs, Outputs]"
     request: LMRequest[Inputs, Outputs]
     response: LMResponse[Outputs]
-    id: str = field(default_factory=id_generator("call"))
+    id: str = dataclasses.field(default_factory=ksuid_generator("call"))
 
 
 SyncDef = Callable[
@@ -64,7 +135,7 @@ AsyncDef = Callable[
 
 
 class LMFunction(Generic[Inputs, Outputs]):
-    gen_id = staticmethod(id_generator("fn"))
+    gen_id = staticmethod(ksuid_generator("fn"))
 
     id: str
     fn: SyncDef[Inputs, Outputs] | AsyncDef[Inputs, Outputs]
@@ -101,7 +172,7 @@ class LMFunction(Generic[Inputs, Outputs]):
     def refine(self, zenbase: LMZenbase | None = None) -> "LMFunction[Inputs, Outputs]":
         dup = copy(self)
         dup.id = self.gen_id()
-        dup.zenbase = zenbase or replace(self.zenbase)
+        dup.zenbase = zenbase or self.zenbase.copy()
         dup.history = deque([], maxlen=self.history.maxlen)
         return dup
 
