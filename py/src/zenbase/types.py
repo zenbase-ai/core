@@ -123,22 +123,11 @@ class LMCall(Dataclass, Generic[Inputs, Outputs]):
     id: str = dataclasses.field(default_factory=ksuid_generator("call"))
 
 
-SyncDef = Callable[
-    [LMRequest[Inputs, Outputs]],
-    Outputs,
-]
-
-AsyncDef = Callable[
-    [LMRequest[Inputs, Outputs]],
-    Awaitable[Outputs],
-]
-
-
 class LMFunction(Generic[Inputs, Outputs]):
     gen_id = staticmethod(ksuid_generator("fn"))
 
     id: str
-    fn: SyncDef[Inputs, Outputs] | AsyncDef[Inputs, Outputs]
+    fn: Callable[[LMRequest[Inputs, Outputs]], Outputs | Awaitable[Outputs]]
     __name__: str
     __qualname__: str
     __doc__: str
@@ -148,7 +137,7 @@ class LMFunction(Generic[Inputs, Outputs]):
 
     def __init__(
         self,
-        fn: SyncDef[Inputs, Outputs] | AsyncDef[Inputs, Outputs],
+        fn: Callable[[LMRequest[Inputs, Outputs]], Outputs | Awaitable[Outputs]],
         zenbase: LMZenbase | None = None,
         maxhistory: int = 1,
     ):
@@ -204,7 +193,9 @@ class LMFunction(Generic[Inputs, Outputs]):
 
 
 def deflm(
-    function: SyncDef[Inputs, Outputs] | AsyncDef[Inputs, Outputs] | None = None,
+    function: (
+        Callable[[LMRequest[Inputs, Outputs]], Outputs | Awaitable[Outputs]] | None
+    ) = None,
     zenbase: LMZenbase[Inputs, Outputs] | None = None,
 ) -> LMFunction[Inputs, Outputs]:
     if function is None:

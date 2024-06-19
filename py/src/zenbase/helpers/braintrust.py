@@ -1,6 +1,6 @@
 from asyncio import Task
 from dataclasses import asdict
-from typing import Callable, Iterator, AsyncIterator, Awaitable, Optional, List, Union
+from typing import Callable, Iterator, AsyncIterator, Awaitable
 
 from braintrust import (
     Eval,
@@ -24,7 +24,7 @@ class ZenBraintrust:
         name: str,
         data: Callable[[], Iterator[EvalCase] | AsyncIterator[EvalCase]],
         task: Callable[[Input, EvalHooks], Output | Awaitable[Output]],
-        scores: List[EvalScorer],
+        scores: list[EvalScorer],
         experiment_name: str | None = None,
         trial_count: int = 1,
         metadata: Metadata | None = None,
