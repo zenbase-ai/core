@@ -5,7 +5,6 @@ from typing import Awaitable, Callable, Generic, TypeVar, Union, get_origin
 import dataclasses
 import inspect
 import json
-import yaml
 
 
 from zenbase.utils import asyncify, ksuid_generator, syncify
@@ -26,10 +25,6 @@ class Dataclass:
     def as_json(self, **kwargs):
         """Serialize the object to JSON."""
         return json.dumps(self.as_dict(), **kwargs)
-
-    def as_yaml(self):
-        """Serialize the object to YAML."""
-        return yaml.dumps(self.as_dict())
 
     @classmethod
     def from_dict(cls, d: dict):
