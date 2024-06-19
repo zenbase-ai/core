@@ -1,5 +1,5 @@
 from anyio._core._eventloop import threadlocals
-from typing import AsyncIterable, Awaitable, Callable, ParamSpec, TypeVar, TypedDict
+from typing import AsyncIterable, Awaitable, Callable, ParamSpec, TypeVar
 from random import Random
 from concurrent.futures import ThreadPoolExecutor
 import anyio

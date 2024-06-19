@@ -1,4 +1,5 @@
 from collections import deque
+from contextvars import ContextVar, Token
 from copy import copy
 from functools import partial
 from typing import Awaitable, Callable, Generic, TypeVar, Union, get_origin
@@ -93,6 +94,25 @@ class LMZenbase(Dataclass, Generic[Inputs, Outputs]):
         default_factory=dict
     )  # OpenAI-compatible model params
 
+    def __enter__(self):
+        global ZENBASE_CTX_TOKEN
+        ZENBASE_CTX_TOKEN = ZENBASE_CTX.set(self)
+        return self
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        global ZENBASE_CTX_TOKEN
+        if ZENBASE_CTX_TOKEN:
+            ZENBASE_CTX.reset(ZENBASE_CTX_TOKEN)
+            ZENBASE_CTX_TOKEN = None
+
+
+ZENBASE_CTX = ContextVar[LMZenbase]("zenbase")
+ZENBASE_CTX_TOKEN: Token[LMZenbase] | None = None
+
+
+def use_zenbase() -> LMZenbase:
+    return ZENBASE_CTX.get()
+
 
 @dataclasses.dataclass(frozen=True)
 class LMRequest(Dataclass, Generic[Inputs, Outputs]):
@@ -161,6 +181,7 @@ class LMFunction(Generic[Inputs, Outputs]):
         return dup
 
     def prepare_request(self, inputs: Inputs) -> LMRequest[Inputs, Outputs]:
+        ZENBASE_CTX.set(self.zenbase)
         return LMRequest(zenbase=self.zenbase, inputs=inputs)
 
     def process_response(
@@ -172,19 +193,21 @@ class LMFunction(Generic[Inputs, Outputs]):
         return outputs
 
     def __call__(self, inputs: Inputs, *args, **kwargs) -> Outputs:
-        request = self.prepare_request(inputs)
-        response = syncify(self.fn)(request, *args, **kwargs)
-        return self.process_response(request, response)
+        with self.zenbase:
+            request = self.prepare_request(inputs)
+            response = syncify(self.fn)(request, *args, **kwargs)
+            return self.process_response(request, response)
 
-    async def coroutine(
+    async def coro(
         self,
         inputs: Inputs,
         *args,
         **kwargs,
     ) -> Outputs:
-        request = self.prepare_request(inputs)
-        response = await asyncify(self.fn)(request, *args, **kwargs)
-        return self.process_response(request, response)
+        with self.zenbase:
+            request = self.prepare_request(inputs)
+            response = await asyncify(self.fn)(request, *args, **kwargs)
+            return self.process_response(request, response)
 
 
 def deflm(
