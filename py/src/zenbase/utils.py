@@ -40,12 +40,12 @@ def random_factory(seed: int | None = None) -> Random:
     return Random(get_seed(seed))
 
 
-def ksuid_generator(prefix: str) -> Callable[[], str]:
-    return lambda: ksuid(prefix)
-
-
 def ksuid(prefix: str | None = None) -> str:
     return str(PKSUID(prefix))
+
+
+def ksuid_generator(prefix: str) -> Callable[[], str]:
+    return functools.partial(ksuid, prefix)
 
 
 def random_name_generator(
