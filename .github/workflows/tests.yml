@@ -21,9 +21,9 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
       - name: Install Rye
-        run: |
-          curl -sSf https://rye-up.com/get | bash
-          echo "$HOME/.rye/shims" >> $GITHUB_PATH
+        uses: eifinger/setup-rye@v3
+        with:
+          enable-cache: true
       - name: Install dependencies
         run: rye sync
       - name: Run lint with tests
@@ -50,9 +50,10 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
       - name: Install Rye
-        run: |
-          curl -sSf https://rye-up.com/get | bash
-          echo "$HOME/.rye/shims" >> $GITHUB_PATH
+        uses: eifinger/setup-rye@v3
+        with:
+          enable-cache: true
+          github-token: ${{ secrets.GITHUB_TOKEN }}
       - name: Install dependencies
         run: rye sync
       - name: Run Tests
