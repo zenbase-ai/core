@@ -28,7 +28,7 @@ async def test_lm_function_async():
 
 
 @pytest.mark.anyio
-async def test_lm_function_zenbase_context():
+async def test_async_lm_function_zenbase_context():
     @deflm
     async def l2_fn2(r):
         assert r.zenbase == use_zenbase()
@@ -48,3 +48,26 @@ async def test_lm_function_zenbase_context():
         assert r.zenbase == use_zenbase()
 
     await l0_fn.coro({})
+
+
+def test_lm_function_zenbase_context():
+    @deflm
+    def l2_fn2(r):
+        assert r.zenbase == use_zenbase()
+
+    @deflm
+    def l2_fn1(r):
+        assert r.zenbase == use_zenbase()
+
+    @deflm
+    def l1_fn(r):
+        l2_fn1(r.inputs)
+        l2_fn2(r.inputs)
+        assert r.zenbase == use_zenbase()
+
+    @deflm
+    def l0_fn(r):
+        l1_fn(r.inputs)
+        assert r.zenbase == use_zenbase()
+
+    l0_fn({})
