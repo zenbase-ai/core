@@ -193,10 +193,9 @@ class LMFunction(Generic[Inputs, Outputs]):
         return outputs
 
     def __call__(self, inputs: Inputs, *args, **kwargs) -> Outputs:
-        with self.zenbase:
-            request = self.prepare_request(inputs)
-            response = syncify(self.fn)(request, *args, **kwargs)
-            return self.process_response(request, response)
+        request = self.prepare_request(inputs)
+        response = syncify(self.fn)(request, *args, **kwargs)
+        return self.process_response(request, response)
 
     async def coro(
         self,
@@ -204,10 +203,9 @@ class LMFunction(Generic[Inputs, Outputs]):
         *args,
         **kwargs,
     ) -> Outputs:
-        with self.zenbase:
-            request = self.prepare_request(inputs)
-            response = await asyncify(self.fn)(request, *args, **kwargs)
-            return self.process_response(request, response)
+        request = self.prepare_request(inputs)
+        response = await asyncify(self.fn)(request, *args, **kwargs)
+        return self.process_response(request, response)
 
 
 def deflm(
