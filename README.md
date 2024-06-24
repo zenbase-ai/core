@@ -10,12 +10,12 @@
 
 The Zenbase AI SDK is the library for programming — not prompting — AI in production. It is a spin-out of [Stanford NLP's DSPy](https://github.com/stanfordnlp/dspy) project started by key contributors. DSPy is an excellent framework for R&D. Zenbase strives to be its brother for software engineering.
 
-### Key Points
+## Key Points
 
 - **DSPy** is optimized for research and development, providing tools specifically designed for deep exploration and optimization of AI systems. You run experiments with AI systems and report the results.
 - **Zenbase** focuses on adapting these research advancements to practical software engineering needs. Optimizers can be integrated into existing systems. We're focused on helping you deploy automatic prompt optimization in production.
 
-### Quick Start with Python
+## Quick Start with Python
 
 ```bash
 pip install zenbase
