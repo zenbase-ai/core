@@ -22,15 +22,15 @@ jobs:
         with:
           enable-cache: true
           cache-prefix: ${{ matrix.python-version }}
-          working-directory: ./py
+          working-directory: /py
       - name: Pin python-version ${{ matrix.python-version }}
-        working-directory: ./py
+        working-directory: /py
         if: steps.setup-rye.outputs.cache-hit != 'true'
         run: rye pin ${{ matrix.python-version }}
       - name: Install dependencies
-        working-directory: ./py
+        working-directory: /py
         if: steps.setup-rye.outputs.cache-hit != 'true'
         run: rye sync --no-lock
       - name: Run Tests
-        working-directory: ./py
+        working-directory: /py
         run: rye run pytest
