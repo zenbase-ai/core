@@ -58,3 +58,24 @@ allow-direct-references = true
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/zenbase"]
+
+[tool.ruff]
+exclude = [
+    "venv",
+    ".git",
+    "__pycache__",
+    "build",
+    "dist",
+    "venv",
+]
+line-length = 120
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+ignore = []
+select = [
+    "E",
+    "F",
+    "W",
+    "I001",
+]
