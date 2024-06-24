@@ -30,4 +30,4 @@ This project is licensed under the MIT License. See the [LICENSE](./LICENSE) fil
 
 ## Contribution 
 
-Thank you for your interest in contributing to our project! Any and all contributions are welcome. See [CONTRIBUTION.md](./CONTRIBUTION.md) for more information.
+Thank you for your interest in contributing to our project! Any and all contributions are welcome. See [CONTRIBUTION.md](./CONTRIBUTING) for more information.
