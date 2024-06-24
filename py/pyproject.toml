@@ -25,6 +25,7 @@ namespace_packages = true
 
 [tool.pytest.ini_options]
 markers = ["helpers"]
+addopts = "-m 'not helpers'"
 
 [tool.rye]
 managed = true

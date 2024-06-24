@@ -41,5 +41,5 @@ You can run tests with:
 
 ```bash
 rye test # pytest -sv to see prints and verbose output
-rye test -- --helpers # integration tests with helpers
+rye test -- -m helpers # integration tests with helpers
 ```

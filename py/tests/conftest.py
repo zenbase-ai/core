@@ -16,15 +16,6 @@ def pytest_configure():
     nest_asyncio.apply()
 
 
-def pytest_addoption(parser: pytest.Parser):
-    parser.addoption("--helpers", action="store_true", help="run helpers tests")
-
-
-def pytest_runtest_setup(item: pytest.Item):
-    if "helpers" in item.keywords and not item.config.getoption("--helpers"):
-        pytest.skip("skipping integration tests")
-
-
 @pytest.fixture
 def anyio_backend():
     return "asyncio"
