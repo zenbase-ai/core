@@ -15,6 +15,19 @@ The Zenbase AI SDK is the library for programming — not prompting — AI in p
 - **DSPy** is optimized for research and development, providing tools specifically designed for deep exploration and optimization of AI systems. You run experiments with AI systems and report the results.
 - **Zenbase** focuses on adapting these research advancements to practical software engineering needs. Optimizers can be integrated into existing systems. We're focused on helping you deploy automatic prompt optimization in production.
 
+### Quick Start with Python
+
+```bash
+pip install zenbase
+```
+
+For more information take a look at the [Zenbase Python SDK](./py/README.md). 
+
 ## License
 
 This project is licensed under the MIT License. See the [LICENSE](./LICENSE) file for more information.
+
+
+## Contribution 
+
+Thank you for your interest in contributing to our project! Any and all contributions are welcome. See [CONTRIBUTION.md](./CONTRIBUTION.md) for more information.
