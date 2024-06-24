@@ -33,4 +33,4 @@ jobs:
         run: rye sync --no-lock
       - name: Run Tests
         working-directory: py
-        run: rye run pytest
+        run: rye test
