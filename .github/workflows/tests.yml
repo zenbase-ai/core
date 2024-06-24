@@ -1,60 +1,32 @@
-name: Test CI
+name: CI
 
 on:
   push:
-    branches: [ "main" ]
+    branches:
+      - main
   pull_request:
-    branches: [ "main" ]
+    branches:
+      - main
 
 jobs:
-  lint:
+  build:
     runs-on: ubuntu-latest
     strategy:
-      max-parallel: 4
       matrix:
-        python-version: [3.9, 3.10, 3.11, 3.12]
+        python-version: ["3.9", "3.10", "3.11", "3.12"]
 
     steps:
       - uses: actions/checkout@v4
-      - name: Set up python ${{ matrix.python-version }}
-        uses: actions/setup-python@v5
-        with:
-          python-version: ${{ matrix.python-version }}
-      - name: Install Rye
-        uses: eifinger/setup-rye@v3
+      - uses: eifinger/setup-rye@v3
+        id: setup-rye
         with:
           enable-cache: true
+          cache-prefix: ${{ matrix.python-version }}
+      - name: Pin python-version ${{ matrix.python-version }}
+        if: steps.setup-rye.outputs.cache-hit != 'true'
+        run: rye pin ${{ matrix.python-version }}
       - name: Install dependencies
-        run: rye sync
-      - name: Run lint with tests
-        uses: chartboost/ruff-action@v1
-        with:
-          args: --fix-only
-
-  tests:
-    needs: lint
-    runs-on: ubuntu-latest
-    strategy:
-      max-parallel: 4
-      matrix:
-        python-version: [3.9, 3.10, 3.11, 3.12]
-
-    env:
-      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-      LANGCHAIN_API_KEY: ${{ secrets.LANGCHAIN_API_KEY }}
-
-    steps:
-      - uses: actions/checkout@v4
-      - name: Set up python ${{ matrix.python-version }}
-        uses: actions/setup-python@v5
-        with:
-          python-version: ${{ matrix.python-version }}
-      - name: Install Rye
-        uses: eifinger/setup-rye@v3
-        with:
-          enable-cache: true
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-      - name: Install dependencies
-        run: rye sync
+        if: steps.setup-rye.outputs.cache-hit != 'true'
+        run: rye sync --no-lock
       - name: Run Tests
         run: rye run pytest
