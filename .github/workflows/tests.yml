@@ -1,0 +1,59 @@
+name: Test CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    strategy:
+      max-parallel: 4
+      matrix:
+        python-version: [3.9, 3.10, 3.11, 3.12]
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install Rye
+        run: |
+          curl -sSf https://rye-up.com/get | bash
+          echo "$HOME/.rye/shims" >> $GITHUB_PATH
+      - name: Install dependencies
+        run: rye sync
+      - name: Run lint with tests
+        uses: chartboost/ruff-action@v1
+        with:
+          args: --fix-only
+
+  tests:
+    needs: lint
+    runs-on: ubuntu-latest
+    strategy:
+      max-parallel: 4
+      matrix:
+        python-version: [3.9, 3.10, 3.11, 3.12]
+
+    env:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      LANGCHAIN_API_KEY: ${{ secrets.LANGCHAIN_API_KEY }}
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install Rye
+        run: |
+          curl -sSf https://rye-up.com/get | bash
+          echo "$HOME/.rye/shims" >> $GITHUB_PATH
+      - name: Install dependencies
+        run: rye sync
+      - name: Run Tests
+        run: rye run pytest
