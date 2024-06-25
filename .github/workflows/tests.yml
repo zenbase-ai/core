@@ -33,8 +33,7 @@ jobs:
         run: ls -la py
       - name: Run Tests
         working-directory: py
-        run: |
-          pwd
-          ls -la
-          rye --version
-          rye run pytest -v
+        run: rye run pytest -v
+      - name: Run Integration Tests
+        working-directory: py
+        run: rye run pytest -v
