@@ -20,7 +20,7 @@ Zenbase is designed to require minimal changes to your existing codebase and int
 | ---------------------------------------------- |-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | [langsmith.ipynb](./cookbooks/langsmith.ipynb) | [<img align="center" src="https://colab.research.google.com/assets/colab-badge.svg" />](https://colab.research.google.com/drive/14Lh8Azk_Ocnm2GvGvFHFz_hJ1tFNvOJW?usp=sharing) |
 | [langfuse.ipynb](./cookbooks/langfuse.ipynb)   | [<img align="center" src="https://colab.research.google.com/assets/colab-badge.svg" />](https://colab.research.google.com/drive/1EMR_PQfsfawTvTjZSxcS_FQUr8s_gVwR?usp=sharing) |
-| [parea.ipynb](./cookbooks/parea.ipynb)         | [<img align="center" src="https://colab.research.google.com/assets/colab-badge.svg" />](https://drive.google.com/file/d/1YEVgjl5mcVm9Q87MOBrOg7MXNVy4IJ8t/view?usp=sharing)   |
+| [parea.ipynb](./cookbooks/parea.ipynb)         | [<img align="center" src="https://colab.research.google.com/assets/colab-badge.svg" />](https://colab.research.google.com/drive/1oBFD8MhHjHxCltuosFeXHkqOsdeXwJ_N?usp=sharing)   |
 | [lunary.ipynb](./cookbooks/lunary.ipynb)       | [<img align="center" src="https://colab.research.google.com/assets/colab-badge.svg" />](https://colab.research.google.com/drive/1HXpW6E7AgoBbVWiiUxxtzztU6Gxy6iEA?usp=sharing) |
 
 ## Repo setup
