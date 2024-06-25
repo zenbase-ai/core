@@ -39,7 +39,7 @@ jobs:
         run: rye run pytest -v
       - name: Run Integration Tests
         working-directory: py
-        run: rye run pytest -v
+        run: rye run pytest -v -m helpers
         env:
           LANGCHAIN_API_KEY: ${{ secrets.LANGCHAIN_API_KEY }}
           LANGCHAIN_TRACING_V2: ${{ secrets.LANGCHAIN_TRACING_V2 }}
