@@ -7,6 +7,7 @@ from zenbase.types import LMDemo, LMRequest
 
 TEST_SIZE = 5
 SAMPLE_SIZE = 2
+NEW_SAMPLES = 3
 
 
 @pytest.fixture
