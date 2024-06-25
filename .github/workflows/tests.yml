@@ -11,9 +11,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    environment:
-      name: production
-      url: https://github.com
     strategy:
       matrix:
         python-version: ["3.10", "3.11", "3.12"]
@@ -51,3 +48,4 @@ jobs:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           PAREA_API_KEY: ${{ secrets.PAREA_API_KEY }}
           BRAINTRUST_API_KEY: ${{ secrets.BRAINTRUST_API_KEY }}
+        environment: test
