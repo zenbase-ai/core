@@ -1,3 +1,4 @@
+import os
 from typing import Any, Callable
 
 import pytest
@@ -9,9 +10,10 @@ from zenbase.types import LMDemo
 def pytest_configure():
     from pathlib import Path
 
-    from dotenv import load_dotenv
+    if not os.getenv("CI"):
+        from dotenv import load_dotenv
 
-    load_dotenv(str(Path(__file__).parent.parent / ".env.test"))
+        load_dotenv(str(Path(__file__).parent.parent / ".env.test"))
 
     import nest_asyncio
 
