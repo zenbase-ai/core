@@ -1,0 +1,40 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.10", "3.11", "3.12"]
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: eifinger/setup-rye@v3
+        id: setup-rye
+        with:
+          enable-cache: true
+          working-directory: py
+          cache-prefix: ${{ matrix.python-version }}
+      - name: Pin python-version ${{ matrix.python-version }}
+        working-directory: py
+        run: rye pin ${{ matrix.python-version }}
+      - name: Install dependencies
+        working-directory: py
+        run: rye sync --no-lock
+      - name: Check py directory contents
+        run: ls -la py
+      - name: Run Tests
+        working-directory: py
+        run: |
+          pwd
+          ls -la
+          rye --version
+          rye run pytest -v
