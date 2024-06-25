@@ -1,14 +1,14 @@
-from anyio._core._eventloop import threadlocals
-from typing import AsyncIterable, Awaitable, Callable, ParamSpec, TypeVar
-from random import Random
-from concurrent.futures import ThreadPoolExecutor
-import anyio
 import asyncio
 import functools
 import inspect
 import logging
 import os
+from concurrent.futures import ThreadPoolExecutor
+from random import Random
+from typing import AsyncIterable, Awaitable, Callable, ParamSpec, TypeVar
 
+import anyio
+from anyio._core._eventloop import threadlocals
 from faker import Faker
 from opentelemetry import trace
 from pksuid import PKSUID
@@ -74,9 +74,7 @@ def asyncify(
         return func
 
     @functools.wraps(func)
-    async def wrapper(
-        *args: I_ParamSpec.args, **kwargs: I_ParamSpec.kwargs
-    ) -> O_Retval:
+    async def wrapper(*args: I_ParamSpec.args, **kwargs: I_ParamSpec.kwargs) -> O_Retval:
         partial_f = functools.partial(func, *args, **kwargs)
         return await anyio.to_thread.run_sync(
             partial_f,
@@ -121,9 +119,7 @@ async def amap(
         return [await func(*args) for args in zip(iterable, *iterables)]
 
     if concurrency == float("inf"):
-        return await asyncio.gather(
-            *[func(*args) for args in zip(iterable, *iterables)]
-        )
+        return await asyncio.gather(*[func(*args) for args in zip(iterable, *iterables)])
 
     semaphore = asyncio.Semaphore(concurrency)
 

@@ -1,0 +1,39 @@
+repos:
+-   repo: local
+    hooks:
+    - id: rye-lint
+      name: rye-lint
+      description: "Lint Python via 'rye lint'"
+      entry: sh -c 'cd py && rye lint --fix'
+      language: system
+      types_or: [python, pyi]
+      files: ^py/
+      args: []
+      require_serial: true
+      additional_dependencies: []
+      minimum_pre_commit_version: "2.9.2"
+
+    - id: rye-format
+      name: rye-format
+      description: "Format Python via 'rye fmt'"
+      entry: sh -c 'cd py && rye fmt'
+      language: system
+      types_or: [python, pyi]
+      files: ^py/
+      args: []
+      require_serial: true
+      additional_dependencies: []
+      minimum_pre_commit_version: "2.9.2"
+
+    - id: rye-test
+      name: rye-test
+      description: "Test Python via 'rye test'"
+      entry: sh -c 'cd py && rye test'
+      language: system
+      types_or: [python, pyi]
+      files: ^py/
+      args: []
+      pass_filenames: false
+      require_serial: true
+      additional_dependencies: []
+      minimum_pre_commit_version: "2.9.2"

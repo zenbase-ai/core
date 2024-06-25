@@ -1,7 +1,7 @@
-from datasets import DatasetDict
-from openai import AsyncOpenAI
 import pandas as pd
 import pytest
+from datasets import DatasetDict
+from openai import AsyncOpenAI
 
 from zenbase.types import LMDemo, LMRequest
 
@@ -42,7 +42,7 @@ async def xtest_arize_phoenix_labeled_few_shot(
         messages = [
             {
                 "role": "system",
-                "content": "You are an expert math solver. Your answer must be just the number with no separators, and nothing else. Follow the format of the examples.",
+                "content": "You are an expert math solver. Your answer must be just the number with no separators, and nothing else. Follow the format of the examples.",  # noqa
             },
         ]
         for example in few_shot_examples:

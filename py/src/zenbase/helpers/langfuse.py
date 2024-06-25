@@ -4,9 +4,9 @@ from langfuse import Langfuse
 from langfuse.client import Dataset
 
 from zenbase.optim.metric.types import (
-    MetricEvals,
-    CandidateMetricResult,
     CandidateMetricEvaluator,
+    CandidateMetricResult,
+    MetricEvals,
 )
 from zenbase.types import LMDemo, LMFunction, Outputs
 from zenbase.utils import pmap
@@ -25,10 +25,7 @@ class ZenLangfuse:
 
     @staticmethod
     def dataset_demos(dataset: Dataset) -> list[LMDemo]:
-        return [
-            LMDemo(inputs=item.input, outputs=item.expected_output)
-            for item in dataset.items
-        ]
+        return [LMDemo(inputs=item.input, outputs=item.expected_output) for item in dataset.items]
 
     @classmethod
     def metric_evaluator(

@@ -1,13 +1,15 @@
 from typing import Any, Callable
-from datasets import DatasetDict
+
 import pytest
+from datasets import DatasetDict
 
 from zenbase.types import LMDemo
 
 
 def pytest_configure():
-    from dotenv import load_dotenv
     from pathlib import Path
+
+    from dotenv import load_dotenv
 
     load_dotenv(str(Path(__file__).parent.parent / ".env.test"))
 
@@ -27,9 +29,7 @@ def vcr_config():
         def before_record_response(response: dict | Any) -> dict | Any:
             if isinstance(response, dict):
                 try:
-                    response_str = (
-                        response.get("body", {}).get("string", b"").decode("utf-8")
-                    )
+                    response_str = response.get("body", {}).get("string", b"").decode("utf-8")
                     if "Rate limit reached for" in response_str:
                         # don't record rate-limiting responses
                         return None

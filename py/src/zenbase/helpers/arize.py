@@ -1,11 +1,10 @@
-from typing import Callable, TYPE_CHECKING
+from typing import TYPE_CHECKING, Callable
 
 import pandas as pd
 
-from zenbase.optim.metric.types import MetricEvals, CandidateMetricResult
+from zenbase.optim.metric.types import CandidateMetricResult, MetricEvals
 from zenbase.types import LMDemo, LMFunction
 from zenbase.utils import amap
-
 
 if TYPE_CHECKING:
     from phoenix.evals import LLMEvaluator
@@ -19,13 +18,9 @@ class ZenPhoenix:
         raise NotImplementedError()
 
     @staticmethod
-    def default_metric(
-        evaluators: list["LLMEvaluator"], eval_dfs: list[pd.DataFrame]
-    ) -> MetricEvals:
+    def default_metric(evaluators: list["LLMEvaluator"], eval_dfs: list[pd.DataFrame]) -> MetricEvals:
         evals = {"score": sum(df.score.mean() for df in eval_dfs)}
-        evals.update(
-            {e.__name__: df.score.mean() for e, df in zip(evaluators, eval_dfs)}
-        )
+        evals.update({e.__name__: df.score.mean() for e, df in zip(evaluators, eval_dfs)})
         return evals
 
     @classmethod
@@ -51,9 +46,7 @@ class ZenPhoenix:
             )
             run_df["attributes.output.value"] = responses
 
-            eval_dfs = run_evals(
-                run_df, evaluators, *args, concurrency=concurrency, **kwargs
-            )
+            eval_dfs = run_evals(run_df, evaluators, *args, concurrency=concurrency, **kwargs)
 
             return CandidateMetricResult(
                 function,

@@ -1,16 +1,16 @@
 from asyncio import Task
 from dataclasses import asdict
-from typing import Callable, Iterator, AsyncIterator, Awaitable
+from typing import AsyncIterator, Awaitable, Callable, Iterator
 
 from braintrust import (
     Eval,
-    EvalHooks,
     EvalCase,
-    Output,
+    EvalHooks,
     EvalScorer,
-    Metadata,
-    ReporterDef,
     Input,
+    Metadata,
+    Output,
+    ReporterDef,
 )
 
 from zenbase.optim.metric.types import CandidateMetricResult

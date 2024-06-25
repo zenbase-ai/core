@@ -1,5 +1,4 @@
 import json
-
 from dataclasses import asdict
 from typing import Callable
 
@@ -7,11 +6,11 @@ from parea import Parea
 from parea.schemas import ExperimentStatsSchema, TestCaseCollection
 
 from zenbase.optim.metric.types import (
-    MetricEvals,
-    CandidateMetricResult,
     CandidateMetricEvaluator,
+    CandidateMetricResult,
+    MetricEvals,
 )
-from zenbase.types import LMFunction, LMDemo
+from zenbase.types import LMDemo, LMFunction
 from zenbase.utils import random_name_generator
 
 
@@ -20,10 +19,7 @@ class ZenParea:
 
     @staticmethod
     def collection_demos(collection: TestCaseCollection) -> list[LMDemo]:
-        return [
-            LMDemo(inputs=case.inputs, outputs={"target": case.target})
-            for case in collection.test_cases.values()
-        ]
+        return [LMDemo(inputs=case.inputs, outputs={"target": case.target}) for case in collection.test_cases.values()]
 
     @staticmethod
     def default_candidate_evals(stats: ExperimentStatsSchema) -> MetricEvals:

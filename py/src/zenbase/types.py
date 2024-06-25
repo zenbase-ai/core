@@ -1,12 +1,11 @@
+import dataclasses
+import inspect
+import json
 from collections import deque
 from contextvars import ContextVar, Token
 from copy import copy
 from functools import partial
 from typing import Awaitable, Callable, Generic, TypeVar, Union, get_origin
-import dataclasses
-import inspect
-import json
-
 
 from zenbase.utils import asyncify, ksuid_generator, syncify
 
@@ -45,11 +44,7 @@ class Dataclass:
             if k not in fields:
                 continue
 
-            if (
-                isinstance(v, dict)
-                and isinstance(fields[k].type, type)
-                and issubclass(fields[k].type, Dataclass)
-            ):
+            if isinstance(v, dict) and isinstance(fields[k].type, type) and issubclass(fields[k].type, Dataclass):
                 filtered[k] = fields[k].type.from_dict_deep(v)
             elif get_origin(fields[k].type) == Union:
                 for t in fields[k].type.__args__:
@@ -90,9 +85,7 @@ class LMDemo(Dataclass, Generic[Inputs, Outputs]):
 @dataclasses.dataclass(frozen=True)
 class LMZenbase(Dataclass, Generic[Inputs, Outputs]):
     task_demos: list[LMDemo[Inputs, Outputs]] = dataclasses.field(default_factory=list)
-    model_params: dict = dataclasses.field(
-        default_factory=dict
-    )  # OpenAI-compatible model params
+    model_params: dict = dataclasses.field(default_factory=dict)  # OpenAI-compatible model params
 
     def __enter__(self):
         global ZENBASE_CTX_TOKEN
@@ -124,9 +117,7 @@ class LMRequest(Dataclass, Generic[Inputs, Outputs]):
 @dataclasses.dataclass(frozen=True)
 class LMResponse(Dataclass, Generic[Outputs]):
     outputs: Outputs
-    attributes: dict = dataclasses.field(
-        default_factory=dict
-    )  # token_count, cost, inference_time, etc.
+    attributes: dict = dataclasses.field(default_factory=dict)  # token_count, cost, inference_time, etc.
     id: str = dataclasses.field(default_factory=ksuid_generator("response"))
 
 
@@ -209,9 +200,7 @@ class LMFunction(Generic[Inputs, Outputs]):
 
 
 def deflm(
-    function: (
-        Callable[[LMRequest[Inputs, Outputs]], Outputs | Awaitable[Outputs]] | None
-    ) = None,
+    function: (Callable[[LMRequest[Inputs, Outputs]], Outputs | Awaitable[Outputs]] | None) = None,
     zenbase: LMZenbase[Inputs, Outputs] | None = None,
 ) -> LMFunction[Inputs, Outputs]:
     if function is None:

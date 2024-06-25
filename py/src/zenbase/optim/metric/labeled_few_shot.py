@@ -5,8 +5,7 @@ from typing import NamedTuple
 from zenbase.optim.abc import LMOptim
 from zenbase.optim.metric.types import CandidateMetricEvaluator, CandidateMetricResult
 from zenbase.types import Inputs, LMDemo, LMFunction, LMZenbase, Outputs
-from zenbase.utils import asyncify, ksuid, pmap, ot_tracer, get_logger, posthog
-
+from zenbase.utils import asyncify, get_logger, ksuid, ot_tracer, pmap, posthog
 
 log = get_logger(__name__)
 
@@ -78,9 +77,7 @@ class LabeledFewShot(LMOptim[Inputs, Outputs]):
         rounds: int = 1,
         concurrency: int = 1,
     ) -> Result:
-        return await asyncify(self.perform)(
-            lmfn, evaluator, samples, rounds, concurrency
-        )
+        return await asyncify(self.perform)(lmfn, evaluator, samples, rounds, concurrency)
 
     def candidates(self, _lmfn: LMFunction[Inputs, Outputs], samples: int):
         max_samples = factorial(len(self.demoset))

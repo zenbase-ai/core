@@ -6,6 +6,7 @@
 #   features: []
 #   all-features: false
 #   with-sources: false
+#   generate-hashes: false
 
 -e file:.
 aiohttp==3.9.5
@@ -81,6 +82,8 @@ certifi==2024.2.2
 cffi==1.16.0
     # via argon2-cffi-bindings
     # via xattr
+cfgv==3.4.0
+    # via pre-commit
 charset-normalizer==3.3.2
     # via requests
 chevron==0.14.0
@@ -176,6 +179,8 @@ httpx==0.27.0
     # via parea-ai
 huggingface-hub==0.23.2
     # via datasets
+identify==2.5.36
+    # via pre-commit
 idna==3.7
     # via anyio
     # via httpx
@@ -333,6 +338,7 @@ nbformat==5.10.4
 nest-asyncio==1.6.0
     # via ipykernel
 nodeenv==1.9.0
+    # via pre-commit
     # via pyright
 notebook==7.2.0
     # via jupyter
@@ -469,6 +475,7 @@ poetry-plugin-export==1.8.0
     # via poetry
 posthog==3.5.0
     # via zenbase
+pre-commit==3.7.1
 prometheus-client==0.20.0
     # via jupyter-server
 prompt-toolkit==3.0.45
@@ -547,6 +554,7 @@ pyyaml==6.0.1
     # via jupyter-events
     # via langchain
     # via langchain-core
+    # via pre-commit
     # via vcrpy
 pyzmq==26.0.3
     # via ipykernel
@@ -734,6 +742,7 @@ vcrpy==6.0.1
     # via pytest-recording
 virtualenv==20.26.2
     # via poetry
+    # via pre-commit
 wcwidth==0.2.13
     # via prompt-toolkit
 webcolors==1.13

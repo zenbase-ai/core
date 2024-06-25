@@ -1,16 +1,16 @@
 import logging
 
-from openai import OpenAI
+import pytest
+from datasets import DatasetDict
 from langfuse import Langfuse
 from langfuse.decorators import observe
-from datasets import DatasetDict
+from openai import OpenAI
 from tenacity import (
     before_sleep_log,
     retry,
     stop_after_attempt,
     wait_exponential_jitter,
 )
-import pytest
 
 from zenbase.helpers.langfuse import ZenLangfuse
 from zenbase.optim.metric.labeled_few_shot import LabeledFewShot
@@ -67,14 +67,14 @@ def evalset(gsm8k_dataset: DatasetDict, langfuse: Langfuse):
 )
 @observe()
 def langchain_chain(request: LMRequest) -> str:
-    from langchain_openai import ChatOpenAI
-    from langchain_core.prompts import ChatPromptTemplate
     from langchain_core.output_parsers import StrOutputParser
+    from langchain_core.prompts import ChatPromptTemplate
+    from langchain_openai import ChatOpenAI
 
     messages = [
         (
             "system",
-            "You are an expert math solver. Your answer must be just the number with no separators, and nothing else. Follow the format of the examples.",
+            "You are an expert math solver. Your answer must be just the number with no separators, and nothing else. Follow the format of the examples.",  # noqa
         )
     ]
     for demo in request.zenbase.task_demos:
@@ -85,11 +85,7 @@ def langchain_chain(request: LMRequest) -> str:
 
     messages.append(("user", "{question}"))
 
-    chain = (
-        ChatPromptTemplate.from_messages(messages)
-        | ChatOpenAI(model="gpt-3.5-turbo")
-        | StrOutputParser()
-    )
+    chain = ChatPromptTemplate.from_messages(messages) | ChatOpenAI(model="gpt-3.5-turbo") | StrOutputParser()
 
     print("Mathing...")
     answer = chain.invoke(request.inputs)

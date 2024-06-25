@@ -1,12 +1,12 @@
 from dataclasses import asdict
 from typing import TYPE_CHECKING, Iterator
 
-from zenbase.types import LMDemo, LMFunction
 from zenbase.optim.metric.types import (
-    MetricEvals,
-    CandidateMetricResult,
     CandidateMetricEvaluator,
+    CandidateMetricResult,
+    MetricEvals,
 )
+from zenbase.types import LMDemo, LMFunction
 from zenbase.utils import random_name_generator
 
 if TYPE_CHECKING:
@@ -23,9 +23,7 @@ class ZenLangSmith:
         from langsmith import evaluate
 
         metadata = evaluate_kwargs.pop("metadata", {})
-        gen_random_name = random_name_generator(
-            evaluate_kwargs.pop("experiment_prefix", None)
-        )
+        gen_random_name = random_name_generator(evaluate_kwargs.pop("experiment_prefix", None))
 
         def evaluate_candidate(function: LMFunction) -> CandidateMetricResult:
             experiment_results = evaluate(
@@ -49,10 +47,7 @@ class ZenLangSmith:
 
     @staticmethod
     def _experiment_results_to_evals(experiment_results: list) -> MetricEvals:
-        total = sum(
-            res["evaluation_results"]["results"][0].score
-            for res in experiment_results._results
-        )
+        total = sum(res["evaluation_results"]["results"][0].score for res in experiment_results._results)
         count = len(experiment_results._results)
         mean = total / count
         return {"score": mean}
