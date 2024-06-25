@@ -21,7 +21,7 @@ The Zenbase AI SDK is the library for programming — not prompting — AI in p
 pip install zenbase
 ```
 
-For more information take a look at the [Zenbase Python SDK](./py/README.md). 
+For more information take a look at the [Zenbase Python SDK README](./py/README.md). 
 
 ## License
 
@@ -30,4 +30,4 @@ This project is licensed under the MIT License. See the [LICENSE](./LICENSE) fil
 
 ## Contribution 
 
-Thank you for your interest in contributing to our project! Any and all contributions are welcome. See [CONTRIBUTION.md](./CONTRIBUTING) for more information.
+Thank you for your interest in contributing to our project! Any and all contributions are welcome. See [CONTRIBUTING](./CONTRIBUTING.md) for more information.
