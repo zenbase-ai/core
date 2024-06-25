@@ -11,6 +11,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: https://github.com
     strategy:
       matrix:
         python-version: ["3.10", "3.11", "3.12"]
@@ -37,3 +40,14 @@ jobs:
       - name: Run Integration Tests
         working-directory: py
         run: rye run pytest -v
+        env:
+          LANGCHAIN_API_KEY: ${{ secrets.LANGCHAIN_API_KEY }}
+          LANGCHAIN_TRACING_V2: ${{ secrets.LANGCHAIN_TRACING_V2 }}
+          LANGFUSE_HOST: ${{ secrets.LANGFUSE_HOST }}
+          LANGFUSE_PUBLIC_KEY: ${{ secrets.LANGFUSE_PUBLIC_KEY }}
+          LANGFUSE_SECRET_KEY: ${{ secrets.LANGFUSE_SECRET_KEY }}
+          LANGSMITH_TEST_TRACKING: ${{ secrets.LANGSMITH_TEST_TRACKING }}
+          LUNARY_PUBLIC_KEY: ${{ secrets.LUNARY_PUBLIC_KEY }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          PAREA_API_KEY: ${{ secrets.PAREA_API_KEY }}
+          BRAINTRUST_API_KEY: ${{ secrets.BRAINTRUST_API_KEY }}
