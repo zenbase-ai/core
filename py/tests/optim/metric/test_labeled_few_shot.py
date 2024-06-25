@@ -1,10 +1,10 @@
 from random import Random, random
+
 import pytest
 
 from zenbase.optim.metric.labeled_few_shot import LabeledFewShot
 from zenbase.optim.metric.types import CandidateMetricResult
 from zenbase.types import LMDemo, LMFunction, LMRequest, deflm
-
 
 lmfn = deflm(lambda x: x)
 

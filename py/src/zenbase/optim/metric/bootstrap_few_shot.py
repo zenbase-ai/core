@@ -6,7 +6,6 @@ from zenbase.optim.metric.types import CandidateMetricEvaluator, CandidateMetric
 from zenbase.types import Inputs, LMDemo, LMFunction, Outputs
 from zenbase.utils import get_logger
 
-
 log = get_logger(__name__)
 
 

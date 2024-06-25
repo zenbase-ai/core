@@ -51,6 +51,7 @@ dev-dependencies = [
     "lunary>=1.0.30",
     "autoevals>=0.0.68",
     "braintrust>=0.0.131",
+    "pre-commit>=3.7.1",
 ]
 
 [tool.hatch.metadata]

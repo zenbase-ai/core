@@ -3,9 +3,9 @@ from typing import Any, Callable
 import lunary
 
 from zenbase.optim.metric.types import (
-    MetricEvals,
-    CandidateMetricResult,
     CandidateMetricEvaluator,
+    CandidateMetricResult,
+    MetricEvals,
 )
 from zenbase.types import LMDemo, LMFunction
 from zenbase.utils import pmap
@@ -21,9 +21,7 @@ class ZenLunary:
 
     @staticmethod
     def dataset_to_demos(dataset: list[lunary.DatasetItem]) -> list[LMDemo]:
-        return [
-            LMDemo(inputs=item.input, outputs=item.ideal_output) for item in dataset
-        ]
+        return [LMDemo(inputs=item.input, outputs=item.ideal_output) for item in dataset]
 
     @classmethod
     def metric_evaluator(

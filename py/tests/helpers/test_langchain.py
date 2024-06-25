@@ -1,9 +1,11 @@
 import json
 import logging
 
+import pytest
+import requests
 from datasets import DatasetDict
 from langsmith import Client, traceable
-from langsmith.schemas import Run, Example
+from langsmith.schemas import Example, Run
 from langsmith.wrappers import wrap_openai
 from openai import AsyncOpenAI
 from tenacity import (
@@ -12,8 +14,6 @@ from tenacity import (
     stop_after_attempt,
     wait_exponential_jitter,
 )
-import pytest
-import requests
 
 from zenbase.helpers.langchain import ZenLangSmith
 from zenbase.optim.metric.labeled_few_shot import LabeledFewShot
@@ -81,14 +81,14 @@ def test_langsmith_lcel_labeled_few_shot(
     )
     @traceable
     def langchain_chain(request: LMRequest):
-        from langchain_openai import ChatOpenAI
-        from langchain_core.prompts import ChatPromptTemplate
         from langchain_core.output_parsers import StrOutputParser
+        from langchain_core.prompts import ChatPromptTemplate
+        from langchain_openai import ChatOpenAI
 
         messages = [
             (
                 "system",
-                "You are an expert math solver. Your answer must be just the number with no separators, and nothing else. Follow the format of the examples.",
+                "You are an expert math solver. Your answer must be just the number with no separators, and nothing else. Follow the format of the examples.",  # noqa
             )
         ]
         for demo in request.zenbase.task_demos:
@@ -99,11 +99,7 @@ def test_langsmith_lcel_labeled_few_shot(
 
         messages.append(("user", "{question}"))
 
-        chain = (
-            ChatPromptTemplate.from_messages(messages)
-            | ChatOpenAI(model="gpt-3.5-turbo")
-            | StrOutputParser()
-        )
+        chain = ChatPromptTemplate.from_messages(messages) | ChatOpenAI(model="gpt-3.5-turbo") | StrOutputParser()
 
         print("Mathing...")
         answer = chain.invoke(request.inputs)
@@ -145,7 +141,7 @@ async def test_langsmith_openai_json_response_labeled_few_shot(
         messages = [
             {
                 "role": "system",
-                "content": "You are an expert math solver. Your answer must be just the number with no separators, and nothing else. Follow the format of the examples. Think step by step. Respond with a JSON object.",
+                "content": "You are an expert math solver. Your answer must be just the number with no separators, and nothing else. Follow the format of the examples. Think step by step. Respond with a JSON object.",  # noqa
             },
         ]
 

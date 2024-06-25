@@ -1,17 +1,17 @@
 import json
 import logging
 
+import pytest
+from datasets import DatasetDict
 from openai import OpenAI
 from parea import Parea, trace
-from parea.schemas import Log, EvaluationResult
-from datasets import DatasetDict
+from parea.schemas import EvaluationResult, Log
 from tenacity import (
     before_sleep_log,
     retry,
     stop_after_attempt,
     wait_exponential_jitter,
 )
-import pytest
 
 from zenbase.helpers.parea import ZenParea
 from zenbase.optim.metric.labeled_few_shot import LabeledFewShot
@@ -71,14 +71,14 @@ def score_answer(log: Log) -> EvaluationResult:
 )
 @trace(eval_funcs=[score_answer])
 def langchain_chain(request: LMRequest):
-    from langchain_openai import ChatOpenAI
-    from langchain_core.prompts import ChatPromptTemplate
     from langchain_core.output_parsers import StrOutputParser
+    from langchain_core.prompts import ChatPromptTemplate
+    from langchain_openai import ChatOpenAI
 
     messages = [
         (
             "system",
-            "You are an expert math solver. Your answer must be just the number with no separators, and nothing else. Follow the format of the examples.",
+            "You are an expert math solver. Your answer must be just the number with no separators, and nothing else. Follow the format of the examples.",  # noqa
         )
     ]
     for demo in request.zenbase.task_demos:
@@ -89,11 +89,7 @@ def langchain_chain(request: LMRequest):
 
     messages.append(("user", "{question}"))
 
-    chain = (
-        ChatPromptTemplate.from_messages(messages)
-        | ChatOpenAI(model="gpt-3.5-turbo")
-        | StrOutputParser()
-    )
+    chain = ChatPromptTemplate.from_messages(messages) | ChatOpenAI(model="gpt-3.5-turbo") | StrOutputParser()
 
     print("Mathing...")
     answer = chain.invoke(request.inputs)
@@ -116,9 +112,7 @@ def langchain_chain(request: LMRequest):
     )
 
     print("Mathing...")
-    new_answer = chain_2.invoke(
-        {"question": request.inputs["question"], "answer": answer}
-    )
+    new_answer = chain_2.invoke({"question": request.inputs["question"], "answer": answer})
     print(new_answer)
 
     return answer
