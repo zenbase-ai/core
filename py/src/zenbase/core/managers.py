@@ -2,13 +2,16 @@ import inspect
 from abc import ABC
 from contextlib import contextmanager
 from datetime import datetime
+from typing import Any, Callable
+
+from zenbase.types import LMFunction, LMZenbase
 
 
 class BaseManager(ABC):
     pass
 
 
-class Zenbase(BaseManager):
+class TraceManager:
     def __init__(self):
         self.all_traces = {}
         self.current_trace = None
@@ -33,18 +36,18 @@ class Zenbase(BaseManager):
                 self.current_key = None
                 self.optimized_args = {}
 
-    def trace_function(self, func):
+    def trace_function(self, function: Callable[[Any], Any] = None, zenbase: LMZenbase = None):
         def wrapper(*args, **kwargs):
-            func_name = func.__name__
+            func_name = function.__name__
             run_timestamp = f"{func_name}_{datetime.now().isoformat()}"
 
             if self.current_trace is None:
                 with self.trace_context(func_name, run_timestamp):
-                    return self._execute_and_trace(func, func_name, *args, **kwargs)
+                    return self._execute_and_trace(function, func_name, *args, **kwargs)
             else:
-                return self._execute_and_trace(func, func_name, *args, **kwargs)
+                return self._execute_and_trace(function, func_name, *args, **kwargs)
 
-        return wrapper
+        return LMFunction(wrapper, zenbase)
 
     def _execute_and_trace(self, func, func_name, *args, **kwargs):
         # Get the function signature
