@@ -1,10 +1,10 @@
 import inspect
 from abc import ABC
 from contextlib import contextmanager
-from datetime import datetime
 from typing import Any, Callable
 
 from zenbase.types import LMFunction, LMZenbase
+from zenbase.utils import ksuid
 
 
 class BaseManager(ABC):
@@ -37,19 +37,19 @@ class TraceManager:
                 self.optimized_args = {}
 
     def trace_function(self, function: Callable[[Any], Any] = None, zenbase: LMZenbase = None):
-        def wrapper(*args, **kwargs):
+        def wrapper(request, lm_function, *args, **kwargs):
             func_name = function.__name__
-            run_timestamp = f"{func_name}_{datetime.now().isoformat()}"
+            run_timestamp = ksuid(func_name)
 
             if self.current_trace is None:
                 with self.trace_context(func_name, run_timestamp):
-                    return self._execute_and_trace(function, func_name, *args, **kwargs)
+                    return self._execute_and_trace(function, func_name, request, lm_function, *args, **kwargs)
             else:
-                return self._execute_and_trace(function, func_name, *args, **kwargs)
+                return self._execute_and_trace(function, func_name, request, lm_function, *args, **kwargs)
 
         return LMFunction(wrapper, zenbase)
 
-    def _execute_and_trace(self, func, func_name, *args, **kwargs):
+    def _execute_and_trace(self, func, func_name, request, lm_function, *args, **kwargs):
         # Get the function signature
         sig = inspect.signature(func)
 
@@ -63,13 +63,24 @@ class TraceManager:
             if param.name not in combined_args and param.default is not param.empty:
                 combined_args[param.name] = param.default
 
+        if func_name in self.optimized_args:
+            optimized_args = self.optimized_args[func_name]["args"]
+            if "zenbase" in optimized_args:
+                request.zenbase = optimized_args["zenbase"]
+            optimized_args.pop("zenbase", None)
+
         # Replace with optimized arguments if available
         if func_name in self.optimized_args:
             optimized_args = self.optimized_args[func_name]["args"]
             combined_args.update(optimized_args)
 
+        combined_args.update(
+            {
+                "request": request,
+            }
+        )
         # Capture input arguments in trace_info
-        trace_info = {"args": combined_args, "output": None}
+        trace_info = {"args": combined_args, "output": None, "request": request, "lm_function": lm_function}
 
         # Execute the function and capture its output
         output = func(**combined_args)

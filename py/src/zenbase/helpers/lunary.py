@@ -5,6 +5,7 @@ import lunary
 from zenbase.optim.metric.types import (
     CandidateMetricEvaluator,
     CandidateMetricResult,
+    IndividualEvalMetric,
     MetricEvals,
 )
 from zenbase.types import LMDemo, LMFunction
@@ -20,8 +21,12 @@ class ZenLunary:
         return {"score": avg_pass}
 
     @staticmethod
-    def dataset_to_demos(dataset: list[lunary.DatasetItem]) -> list[LMDemo]:
-        return [LMDemo(inputs=item.input, outputs=item.ideal_output) for item in dataset]
+    def data_to_demo(dataset_item: lunary.DatasetItem) -> LMDemo:
+        return LMDemo(inputs=dataset_item.input, outputs=dataset_item.ideal_output, original_object=dataset_item)
+
+    @classmethod
+    def dataset_to_demos(cls, dataset: list[lunary.DatasetItem]) -> list[LMDemo]:
+        return [cls.data_to_demo(item) for item in dataset]
 
     @classmethod
     def metric_evaluator(
@@ -34,9 +39,15 @@ class ZenLunary:
         **kwargs,
     ) -> CandidateMetricEvaluator:
         def evaluate_metric(function: LMFunction) -> CandidateMetricResult:
-            def run_and_evaluate(item: lunary.DatasetItem):
+            individual_evals = []
+
+            def run_and_evaluate(demo: LMDemo):
+                nonlocal individual_evals
+
+                item = demo.original_object
+
                 response = function(item.input)
-                return lunary.evaluate(
+                result = lunary.evaluate(
                     checklist,
                     input=item.input,
                     output=response,
@@ -45,12 +56,23 @@ class ZenLunary:
                     **kwargs,
                 )
 
+                individual_evals.append(
+                    IndividualEvalMetric(
+                        details=result[1][0]["details"],
+                        passed=result[0],
+                        response=response,
+                        demo=demo,
+                    )
+                )
+
+                return result
+
             eval_results = pmap(
                 run_and_evaluate,
-                evalset,
+                cls.dataset_to_demos(evalset),
                 concurrency=concurrency,
             )
 
-            return CandidateMetricResult(function, eval_metrics(eval_results))
+            return CandidateMetricResult(function, eval_metrics(eval_results), individual_evals=individual_evals)
 
         return evaluate_metric

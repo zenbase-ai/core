@@ -15,6 +15,7 @@ class LabeledFewShot(LMOptim[Inputs, Outputs]):
     class Result(NamedTuple):
         best_function: LMFunction[Inputs, Outputs]
         candidate_results: list[CandidateMetricResult]
+        best_candidate_result: CandidateMetricResult | None
 
     demoset: list[LMDemo[Inputs, Outputs]]
     shots: int = field(default=5)
@@ -35,10 +36,11 @@ class LabeledFewShot(LMOptim[Inputs, Outputs]):
 
         best_score = float("-inf")
         best_lmfn = lmfn
+        best_candidate_result = None
 
         @ot_tracer.start_as_current_span("run_experiment")
         def run_candidate_zenbase(zenbase: LMZenbase):
-            nonlocal best_score, best_lmfn
+            nonlocal best_score, best_lmfn, best_candidate_result
 
             candidate_fn = lmfn.refine(zenbase)
             candidate_result = evaluator(candidate_fn)
@@ -48,6 +50,7 @@ class LabeledFewShot(LMOptim[Inputs, Outputs]):
             if candidate_result.evals["score"] > best_score:
                 best_score = candidate_result.evals["score"]
                 best_lmfn = candidate_fn
+                best_candidate_result = candidate_result
 
             return candidate_result
 
@@ -67,7 +70,7 @@ class LabeledFewShot(LMOptim[Inputs, Outputs]):
             },
         )
 
-        return self.Result(best_lmfn, candidates)
+        return self.Result(best_lmfn, candidates, best_candidate_result)
 
     async def aperform(
         self,

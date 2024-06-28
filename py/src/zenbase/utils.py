@@ -3,7 +3,6 @@ import functools
 import inspect
 import logging
 import os
-from concurrent.futures import ThreadPoolExecutor
 from random import Random
 from typing import AsyncIterable, Awaitable, Callable, ParamSpec, TypeVar
 
@@ -137,8 +136,8 @@ def pmap(
     *iterables,
     concurrency=10,
 ) -> list[ReturnValue]:
-    with ThreadPoolExecutor(max_workers=concurrency) as pool:
-        return list(pool.map(func, iterable, *iterables))
+    # TODO: Should revert.
+    return [func(*args) for args in zip(iterable, *iterables)]
 
 
 async def alist(aiterable: AsyncIterable[ReturnValue]) -> list[ReturnValue]:
