@@ -15,4 +15,4 @@ def test_demo_eq():
 
 def test_lm_function_refine():
     fn = deflm(lambda r: r.inputs)
-    assert fn != fn.refine()
+    assert fn != fn.clean_and_duplicate()

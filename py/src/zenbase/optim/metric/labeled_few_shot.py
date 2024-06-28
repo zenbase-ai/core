@@ -42,7 +42,7 @@ class LabeledFewShot(LMOptim[Inputs, Outputs]):
         def run_candidate_zenbase(zenbase: LMZenbase):
             nonlocal best_score, best_lmfn, best_candidate_result
 
-            candidate_fn = lmfn.refine(zenbase)
+            candidate_fn = lmfn.clean_and_duplicate(zenbase)
             candidate_result = evaluator(candidate_fn)
 
             self.events.emit("candidate", candidate_result)

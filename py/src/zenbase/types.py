@@ -146,7 +146,7 @@ class LMFunction(Generic[Inputs, Outputs]):
         self.zenbase = zenbase or LMZenbase()
         self.history = deque([], maxlen=maxhistory)
 
-    def refine(self, zenbase: LMZenbase | None = None) -> "LMFunction[Inputs, Outputs]":
+    def clean_and_duplicate(self, zenbase: LMZenbase | None = None) -> "LMFunction[Inputs, Outputs]":
         dup = copy(self)
         dup.id = self.gen_id()
         dup.zenbase = zenbase or self.zenbase.copy()
@@ -188,6 +188,6 @@ def deflm(
         return partial(deflm, zenbase=zenbase)
 
     if isinstance(function, LMFunction):
-        return function.refine(zenbase)
+        return function.clean_and_duplicate(zenbase)
 
     return LMFunction(function, zenbase)
