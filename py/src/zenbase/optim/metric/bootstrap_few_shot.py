@@ -2,7 +2,7 @@ from dataclasses import dataclass, field
 from datetime import datetime
 from typing import NamedTuple
 
-from zenbase.optim.abc import LMOptim
+from zenbase.optim.base import LMOptim
 from zenbase.optim.metric.labeled_few_shot import LabeledFewShot
 from zenbase.optim.metric.types import CandidateMetricEvaluator, CandidateMetricResult
 from zenbase.types import Inputs, LMDemo, LMFunction, LMZenbase, Outputs
@@ -44,6 +44,10 @@ class BootstrapFewShot(LMOptim[Inputs, Outputs]):
             samples=samples,
             rounds=rounds,
         )
+
+        # make an student lm
+        student_lm = teacher_lm.clean_and_duplciate()
+        print(student_lm)
 
         # make the validated demo set
         validated_demo_set = []

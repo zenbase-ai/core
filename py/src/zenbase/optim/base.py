@@ -21,11 +21,3 @@ class LMOptim(Generic[Inputs, Outputs], ABC):
         *args,
         **kwargs,
     ): ...
-
-    @abstractmethod
-    async def aperform(
-        self,
-        lmfn: LMFunction[Inputs, Outputs],
-        *args,
-        **kwargs,
-    ) -> LMFunction[Inputs, Outputs]: ...

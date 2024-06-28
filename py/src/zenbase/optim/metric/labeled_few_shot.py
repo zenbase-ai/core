@@ -2,7 +2,7 @@ from dataclasses import dataclass, field
 from math import factorial
 from typing import NamedTuple
 
-from zenbase.optim.abc import LMOptim
+from zenbase.optim.base import LMOptim
 from zenbase.optim.metric.types import CandidateMetricEvaluator, CandidateMetricResult
 from zenbase.types import Inputs, LMDemo, LMFunction, LMZenbase, Outputs
 from zenbase.utils import asyncify, get_logger, ksuid, ot_tracer, pmap, posthog
