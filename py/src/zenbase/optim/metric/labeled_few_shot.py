@@ -3,7 +3,7 @@ from math import factorial
 from typing import NamedTuple
 
 from zenbase.optim.base import LMOptim
-from zenbase.optim.metric.types import CandidateMetricEvaluator, CandidateMetricResult
+from zenbase.optim.metric.types import CandidateEvalResult, CandidateEvaluator
 from zenbase.types import Inputs, LMDemo, LMFunction, LMZenbase, Outputs
 from zenbase.utils import asyncify, get_logger, ksuid, ot_tracer, pmap, posthog
 
@@ -14,8 +14,8 @@ log = get_logger(__name__)
 class LabeledFewShot(LMOptim[Inputs, Outputs]):
     class Result(NamedTuple):
         best_function: LMFunction[Inputs, Outputs]
-        candidate_results: list[CandidateMetricResult]
-        best_candidate_result: CandidateMetricResult | None
+        candidate_results: list[CandidateEvalResult]
+        best_candidate_result: CandidateEvalResult | None
 
     demoset: list[LMDemo[Inputs, Outputs]]
     shots: int = field(default=5)
@@ -27,7 +27,7 @@ class LabeledFewShot(LMOptim[Inputs, Outputs]):
     def perform(
         self,
         lmfn: LMFunction[Inputs, Outputs],
-        evaluator: CandidateMetricEvaluator[Inputs, Outputs],
+        evaluator: CandidateEvaluator[Inputs, Outputs],
         samples: int = 0,
         rounds: int = 1,
         concurrency: int = 1,
@@ -54,7 +54,7 @@ class LabeledFewShot(LMOptim[Inputs, Outputs]):
 
             return candidate_result
 
-        candidates: list[CandidateMetricResult] = []
+        candidates: list[CandidateEvalResult] = []
         for _ in range(rounds):
             candidates += pmap(
                 run_candidate_zenbase,
@@ -75,7 +75,7 @@ class LabeledFewShot(LMOptim[Inputs, Outputs]):
     async def aperform(
         self,
         lmfn: LMFunction[Inputs, Outputs],
-        evaluator: CandidateMetricEvaluator[Inputs, Outputs],
+        evaluator: CandidateEvaluator[Inputs, Outputs],
         samples: int = 0,
         rounds: int = 1,
         concurrency: int = 1,

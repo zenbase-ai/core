@@ -12,9 +12,9 @@ from tenacity import (
     wait_exponential_jitter,
 )
 
-from zenbase.helpers.langfuse import ZenLangfuse
+from zenbase.helpers.langfuse_helper import ZenLangfuse
 from zenbase.optim.metric.labeled_few_shot import LabeledFewShot
-from zenbase.optim.metric.types import MetricEvals
+from zenbase.optim.metric.types import OverallEvalValue
 from zenbase.types import LMDemo, LMRequest, deflm
 from zenbase.utils import pmap
 
@@ -92,7 +92,7 @@ def langchain_chain(request: LMRequest) -> str:
     return answer
 
 
-def score_answer(answer: str, demo: LMDemo, langfuse: Langfuse) -> MetricEvals:
+def score_answer(answer: str, demo: LMDemo, langfuse: Langfuse) -> OverallEvalValue:
     """The first argument is the return value from the `langchain_chain` function above."""
     score = int(answer.split("#### ")[-1] == demo.outputs.split("#### ")[-1])
     langfuse.score(

@@ -3,20 +3,20 @@ from typing import Any, Callable
 import lunary
 
 from zenbase.optim.metric.types import (
-    CandidateMetricEvaluator,
-    CandidateMetricResult,
-    IndividualEvalMetric,
-    MetricEvals,
+    CandidateEvalResult,
+    CandidateEvaluator,
+    IndividualEvalValue,
+    OverallEvalValue,
 )
 from zenbase.types import LMDemo, LMFunction
 from zenbase.utils import pmap
 
 
 class ZenLunary:
-    MetricEvaluator = Callable[[list[tuple[bool, Any]]], MetricEvals]
+    MetricEvaluator = Callable[[list[tuple[bool, Any]]], OverallEvalValue]
 
     @staticmethod
-    def default_metric(batch_results: list[tuple[bool, Any]]) -> MetricEvals:
+    def default_metric(batch_results: list[tuple[bool, Any]]) -> OverallEvalValue:
         avg_pass = sum(int(passed) for passed, _ in batch_results) / len(batch_results)
         return {"score": avg_pass}
 
@@ -37,8 +37,8 @@ class ZenLunary:
         eval_metrics: MetricEvaluator = default_metric,
         concurrency: int = 20,
         **kwargs,
-    ) -> CandidateMetricEvaluator:
-        def evaluate_metric(function: LMFunction) -> CandidateMetricResult:
+    ) -> CandidateEvaluator:
+        def evaluate_metric(function: LMFunction) -> CandidateEvalResult:
             individual_evals = []
 
             def run_and_evaluate(demo: LMDemo):
@@ -57,7 +57,7 @@ class ZenLunary:
                 )
 
                 individual_evals.append(
-                    IndividualEvalMetric(
+                    IndividualEvalValue(
                         details=result[1][0]["details"],
                         passed=result[0],
                         response=response,
@@ -73,6 +73,6 @@ class ZenLunary:
                 concurrency=concurrency,
             )
 
-            return CandidateMetricResult(function, eval_metrics(eval_results), individual_evals=individual_evals)
+            return CandidateEvalResult(function, eval_metrics(eval_results), individual_evals=individual_evals)
 
         return evaluate_metric

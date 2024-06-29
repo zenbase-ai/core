@@ -6,23 +6,23 @@ from parea import Parea
 from parea.schemas import ExperimentStatsSchema, TestCaseCollection
 
 from zenbase.optim.metric.types import (
-    CandidateMetricEvaluator,
-    CandidateMetricResult,
-    MetricEvals,
+    CandidateEvalResult,
+    CandidateEvaluator,
+    OverallEvalValue,
 )
 from zenbase.types import LMDemo, LMFunction
 from zenbase.utils import random_name_generator
 
 
 class ZenParea:
-    MetricEvaluator = Callable[[dict[str, float]], MetricEvals]
+    MetricEvaluator = Callable[[dict[str, float]], OverallEvalValue]
 
     @staticmethod
     def collection_demos(collection: TestCaseCollection) -> list[LMDemo]:
         return [LMDemo(inputs=case.inputs, outputs={"target": case.target}) for case in collection.test_cases.values()]
 
     @staticmethod
-    def default_candidate_evals(stats: ExperimentStatsSchema) -> MetricEvals:
+    def default_candidate_evals(stats: ExperimentStatsSchema) -> OverallEvalValue:
         return {**stats.avg_scores, "score": sum(stats.avg_scores.values())}
 
     @classmethod
@@ -32,14 +32,14 @@ class ZenParea:
         p: Parea | None = None,
         candidate_evals: MetricEvaluator = default_candidate_evals,
         **kwargs,
-    ) -> CandidateMetricEvaluator:
+    ) -> CandidateEvaluator:
         p = p or Parea()
         assert isinstance(p, Parea)
 
         base_metadata = kwargs.pop("metadata", {})
         gen_random_name = random_name_generator(kwargs.pop("name", None))
 
-        def evaluate_candidate(function: LMFunction) -> CandidateMetricResult:
+        def evaluate_candidate(function: LMFunction) -> CandidateEvalResult:
             experiment = p.experiment(
                 func=function,
                 *args,
@@ -54,7 +54,7 @@ class ZenParea:
             experiment.run()
             assert experiment.experiment_stats, "failed to run experiment"
 
-            return CandidateMetricResult(
+            return CandidateEvalResult(
                 function,
                 evals=candidate_evals(experiment.experiment_stats),
             )

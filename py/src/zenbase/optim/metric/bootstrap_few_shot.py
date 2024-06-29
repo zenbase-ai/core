@@ -4,7 +4,7 @@ from typing import NamedTuple
 
 from zenbase.optim.base import LMOptim
 from zenbase.optim.metric.labeled_few_shot import LabeledFewShot
-from zenbase.optim.metric.types import CandidateMetricEvaluator, CandidateMetricResult
+from zenbase.optim.metric.types import CandidateEvalResult, CandidateEvaluator
 from zenbase.types import Inputs, LMDemo, LMFunction, LMZenbase, Outputs
 from zenbase.utils import get_logger, ot_tracer
 
@@ -15,7 +15,7 @@ log = get_logger(__name__)
 class BootstrapFewShot(LMOptim[Inputs, Outputs]):
     class Result(NamedTuple):
         best_function: LMFunction[Inputs, Outputs]
-        candidate_results: list[CandidateMetricResult]
+        candidate_results: list[CandidateEvalResult]
 
     demoset: list[LMDemo[Inputs, Outputs]]
     shots: int = field(default=5)
@@ -28,7 +28,7 @@ class BootstrapFewShot(LMOptim[Inputs, Outputs]):
         self,
         lmfn: LMFunction[Inputs, Outputs],
         deps: list[LMFunction],
-        evaluator: CandidateMetricEvaluator[Inputs, Outputs],
+        evaluator: CandidateEvaluator[Inputs, Outputs],
         samples: int = 0,
         rounds: int = 1,
         concurrency: int = 1,
@@ -44,10 +44,6 @@ class BootstrapFewShot(LMOptim[Inputs, Outputs]):
             samples=samples,
             rounds=rounds,
         )
-
-        # make an student lm
-        student_lm = teacher_lm.clean_and_duplciate()
-        print(student_lm)
 
         # make the validated demo set
         validated_demo_set = []

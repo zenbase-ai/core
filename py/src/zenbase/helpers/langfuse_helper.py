@@ -4,19 +4,19 @@ from langfuse import Langfuse
 from langfuse.client import Dataset
 
 from zenbase.optim.metric.types import (
-    CandidateMetricEvaluator,
-    CandidateMetricResult,
-    MetricEvals,
+    CandidateEvalResult,
+    CandidateEvaluator,
+    OverallEvalValue,
 )
 from zenbase.types import LMDemo, LMFunction, Outputs
 from zenbase.utils import pmap
 
 
 class ZenLangfuse:
-    MetricEvaluator = Callable[[list[MetricEvals]], MetricEvals]
+    MetricEvaluator = Callable[[list[OverallEvalValue]], OverallEvalValue]
 
     @staticmethod
-    def default_candidate_evals(item_evals: list[MetricEvals]) -> MetricEvals:
+    def default_candidate_evals(item_evals: list[OverallEvalValue]) -> OverallEvalValue:
         keys = item_evals[0].keys()
         evals = {k: sum(d[k] for d in item_evals) / len(item_evals) for k in keys}
         if not evals["score"]:
@@ -31,17 +31,17 @@ class ZenLangfuse:
     def metric_evaluator(
         cls,
         evalset: Dataset,
-        evaluate: Callable[[Outputs, LMDemo, Langfuse], MetricEvals],
+        evaluate: Callable[[Outputs, LMDemo, Langfuse], OverallEvalValue],
         candidate_evals: MetricEvaluator = default_candidate_evals,
         langfuse: Langfuse | None = None,
         concurrency: int = 20,
-    ) -> CandidateMetricEvaluator:
+    ) -> CandidateEvaluator:
         from langfuse import Langfuse
         from langfuse.decorators import observe
 
         langfuse = langfuse or Langfuse()
 
-        def evaluate_candidate(function: LMFunction) -> CandidateMetricResult:
+        def evaluate_candidate(function: LMFunction) -> CandidateEvalResult:
             @observe()
             def run_and_evaluate(demo: LMDemo):
                 outputs = function(demo.inputs)
@@ -55,6 +55,6 @@ class ZenLangfuse:
             )
             candidate_eval = candidate_evals(item_evals)
 
-            return CandidateMetricResult(function, candidate_eval)
+            return CandidateEvalResult(function, candidate_eval)
 
         return evaluate_candidate

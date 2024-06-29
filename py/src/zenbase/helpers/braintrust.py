@@ -13,7 +13,7 @@ from braintrust import (
     ReporterDef,
 )
 
-from zenbase.optim.metric.types import CandidateMetricResult
+from zenbase.optim.metric.types import CandidateEvalResult
 from zenbase.types import LMFunction
 from zenbase.utils import random_name_generator
 
@@ -34,7 +34,7 @@ class ZenBraintrust:
     ):
         gen_random_name = random_name_generator(experiment_name)
 
-        def evaluate_candidate(function: LMFunction) -> CandidateMetricResult:
+        def evaluate_candidate(function: LMFunction) -> CandidateEvalResult:
             eval_result = Eval(
                 name=name,
                 experiment_name=gen_random_name(),
@@ -60,6 +60,6 @@ class ZenBraintrust:
             if "score" not in evals:
                 evals["score"] = sum(evals.values())
 
-            return CandidateMetricResult(function, evals)
+            return CandidateEvalResult(function, evals)
 
         return evaluate_candidate

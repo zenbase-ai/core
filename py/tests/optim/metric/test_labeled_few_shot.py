@@ -3,7 +3,7 @@ from random import Random, random
 import pytest
 
 from zenbase.optim.metric.labeled_few_shot import LabeledFewShot
-from zenbase.optim.metric.types import CandidateMetricResult
+from zenbase.optim.metric.types import CandidateEvalResult
 from zenbase.types import LMDemo, LMFunction, LMRequest, deflm
 
 lmfn = deflm(lambda x: x)
@@ -63,7 +63,7 @@ def dummy_lmfn(_: LMRequest):
 
 
 def dummy_evalfn(fn: LMFunction):
-    return CandidateMetricResult(fn, {"score": random()})
+    return CandidateEvalResult(fn, {"score": random()})
 
 
 def test_training(optim: LabeledFewShot):
