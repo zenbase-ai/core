@@ -166,7 +166,8 @@ class LMFunction(Generic[Inputs, Outputs]):
 
     def __call__(self, inputs: Inputs, *args, **kwargs) -> Outputs:
         request = self.prepare_request(inputs)
-        response = self.fn(request, lm_function=self, *args, **kwargs)
+        kwargs.update({"lm_function": self} if "lm_function" in inspect.signature(self.fn).parameters else {})
+        response = self.fn(request, *args, **kwargs)
         return self.process_response(request, response)
 
     async def coro(

@@ -13,6 +13,7 @@ from tenacity import (
 )
 
 from zenbase.adaptors.langfuse_helper import ZenLangfuse
+from zenbase.core.managers import TraceManager
 from zenbase.optim.metric.labeled_few_shot import LabeledFewShot
 from zenbase.optim.metric.types import OverallEvalValue
 from zenbase.types import LMDemo, LMRequest, deflm
@@ -105,6 +106,41 @@ def score_answer(answer: str, demo: LMDemo, langfuse: Langfuse) -> OverallEvalVa
 
 @pytest.mark.helpers
 def test_langfuse_lcel_labeled_few_shot(optim: LabeledFewShot, evalset: list):
+    trace_manager = TraceManager()
+
+    @trace_manager.trace_function
+    @retry(
+        stop=stop_after_attempt(3),
+        wait=wait_exponential_jitter(max=8),
+        before_sleep=before_sleep_log(log, logging.WARN),
+    )
+    @observe()
+    def langchain_chain(request: LMRequest) -> str:
+        from langchain_core.output_parsers import StrOutputParser
+        from langchain_core.prompts import ChatPromptTemplate
+        from langchain_openai import ChatOpenAI
+
+        messages = [
+            (
+                "system",
+                "You are an expert math solver. Your answer must be just the number with no separators, and nothing else. Follow the format of the examples.",  # noqa
+                # noqa
+            )
+        ]
+        for demo in request.zenbase.task_demos:
+            messages += [
+                ("user", demo.inputs["question"]),
+                ("assistant", demo.outputs["answer"]),
+            ]
+
+        messages.append(("user", "{question}"))
+
+        chain = ChatPromptTemplate.from_messages(messages) | ChatOpenAI(model="gpt-3.5-turbo") | StrOutputParser()
+
+        print("Mathing...")
+        answer = chain.invoke(request.inputs)
+        return answer
+
     fn, candidates, _ = optim.perform(
         langchain_chain,
         evaluator=ZenLangfuse.metric_evaluator(evalset, evaluate=score_answer),

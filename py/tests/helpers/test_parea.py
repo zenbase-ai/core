@@ -63,67 +63,67 @@ def score_answer(log: Log) -> EvaluationResult:
     return EvaluationResult("correctness", int(output == target))
 
 
-@deflm
-@retry(
-    stop=stop_after_attempt(3),
-    wait=wait_exponential_jitter(max=8),
-    before_sleep=before_sleep_log(log, logging.WARN),
-)
-@trace(eval_funcs=[score_answer])
-def langchain_chain(request: LMRequest):
-    from langchain_core.output_parsers import StrOutputParser
-    from langchain_core.prompts import ChatPromptTemplate
-    from langchain_openai import ChatOpenAI
-
-    messages = [
-        (
-            "system",
-            "You are an expert math solver. Your answer must be just the number with no separators, and nothing else. Follow the format of the examples.",  # noqa
-        )
-    ]
-    for demo in request.zenbase.task_demos:
-        messages += [
-            ("user", demo.inputs["question"]),
-            ("assistant", demo.outputs["answer"]),
-        ]
-
-    messages.append(("user", "{question}"))
-
-    chain = ChatPromptTemplate.from_messages(messages) | ChatOpenAI(model="gpt-3.5-turbo") | StrOutputParser()
-
-    print("Mathing...")
-    answer = chain.invoke(request.inputs)
-
-    chain_2 = (
-        ChatPromptTemplate.from_messages(
-            [
-                (
-                    "system",
-                    "You are the verifier",
-                ),
-                (
-                    "user",
-                    "the question is: {question} and the answer is {answer}, is it right? answer with yes or no.",
-                ),
-            ]
-        )
-        | ChatOpenAI(model="gpt-3.5-turbo")
-        | StrOutputParser()
-    )
-
-    print("Mathing...")
-    new_answer = chain_2.invoke({"question": request.inputs["question"], "answer": answer})
-    print(new_answer)
-
-    return answer
-
-
 @pytest.mark.helpers
 def test_parea_lcel_labeled_few_shot(
     optim: LabeledFewShot,
     parea: Parea,
     evalset: list,
 ):
+    @deflm
+    @retry(
+        stop=stop_after_attempt(3),
+        wait=wait_exponential_jitter(max=8),
+        before_sleep=before_sleep_log(log, logging.WARN),
+    )
+    @trace(eval_funcs=[score_answer])
+    def langchain_chain(request: LMRequest):
+        from langchain_core.output_parsers import StrOutputParser
+        from langchain_core.prompts import ChatPromptTemplate
+        from langchain_openai import ChatOpenAI
+
+        messages = [
+            (
+                "system",
+                "You are an expert math solver. Your answer must be just the number with no separators, and nothing else. Follow the format of the examples.",  # noqa
+                # noqa
+            )
+        ]
+        for demo in request.zenbase.task_demos:
+            messages += [
+                ("user", demo.inputs["question"]),
+                ("assistant", demo.outputs["answer"]),
+            ]
+
+        messages.append(("user", "{question}"))
+
+        chain = ChatPromptTemplate.from_messages(messages) | ChatOpenAI(model="gpt-3.5-turbo") | StrOutputParser()
+
+        print("Mathing...")
+        answer = chain.invoke(request.inputs)
+
+        chain_2 = (
+            ChatPromptTemplate.from_messages(
+                [
+                    (
+                        "system",
+                        "You are the verifier",
+                    ),
+                    (
+                        "user",
+                        "the question is: {question} and the answer is {answer}, is it right? answer with yes or no.",
+                    ),
+                ]
+            )
+            | ChatOpenAI(model="gpt-3.5-turbo")
+            | StrOutputParser()
+        )
+
+        print("Mathing...")
+        new_answer = chain_2.invoke({"question": request.inputs["question"], "answer": answer})
+        print(new_answer)
+
+        return answer
+
     fn, candidates, _ = optim.perform(
         langchain_chain,
         evaluator=ZenParea.metric_evaluator(data=evalset, n_workers=2, p=parea),
