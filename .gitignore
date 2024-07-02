@@ -8,3 +8,5 @@
 .idea/**/usage.statistics.xml
 .idea/**/dictionaries
 .idea/**/shelf
+
+litellm/redis-data/
