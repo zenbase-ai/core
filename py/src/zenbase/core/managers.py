@@ -36,7 +36,7 @@ class TraceManager:
                 self.current_key = None
                 self.optimized_args = {}
 
-    def trace_function(self, function: Callable[[Any], Any] = None, zenbase: LMZenbase = None):
+    def trace_function(self, function: Callable[[Any], Any] = None, zenbase: LMZenbase = None) -> LMFunction:
         def wrapper(request, lm_function, *args, **kwargs):
             func_name = function.__name__
             run_timestamp = ksuid(func_name)

@@ -6,7 +6,7 @@ from copy import copy
 from functools import partial
 from typing import Awaitable, Callable, Generic, TypeVar, Union, get_origin
 
-from zenbase.utils import asyncify, ksuid_generator, syncify
+from zenbase.utils import asyncify, ksuid_generator
 
 
 class Dataclass:
@@ -166,7 +166,7 @@ class LMFunction(Generic[Inputs, Outputs]):
 
     def __call__(self, inputs: Inputs, *args, **kwargs) -> Outputs:
         request = self.prepare_request(inputs)
-        response = syncify(self.fn)(request, lm_function=self, *args, **kwargs)
+        response = self.fn(request, lm_function=self, *args, **kwargs)
         return self.process_response(request, response)
 
     async def coro(
