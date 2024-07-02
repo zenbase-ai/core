@@ -4,8 +4,8 @@ from datetime import datetime
 from functools import partial
 from typing import TYPE_CHECKING, NamedTuple
 
+from zenbase.adaptors.langchain import ZenLangSmith
 from zenbase.core.managers import TraceManager
-from zenbase.helpers.langchain import ZenLangSmith
 from zenbase.optim.base import LMOptim
 from zenbase.optim.metric.labeled_few_shot import LabeledFewShot
 from zenbase.optim.metric.types import CandidateEvalResult

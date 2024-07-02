@@ -1,6 +1,6 @@
 from typing import TYPE_CHECKING, Iterator
 
-from zenbase.helpers.base.dataset_helper import BaseDatasetHelper
+from zenbase.adaptors.base.dataset_helper import BaseDatasetHelper
 from zenbase.types import LMDemo
 
 if TYPE_CHECKING:

@@ -1,7 +1,7 @@
 __all__ = ["ZenLangSmith"]
 
-from zenbase.helpers.langchain.dataset_helper import LangsmithDatasetHelper
-from zenbase.helpers.langchain.evaluation_helper import LangsmithEvaluationHelper
+from zenbase.adaptors.langchain.dataset_helper import LangsmithDatasetHelper
+from zenbase.adaptors.langchain.evaluation_helper import LangsmithEvaluationHelper
 
 
 class ZenLangSmith(LangsmithDatasetHelper, LangsmithEvaluationHelper):

@@ -15,8 +15,8 @@ from tenacity import (
     wait_exponential_jitter,
 )
 
+from zenbase.adaptors.langchain import ZenLangSmith
 from zenbase.core.managers import TraceManager
-from zenbase.helpers.langchain import ZenLangSmith
 from zenbase.optim.metric.bootstrap_few_shot import BootstrapFewShot
 from zenbase.optim.metric.labeled_few_shot import LabeledFewShot
 from zenbase.types import LMDemo, LMRequest

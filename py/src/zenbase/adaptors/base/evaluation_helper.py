@@ -1,6 +1,6 @@
 from abc import abstractmethod
 
-from zenbase.helpers.base.adaptor import ZenAdaptor
+from zenbase.adaptors.base.adaptor import ZenAdaptor
 
 
 class BaseEvaluationHelper(ZenAdaptor):

@@ -2,7 +2,7 @@ from dataclasses import asdict
 
 from langsmith.evaluation._runner import ExperimentResults  # noqa
 
-from zenbase.helpers.base.evaluation_helper import BaseEvaluationHelper
+from zenbase.adaptors.base.evaluation_helper import BaseEvaluationHelper
 from zenbase.optim.metric.types import CandidateEvalResult, CandidateEvaluator, IndividualEvalValue, OverallEvalValue
 from zenbase.types import LMDemo, LMFunction
 from zenbase.utils import random_name_generator

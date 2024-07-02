@@ -13,7 +13,7 @@ from tenacity import (
     wait_exponential_jitter,
 )
 
-from zenbase.helpers.parea import ZenParea
+from zenbase.adaptors.parea import ZenParea
 from zenbase.optim.metric.labeled_few_shot import LabeledFewShot
 from zenbase.types import LMRequest, deflm
 

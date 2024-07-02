@@ -12,7 +12,7 @@ from tenacity import (
     wait_exponential_jitter,
 )
 
-from zenbase.helpers.langfuse_helper import ZenLangfuse
+from zenbase.adaptors.langfuse_helper import ZenLangfuse
 from zenbase.optim.metric.labeled_few_shot import LabeledFewShot
 from zenbase.optim.metric.types import OverallEvalValue
 from zenbase.types import LMDemo, LMRequest, deflm

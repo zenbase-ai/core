@@ -10,8 +10,8 @@ from tenacity import (
     wait_exponential_jitter,
 )
 
+from zenbase.adaptors.lunary import ZenLunary
 from zenbase.core.managers import TraceManager
-from zenbase.helpers.lunary import ZenLunary
 from zenbase.optim.metric.bootstrap_few_shot import BootstrapFewShot
 from zenbase.optim.metric.labeled_few_shot import LabeledFewShot
 from zenbase.types import LMRequest, deflm
