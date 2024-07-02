@@ -30,7 +30,7 @@ def optim(gsm8k_demoset: list):
 
 @pytest.fixture
 def bootstrap_few_shot_optim(gsm8k_demoset: list):
-    return BootstrapFewShot(demoset=gsm8k_demoset, shots=SHOTS)
+    return BootstrapFewShot(training_set=gsm8k_demoset, shots=SHOTS)
 
 
 @pytest.fixture(scope="module")
@@ -85,7 +85,7 @@ def langchain_chain(request: LMRequest):
 
 @pytest.mark.helpers
 def test_lunary_lcel_labeled_few_shot(optim: LabeledFewShot, evalset: list):
-    fn, candidates = optim.perform(
+    fn, candidates, _ = optim.perform(
         langchain_chain,
         evaluator=ZenLunary.metric_evaluator(
             checklist="exact-match",

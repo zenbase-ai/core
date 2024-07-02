@@ -124,7 +124,7 @@ def test_parea_lcel_labeled_few_shot(
     parea: Parea,
     evalset: list,
 ):
-    fn, candidates = optim.perform(
+    fn, candidates, _ = optim.perform(
         langchain_chain,
         evaluator=ZenParea.metric_evaluator(data=evalset, n_workers=2, p=parea),
         samples=SAMPLES,
