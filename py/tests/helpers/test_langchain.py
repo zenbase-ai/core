@@ -170,11 +170,7 @@ def test_zenlanchain_metric_evaluator(
 
         messages.append(("user", "{question}"))
 
-        chain = (
-            ChatPromptTemplate.from_messages(messages)
-            | ChatOpenAI(model="gpt-3.5-turbo", base_url="http://0.0.0.0:4000")
-            | StrOutputParser()
-        )
+        chain = ChatPromptTemplate.from_messages(messages) | ChatOpenAI(model="gpt-3.5-turbo") | StrOutputParser()
 
         print("Mathing...")
         answer = chain.invoke(request.inputs)
@@ -228,11 +224,7 @@ def test_langsmith_lcel_labeled_few_shot(
 
         messages.append(("user", "{question}"))
 
-        chain = (
-            ChatPromptTemplate.from_messages(messages)
-            | ChatOpenAI(model="gpt-3.5-turbo", base_url="http://0.0.0.0:4000")
-            | StrOutputParser()
-        )
+        chain = ChatPromptTemplate.from_messages(messages) | ChatOpenAI(model="gpt-3.5-turbo") | StrOutputParser()
 
         print("Mathing...")
         answer = chain.invoke(request.inputs)
@@ -351,11 +343,7 @@ def test_bootstrap_few_shot_langchain(
             ("user", "Now come with the answer as number, just return the number, nothing else, just NUMBERS.")
         )
 
-        chain = (
-            ChatPromptTemplate.from_messages(messages)
-            | ChatOpenAI(model="gpt-3.5-turbo", base_url="http://0.0.0.0:4000")
-            | StrOutputParser()
-        )
+        chain = ChatPromptTemplate.from_messages(messages) | ChatOpenAI(model="gpt-3.5-turbo") | StrOutputParser()
 
         print("Mathing...")
         plan = planner_chain(request.inputs)
@@ -403,11 +391,7 @@ def test_bootstrap_few_shot_langchain(
 
         messages.append(("user", "{question}"))
 
-        chain = (
-            ChatPromptTemplate.from_messages(messages)
-            | ChatOpenAI(model="gpt-3.5-turbo", base_url="http://0.0.0.0:4000")
-            | StrOutputParser()
-        )
+        chain = ChatPromptTemplate.from_messages(messages) | ChatOpenAI(model="gpt-3.5-turbo") | StrOutputParser()
 
         print("Mathing...")
         answer = chain.invoke(request.inputs)
@@ -446,11 +430,7 @@ def test_bootstrap_few_shot_langchain(
         messages.append(("user", "{question}"))
         messages.append(("user", "{plan}"))
 
-        chain = (
-            ChatPromptTemplate.from_messages(messages)
-            | ChatOpenAI(model="gpt-3.5-turbo", base_url="http://0.0.0.0:4000")
-            | StrOutputParser()
-        )
+        chain = ChatPromptTemplate.from_messages(messages) | ChatOpenAI(model="gpt-3.5-turbo") | StrOutputParser()
 
         print("Mathing...")
         answer = chain.invoke(request.inputs)
