@@ -12,6 +12,7 @@ dependencies = [
     "structlog>=24.2.0",
     "pyee>=11.1.0",
     "posthog>=3.5.0",
+    "cloudpickle>=3.0.0",
 ]
 readme = "README.md"
 requires-python = ">= 3.10"

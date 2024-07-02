@@ -94,6 +94,8 @@ cleo==2.1.0
     # via poetry
 click==8.1.7
     # via uvicorn
+cloudpickle==3.0.0
+    # via zenbase
 comm==0.2.2
     # via ipykernel
     # via ipywidgets

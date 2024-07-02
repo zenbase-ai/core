@@ -2,7 +2,9 @@ from copy import deepcopy
 from dataclasses import dataclass, field
 from datetime import datetime
 from functools import partial
-from typing import TYPE_CHECKING, NamedTuple
+from typing import TYPE_CHECKING, Any, Dict, NamedTuple
+
+import cloudpickle
 
 from zenbase.adaptors.langchain import ZenLangSmith
 from zenbase.core.managers import TraceManager
@@ -30,6 +32,7 @@ class BootstrapFewShot(LMOptim[Inputs, Outputs]):
     test_set_original: "schemas.Dataset" = None
     base_evaluation = None
     best_evaluation = None
+    optimizer_args: Dict[str, dict[str, dict[str, LMDemo]]] = field(default_factory=dict)
 
     def __post_init__(self):
         assert 1 <= self.shots <= len(self.training_set)
@@ -75,6 +78,7 @@ class BootstrapFewShot(LMOptim[Inputs, Outputs]):
 
         # Consolidate the traces to optimized args
         optimized_args = self._consolidate_traces_to_optimized_args(trace_manager)
+        self.set_optimizer_args(optimized_args)
 
         # Create the optimized function
         optimized_fn = self._create_optimized_function(student_lm, optimized_args, trace_manager)
@@ -170,3 +174,54 @@ class BootstrapFewShot(LMOptim[Inputs, Outputs]):
             trace_manager=trace_manager,
         )
         return optimized_fn
+
+    def set_optimizer_args(self, args: Dict[str, Any]) -> None:
+        """
+        Set the optimizer arguments.
+
+        :param args: A dictionary containing the optimizer arguments
+        """
+        self.optimizer_args = args
+
+    def get_optimizer_args(self) -> Dict[str, Any]:
+        """
+        Get the current optimizer arguments.
+
+        :return: A dictionary containing the current optimizer arguments
+        """
+        return self.optimizer_args
+
+    @classmethod
+    def load_optimizer_and_function(
+        cls, optimizer_args_file: str, student_lm: LMFunction[Inputs, Outputs], trace_manager: TraceManager
+    ) -> LMFunction[Inputs, Outputs]:
+        """
+        Load optimizer arguments and create an optimized function.
+
+        :param optimizer_args_file: The path to the JSON file containing optimizer arguments
+        :param student_lm: The student function to be optimized
+        :param trace_manager: The trace manager to be used
+        :return: An optimized function
+        """
+        optimizer_args = cls._load_optimizer_args(optimizer_args_file)
+        return cls._create_optimized_function(student_lm, optimizer_args, trace_manager)
+
+    def save_optimizer_args(self, file_path: str) -> None:
+        """
+        Save the optimizer arguments to a dill file.
+
+        :param file_path: The path to save the dill file
+        """
+        with open(file_path, "wb") as f:
+            cloudpickle.dump(self.optimizer_args, f)
+
+    @classmethod
+    def _load_optimizer_args(cls, file_path: str) -> Dict[str, Any]:
+        """
+        Load optimizer arguments from a dill file.
+
+        :param file_path: The path to load the dill file from
+        :return: A dictionary containing the loaded optimizer arguments
+        """
+        with open(file_path, "rb") as f:
+            return cloudpickle.load(f)
