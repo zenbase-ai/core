@@ -1,3 +1,4 @@
+import json
 import logging
 import os
 from typing import TYPE_CHECKING
@@ -20,6 +21,7 @@ from zenbase.adaptors.langchain import ZenLangSmith
 from zenbase.core.managers import TraceManager
 from zenbase.optim.metric.bootstrap_few_shot import BootstrapFewShot
 from zenbase.optim.metric.labeled_few_shot import LabeledFewShot
+from zenbase.settings import BASE_DIR, TEST_DIR
 from zenbase.types import LMDemo, LMRequest
 from zenbase.utils import ksuid
 
@@ -44,7 +46,7 @@ def labeled_few_shot_optimizer(gsm8k_demoset: list):
 def openai():
     return wrap_openai(
         OpenAI(
-            base_url="http://0.0.0.0:4000",
+            # base_url="http://0.0.0.0:4000",
         )
     )
 
@@ -205,6 +207,42 @@ def test_langsmith_lcel_labeled_few_shot(
     # )
     @traceable
     def langchain_chain(request: LMRequest):
+        from langchain_core.output_parsers import StrOutputParser
+        from langchain_core.prompts import ChatPromptTemplate
+        from langchain_openai import ChatOpenAI
+
+        langchain_chain_2(request)
+
+        messages = [
+            (
+                "system",
+                "You are an expert math solver. Your answer must be just the number with no separators, and nothing "
+                "else. Follow the format of the examples.",
+                # noqa
+            )
+        ]
+        for demo in request.zenbase.task_demos:
+            messages += [
+                ("user", demo.inputs["question"]),
+                ("assistant", demo.outputs["answer"]),
+            ]
+
+        messages.append(("user", "{question}"))
+
+        chain = ChatPromptTemplate.from_messages(messages) | ChatOpenAI(model="gpt-3.5-turbo") | StrOutputParser()
+
+        print("Mathing...")
+        answer = chain.invoke(request.inputs)
+        return {"answer": answer}
+
+    @trace_manager.trace_function
+    # @retry(
+    #     stop=stop_after_attempt(3),
+    #     wait=wait_exponential_jitter(max=8),
+    #     before_sleep=before_sleep_log(log, logging.WARN),
+    # )
+    @traceable
+    def langchain_chain_2(request: LMRequest):
         from langchain_core.output_parsers import StrOutputParser
         from langchain_core.prompts import ChatPromptTemplate
         from langchain_openai import ChatOpenAI
@@ -474,7 +512,8 @@ def test_bootstrap_few_shot_langchain(
         "request"
     ].zenbase.task_demos[0].inputs is not None
 
-    path_of_the_file = "bootstrap_fewshot_output_test.zenbase"
+    path_of_the_file = os.path.join(TEST_DIR, "adaptors/bootstrap_few_shot_optimizer_test.zenbase")
+
     bootstrap_few_shot.save_optimizer_args(path_of_the_file)
 
     # assert that the file has been saved
@@ -623,7 +662,7 @@ def test_bootstrap_few_shot_langchain_load_args(
         answer = chain.invoke(request.inputs)
         return {"operation": answer}
 
-    path_of_the_file = "bootstrap_few_shot_optimizer_args.zenbase"
+    path_of_the_file = os.path.join(TEST_DIR, "adaptors/bootstrap_few_shot_optimizer_args.zenbase")
 
     teacher_lm = BootstrapFewShot.load_optimizer_and_function(
         optimizer_args_file=path_of_the_file, student_lm=solver, trace_manager=zenbase_manager
@@ -643,3 +682,186 @@ def test_bootstrap_few_shot_langchain_load_args(
     assert [v for k, v in zenbase_manager.all_traces.items()][0]["optimized"]["solver"]["args"][
         "request"
     ].zenbase.task_demos[0].inputs is not None
+
+
+@pytest.mark.helpers
+def test_bootstrap_few_shot_openai_langsmith(
+    train_set: "schemas.Dataset",
+    validation_set: "schemas.Dataset",
+    test_set: "schemas.Dataset",
+    langsmith_helper: ZenLangSmith,
+    openai: OpenAI,
+):
+    zenbase_manager = TraceManager()
+
+    @zenbase_manager.trace_function
+    @retry(
+        stop=stop_after_attempt(3),
+        wait=wait_exponential_jitter(max=8),
+        before_sleep=before_sleep_log(log, logging.WARN),
+    )
+    @traceable
+    def solver(request: LMRequest):
+        messages = [
+            {
+                "role": "system",
+                "content": "You are an expert math solver. You have a question that you should answer. You have step by step actions that you should take to solve the problem. You have the operations that you should do to solve the problem. You should come just with the number for the answer, just the actual number like examples that you have. Follow the format of the examples as they have the final answer, you need to come up with the plan for solving them."  # noqa
+                'return it with json like return it in the {"answer": " the answer "}',
+            }
+        ]
+
+        for demo in request.zenbase.task_demos:
+            messages += [
+                {"role": "user", "content": f"Example Question: {demo.inputs['question']}"},
+                {"role": "assistant", "content": f"Example Answer: {demo.outputs['answer']}"},
+            ]
+
+        plan = planner_chain(request.inputs)
+        the_plan = plan["plan"]
+        the_operation = operation_finder(
+            {
+                "plan": the_plan,
+                "question": request.inputs["question"],
+            }
+        )
+
+        messages.append({"role": "user", "content": f"Question: {request.inputs['question']}"})
+        messages.append({"role": "user", "content": f"Plan: {the_plan}"})
+        messages.append(
+            {"role": "user", "content": f"Mathematical Operation that needed: {the_operation['operation']}"}
+        )
+        messages.append(
+            {
+                "role": "user",
+                "content": "Now come with the answer as number, just return the number, nothing else, just NUMBERS.",
+            }
+        )
+
+        response = openai.chat.completions.create(
+            model="gpt-3.5-turbo",
+            messages=messages,
+            response_format={"type": "json_object"},
+        )
+
+        print("Mathing...")
+        answer = json.loads(response.choices[0].message.content)
+        return {"answer": answer["answer"]}
+
+    @zenbase_manager.trace_function
+    @retry(
+        stop=stop_after_attempt(3),
+        wait=wait_exponential_jitter(max=8),
+        before_sleep=before_sleep_log(log, logging.WARN),
+    )
+    @traceable
+    def planner_chain(request: LMRequest):
+        messages = [
+            {
+                "role": "system",
+                "content": "You are an expert math solver. You have a question that you should create a step-by-step plan to solve it. Follow the format of the examples and return JSON object."  # noqa
+                'return it in the {"plan": " the plan "}',
+            }
+        ]
+
+        if request.zenbase.task_demos:
+            for demo in request.zenbase.task_demos[:2]:
+                messages += [
+                    {"role": "user", "content": demo.inputs["question"]},
+                    {"role": "assistant", "content": demo.outputs["plan"]},
+                ]
+
+        messages.append({"role": "user", "content": request.inputs["question"]})
+
+        response = openai.chat.completions.create(
+            model="gpt-3.5-turbo",
+            messages=messages,
+            response_format={"type": "json_object"},
+        )
+
+        print("Planning...")
+        answer = json.loads(response.choices[0].message.content)
+        return {"plan": " ".join(i for i in answer["plan"])}
+
+    @zenbase_manager.trace_function
+    @retry(
+        stop=stop_after_attempt(3),
+        wait=wait_exponential_jitter(max=8),
+        before_sleep=before_sleep_log(log, logging.WARN),
+    )
+    @traceable
+    def operation_finder(request: LMRequest):
+        messages = [
+            {
+                "role": "system",
+                "content": "You are an expert math solver. You have a plan for solving a problem that is step-by-step, you need to find the overall operation in the math to solve it. Just come up with math operation with simple math operations like sum, multiply, division and minus. Follow the format of the examples."  # noqa
+                'return it with json like return it in the {"operation": " the operation "}',
+            }
+        ]
+
+        if request.zenbase.task_demos:
+            for demo in request.zenbase.task_demos[:2]:
+                messages += [
+                    {"role": "user", "content": f"Question: {demo.inputs['question']}"},
+                    {"role": "user", "content": f"Plan: {demo.inputs['plan']}"},
+                    {"role": "assistant", "content": demo.outputs["operation"]},
+                ]
+
+        messages.append({"role": "user", "content": f"Question: {request.inputs['question']}"})
+        messages.append({"role": "user", "content": f"Plan: {request.inputs['plan']}"})
+
+        response = openai.chat.completions.create(
+            model="gpt-3.5-turbo",
+            messages=messages,
+            response_format={"type": "json_object"},
+        )
+
+        print("Finding operation...")
+        answer = json.loads(response.choices[0].message.content)
+        return {"operation": answer["operation"]}
+
+    sample_data = langsmith_helper.fetch_dataset_demos(train_set)[0]
+    solver({"question": sample_data.inputs["question"]})
+
+    bootstrap_few_shot = BootstrapFewShot(
+        training_set=langsmith_helper.fetch_dataset_demos(train_set),
+        shots=SHOTS,
+        training_set_original=train_set,
+        test_set_original=test_set,
+    )
+
+    langsmith_helper.set_evaluator_kwargs(
+        data=validation_set.name,
+        evaluators=[score_answer],
+        client=langsmith_helper.client,
+        max_concurrency=1,
+    )
+
+    teacher_lm, candidates = bootstrap_few_shot.perform(
+        solver,
+        helper_class=langsmith_helper,
+        samples=SAMPLES,
+        rounds=1,
+        trace_manager=zenbase_manager,
+    )
+
+    assert teacher_lm is not None
+
+    zenbase_manager.all_traces = {}
+    teacher_lm({"question": "What is 2 + 2?"})
+
+    assert [v for k, v in zenbase_manager.all_traces.items()][0]["optimized"]["planner_chain"]["args"][
+        "request"
+    ].zenbase.task_demos[0].inputs is not None
+    assert [v for k, v in zenbase_manager.all_traces.items()][0]["optimized"]["operation_finder"]["args"][
+        "request"
+    ].zenbase.task_demos[0].inputs is not None
+    assert [v for k, v in zenbase_manager.all_traces.items()][0]["optimized"]["solver"]["args"][
+        "request"
+    ].zenbase.task_demos[0].inputs is not None
+
+    path_of_the_file = BASE_DIR + "bootstrap_fewshot_output_test.zenbase"
+
+    bootstrap_few_shot.save_optimizer_args(path_of_the_file)
+
+    # assert that the file has been saved
+    assert os.path.exists(path_of_the_file)
