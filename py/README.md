@@ -18,10 +18,10 @@ Zenbase is designed to require minimal changes to your existing codebase and int
 
 | Cookbook                                       | Run in Colab                                                                                                                                                          |
 | ---------------------------------------------- |-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| [langsmith.ipynb](./cookbooks/langsmith.ipynb) | [<img align="center" src="https://colab.research.google.com/assets/colab-badge.svg" />](https://colab.research.google.com/drive/14Lh8Azk_Ocnm2GvGvFHFz_hJ1tFNvOJW?usp=sharing) |
-| [langfuse.ipynb](./cookbooks/langfuse.ipynb)   | [<img align="center" src="https://colab.research.google.com/assets/colab-badge.svg" />](https://colab.research.google.com/drive/1EMR_PQfsfawTvTjZSxcS_FQUr8s_gVwR?usp=sharing) |
-| [parea.ipynb](./cookbooks/parea.ipynb)         | [<img align="center" src="https://colab.research.google.com/assets/colab-badge.svg" />](https://colab.research.google.com/drive/1oBFD8MhHjHxCltuosFeXHkqOsdeXwJ_N?usp=sharing)   |
-| [lunary.ipynb](./cookbooks/lunary.ipynb)       | [<img align="center" src="https://colab.research.google.com/assets/colab-badge.svg" />](https://colab.research.google.com/drive/1HXpW6E7AgoBbVWiiUxxtzztU6Gxy6iEA?usp=sharing) |
+| [langsmith.ipynb](cookbooks/labeled_few_shot/langsmith.ipynb) | [<img align="center" src="https://colab.research.google.com/assets/colab-badge.svg" />](https://colab.research.google.com/drive/14Lh8Azk_Ocnm2GvGvFHFz_hJ1tFNvOJW?usp=sharing) |
+| [langfuse.ipynb](cookbooks/labeled_few_shot/langfuse.ipynb)   | [<img align="center" src="https://colab.research.google.com/assets/colab-badge.svg" />](https://colab.research.google.com/drive/1EMR_PQfsfawTvTjZSxcS_FQUr8s_gVwR?usp=sharing) |
+| [parea.ipynb](cookbooks/labeled_few_shot/parea.ipynb)         | [<img align="center" src="https://colab.research.google.com/assets/colab-badge.svg" />](https://colab.research.google.com/drive/1oBFD8MhHjHxCltuosFeXHkqOsdeXwJ_N?usp=sharing)   |
+| [lunary.ipynb](cookbooks/labeled_few_shot/lunary.ipynb)       | [<img align="center" src="https://colab.research.google.com/assets/colab-badge.svg" />](https://colab.research.google.com/drive/1HXpW6E7AgoBbVWiiUxxtzztU6Gxy6iEA?usp=sharing) |
 
 ## Repo setup
 
