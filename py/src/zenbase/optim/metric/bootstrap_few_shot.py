@@ -26,15 +26,22 @@ class BootstrapFewShot(LMOptim[Inputs, Outputs]):
         best_function: LMFunction[Inputs, Outputs]
         candidate_results: list[CandidateEvalResult] | None = None
 
-    training_set: list[LMDemo[Inputs, Outputs]] | None
     shots: int = field(default=5)
-    training_set_original: "schemas.Dataset" = None
+    training_set: list[LMDemo[Inputs, Outputs]] | None = None
+    training_set_original: "schemas.Dataset" = (
+        None  # TODO: it needs to be more generic and pass our Dataset Object here
+    )
     test_set_original: "schemas.Dataset" = None
+    validation_set_original: "schemas.Dataset" = None
     base_evaluation = None
     best_evaluation = None
     optimizer_args: Dict[str, dict[str, dict[str, LMDemo]]] = field(default_factory=dict)
+    zen_adaptor: ZenLangSmith = None
+    evaluator_kwargs: dict[str, Any] = field(default_factory=dict)
 
     def __post_init__(self):
+        self.training_set = self.zen_adaptor.fetch_dataset_demos(self.training_set_original)
+        self.zen_adaptor.set_evaluator_kwargs(**self.evaluator_kwargs)
         assert 1 <= self.shots <= len(self.training_set)
 
     @ot_tracer.start_as_current_span("perform")
@@ -45,7 +52,6 @@ class BootstrapFewShot(LMOptim[Inputs, Outputs]):
         samples: int = 5,
         rounds: int = 1,
         trace_manager: TraceManager = None,
-        helper_class: ZenLangSmith | None = None,
     ) -> Result:
         """
         This function will perform the bootstrap few shot optimization on the given student_lm function.
@@ -61,16 +67,15 @@ class BootstrapFewShot(LMOptim[Inputs, Outputs]):
         """
         assert trace_manager is not None, "Zenbase is required for this operation"
 
-        self.training_set = helper_class.fetch_dataset_demos(self.training_set_original)
-        test_set_evaluator = helper_class.get_evaluator(data=self.test_set_original.name)
+        test_set_evaluator = self.zen_adaptor.get_evaluator(data=self.test_set_original.name)
         self.base_evaluation = test_set_evaluator(student_lm)
 
         if not teacher_lm:
             # Create the base LabeledFewShot teacher model
-            teacher_lm = self._create_teacher_model(helper_class, student_lm, samples, rounds)
+            teacher_lm = self._create_teacher_model(self.zen_adaptor, student_lm, samples, rounds)
 
         # Evaluate and validate the demo set
-        validated_demo_set = self._validate_demo_set(helper_class, teacher_lm)
+        validated_demo_set = self._validate_demo_set(self.zen_adaptor, teacher_lm)
 
         # Run each validated demo to fill up the traces
         trace_manager.all_traces = {}
@@ -89,7 +94,7 @@ class BootstrapFewShot(LMOptim[Inputs, Outputs]):
         return self.Result(best_function=optimized_fn)
 
     def _create_teacher_model(self, helper_class, lmfn, samples, rounds):
-        evaluator = helper_class.get_evaluator()
+        evaluator = helper_class.get_evaluator(data=self.validation_set_original.name)
         teacher_lm, _, _ = LabeledFewShot(demoset=self.training_set, shots=self.shots).perform(
             lmfn, evaluator=evaluator, samples=samples, rounds=rounds
         )
@@ -137,8 +142,8 @@ class BootstrapFewShot(LMOptim[Inputs, Outputs]):
 
                     # Sanitize input and output arguments by replacing curly braces with spaces.
                     # This prevents conflicts when using these arguments as keys in template rendering within LangChain.
-                    input_args = {k: v.replace("{", " ").replace("}", " ") for k, v in input_args.items()}
-                    output_args = {k: v.replace("{", " ").replace("}", " ") for k, v in output_args.items()}
+                    input_args = {k: str(v).replace("{", " ").replace("}", " ") for k, v in input_args.items()}
+                    output_args = {k: str(v).replace("{", " ").replace("}", " ") for k, v in output_args.items()}
 
                     each_function_inputs.setdefault(inside_functions, []).append(
                         LMDemo(inputs=input_args, outputs=output_args)
@@ -191,6 +196,15 @@ class BootstrapFewShot(LMOptim[Inputs, Outputs]):
         """
         return self.optimizer_args
 
+    def save_optimizer_args(self, file_path: str) -> None:
+        """
+        Save the optimizer arguments to a dill file.
+
+        :param file_path: The path to save the dill file
+        """
+        with open(file_path, "wb") as f:
+            cloudpickle.dump(self.optimizer_args, f)
+
     @classmethod
     def load_optimizer_and_function(
         cls, optimizer_args_file: str, student_lm: LMFunction[Inputs, Outputs], trace_manager: TraceManager
@@ -205,15 +219,6 @@ class BootstrapFewShot(LMOptim[Inputs, Outputs]):
         """
         optimizer_args = cls._load_optimizer_args(optimizer_args_file)
         return cls._create_optimized_function(student_lm, optimizer_args, trace_manager)
-
-    def save_optimizer_args(self, file_path: str) -> None:
-        """
-        Save the optimizer arguments to a dill file.
-
-        :param file_path: The path to save the dill file
-        """
-        with open(file_path, "wb") as f:
-            cloudpickle.dump(self.optimizer_args, f)
 
     @classmethod
     def _load_optimizer_args(cls, file_path: str) -> Dict[str, Any]:

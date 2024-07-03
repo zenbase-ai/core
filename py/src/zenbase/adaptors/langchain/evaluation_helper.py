@@ -103,6 +103,8 @@ class LangsmithEvaluationHelper(BaseEvaluationHelper):
     ) -> (list)[IndividualEvalValue]:
         individual_evals = []
         for res in experiment_results._results:  # noqa
+            if not res["evaluation_results"]["results"]:
+                continue
             score = res["evaluation_results"]["results"][0].score
             inputs = res["example"].inputs
             outputs = res["example"].outputs
