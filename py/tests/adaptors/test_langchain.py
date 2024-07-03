@@ -654,9 +654,9 @@ def test_bootstrap_few_shot_langchain(
 
     bootstrap_few_shot = BootstrapFewShot(
         shots=SHOTS,
-        training_set_original=train_set,
-        test_set_original=test_set,
-        validation_set_original=validation_set,
+        training_set=train_set,
+        test_set=test_set,
+        validation_set=validation_set,
         evaluator_kwargs=evaluator_kwargs,
         zen_adaptor=langsmith_helper,
     )
@@ -834,9 +834,9 @@ def test_bootstrap_few_shot_openai_langsmith(
 
     bootstrap_few_shot = BootstrapFewShot(
         shots=SHOTS,
-        training_set_original=train_set,
-        test_set_original=test_set,
-        validation_set_original=validation_set,
+        training_set=train_set,
+        test_set=test_set,
+        validation_set=validation_set,
         evaluator_kwargs=evaluator_kwargs,
         zen_adaptor=langsmith_helper,
     )

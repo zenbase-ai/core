@@ -30,7 +30,7 @@ def optim(gsm8k_demoset: list):
 
 @pytest.fixture
 def bootstrap_few_shot_optim(gsm8k_demoset: list):
-    return BootstrapFewShot(training_set=gsm8k_demoset, shots=SHOTS)
+    return BootstrapFewShot(training_set_demos=gsm8k_demoset, shots=SHOTS)
 
 
 @pytest.fixture(scope="module")

@@ -36,21 +36,21 @@ def mock_trace_manager():
 @pytest.fixture
 def bootstrap_few_shot(mock_helper_class):
     return BootstrapFewShot(
-        training_set=mock_helper_class.fetch_dataset_demos(),
+        training_set_demos=mock_helper_class.fetch_dataset_demos(),
         shots=2,
-        training_set_original=Mock(),
-        test_set_original=Mock(),
+        training_set=Mock(),
+        test_set=Mock(),
     )
 
 
 def test_init(bootstrap_few_shot):
     assert bootstrap_few_shot.shots == 2
-    assert len(bootstrap_few_shot.training_set) == 3
+    assert len(bootstrap_few_shot.training_set_demos) == 3
 
 
 def test_init_invalid_shots():
     with pytest.raises(AssertionError):
-        BootstrapFewShot(training_set=[LMDemo(inputs={}, outputs={})], shots=0)
+        BootstrapFewShot(training_set_demos=[LMDemo(inputs={}, outputs={})], shots=0)
 
 
 def test_create_teacher_model(bootstrap_few_shot, mock_helper_class):
