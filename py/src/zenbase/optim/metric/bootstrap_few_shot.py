@@ -2,7 +2,7 @@ from copy import deepcopy
 from dataclasses import dataclass, field
 from datetime import datetime
 from functools import partial
-from typing import TYPE_CHECKING, Any, Dict, NamedTuple
+from typing import Any, Dict, NamedTuple
 
 import cloudpickle
 
@@ -13,9 +13,6 @@ from zenbase.optim.metric.labeled_few_shot import LabeledFewShot
 from zenbase.optim.metric.types import CandidateEvalResult
 from zenbase.types import Inputs, LMDemo, LMFunction, LMZenbase, Outputs
 from zenbase.utils import get_logger, ot_tracer
-
-if TYPE_CHECKING:
-    pass
 
 log = get_logger(__name__)
 
@@ -34,7 +31,7 @@ class BootstrapFewShot(LMOptim[Inputs, Outputs]):
     base_evaluation = None
     best_evaluation = None
     optimizer_args: Dict[str, dict[str, dict[str, LMDemo]]] = field(default_factory=dict)
-    zen_adaptor: ZenLangSmith = None
+    zen_adaptor: Any = None
     evaluator_kwargs: dict[str, Any] = field(default_factory=dict)
 
     def __post_init__(self):
@@ -65,7 +62,7 @@ class BootstrapFewShot(LMOptim[Inputs, Outputs]):
         """
         assert trace_manager is not None, "Zenbase is required for this operation"
 
-        test_set_evaluator = self.zen_adaptor.get_evaluator(data=self.test_set.name)
+        test_set_evaluator = self.zen_adaptor.get_evaluator(data=self.test_set)
         self.base_evaluation = test_set_evaluator(student_lm)
 
         if not teacher_lm:
@@ -94,7 +91,7 @@ class BootstrapFewShot(LMOptim[Inputs, Outputs]):
     def _create_teacher_model(
         self, zen_adaptor: ZenLangSmith, student_lm: LMFunction, samples: int, rounds: int
     ) -> LMFunction:
-        evaluator = zen_adaptor.get_evaluator(data=self.validation_set.name)
+        evaluator = zen_adaptor.get_evaluator(data=self.validation_set)
         teacher_lm, _, _ = LabeledFewShot(demoset=self.training_set_demos, shots=self.shots).perform(
             student_lm, evaluator=evaluator, samples=samples, rounds=rounds
         )
@@ -112,7 +109,7 @@ class BootstrapFewShot(LMOptim[Inputs, Outputs]):
         #     return teacher_lm(request)
 
         # get evaluator for the training set
-        evaluate_demo_set = zen_adaptor.get_evaluator(data=self.training_set.name)
+        evaluate_demo_set = zen_adaptor.get_evaluator(data=self.training_set)
         # run the evaluation and get the result of the evaluation
         result = evaluate_demo_set(teacher_lm)
         # find the validated training set that has been passed
@@ -173,12 +170,20 @@ class BootstrapFewShot(LMOptim[Inputs, Outputs]):
         :param trace_manager: The trace manager that will be used to trace the function
         """
 
-        def optimized_fn_base(request, zenbase, optimized_args_in_fn, trace_manager):
+        def optimized_fn_base(request, zenbase, optimized_args_in_fn, trace_manager, *args, **kwargs):
+            if request is None and "inputs" not in kwargs.keys():
+                raise ValueError("Request or inputs should be passed")
+            elif request is None:
+                request = kwargs["inputs"]
+                kwargs.pop("inputs")
+
             new_optimized_args = deepcopy(optimized_args_in_fn)
             with trace_manager.trace_context(
                 "optimized", f"optimized_layer_0_{datetime.now().isoformat()}", new_optimized_args
             ):
-                return student_lm(request)
+                if request is None:
+                    return student_lm(*args, **kwargs)
+                return student_lm(request, *args, **kwargs)
 
         optimized_fn = partial(
             optimized_fn_base,
