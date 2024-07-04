@@ -15,7 +15,7 @@ from zenbase.types import Inputs, LMDemo, LMFunction, LMZenbase, Outputs
 from zenbase.utils import get_logger, ot_tracer
 
 if TYPE_CHECKING:
-    from langsmith import schemas
+    pass
 
 log = get_logger(__name__)
 
@@ -28,9 +28,9 @@ class BootstrapFewShot(LMOptim[Inputs, Outputs]):
 
     shots: int = field(default=5)
     training_set_demos: list[LMDemo[Inputs, Outputs]] | None = None
-    training_set: "schemas.Dataset" = None  # TODO: it needs to be more generic and pass our Dataset Object here
-    test_set: "schemas.Dataset" = None
-    validation_set: "schemas.Dataset" = None
+    training_set: Any = None  # TODO: it needs to be more generic and pass our Dataset Object here
+    test_set: Any = None
+    validation_set: Any = None
     base_evaluation = None
     best_evaluation = None
     optimizer_args: Dict[str, dict[str, dict[str, LMDemo]]] = field(default_factory=dict)
