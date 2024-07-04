@@ -1,4 +1,5 @@
 from abc import abstractmethod
+from typing import Any
 
 from zenbase.adaptors.base.adaptor import ZenAdaptor
 
@@ -8,7 +9,7 @@ class BaseEvaluationHelper(ZenAdaptor):
     def set_evaluator_kwargs(self, *args, **kwargs) -> None: ...
 
     @abstractmethod
-    def get_evaluator(self, *args, **kwargs): ...
+    def get_evaluator(self, data: Any): ...
 
     @classmethod
     @abstractmethod
