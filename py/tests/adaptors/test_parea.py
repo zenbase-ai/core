@@ -83,7 +83,7 @@ def zen_parea_helper(parea: Parea):
 
 
 def test_create_and_fetch_dataset(parea: Parea, zen_parea_helper: ZenParea):
-    dataset_name = ksuid("gsm8k-test")
+    dataset_name = str(ksuid("gsm8k-test"))
     zen_parea_helper.create_dataset(dataset_name)
     fetched_dataset = zen_parea_helper.fetch_dataset(dataset_name)
     assert fetched_dataset is not None
@@ -92,7 +92,7 @@ def test_create_and_fetch_dataset(parea: Parea, zen_parea_helper: ZenParea):
 def test_create_and_add_examples(parea: Parea, zen_parea_helper: ZenParea):
     inputs = [{"question": "What is 1+1?"}, {"question": "What is 2+2?"}]
     outputs = [{"answer:": "2"}, {"answer": "4"}]
-    dataset_name = ksuid("gsm8k-test")
+    dataset_name = str(ksuid("gsm8k-test"))
     zen_parea_helper.create_dataset(dataset_name)
     zen_parea_helper.add_examples_to_dataset(inputs, outputs, dataset_name)
     fetched_examples = zen_parea_helper.fetch_dataset_examples(dataset_name)
