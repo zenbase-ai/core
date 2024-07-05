@@ -1,0 +1,9 @@
+model_list:
+  - model_name: gpt-3.5-turbo
+    litellm_params:
+      model: openai/gpt-3.5-turbo                          # The `openai/` prefix will call openai.chat.completions.create
+      api_key: os.environ/AZURE_API_KEY                    # The `os.environ/` prefix will call os.environ.get
+
+router_settings:
+  redis_host: redis
+  redis_port: 6379
