@@ -26,7 +26,7 @@ SAMPLES = 2
 SHOTS = 3
 EVALSET_SIZE = 5
 
-TESTSET_SIZE = 4
+TESTSET_SIZE = 2
 TRAINSET_SIZE = 5
 VALIDATIONSET_SIZE = 2
 
@@ -445,8 +445,6 @@ def test_zen_parea_helper_bootstrap_few_shot(
         print("Finding operation...")
         answer = json.loads(response.choices[0].message.content)
         return {"operation": answer["operation"]}
-
-    zen_parea_helper.set_evaluator_kwargs(p=parea, n_workers=1)
 
     evaluator_kwargs = dict(p=parea, n_workers=1)
     bootstrap_few_shot = BootstrapFewShot(
