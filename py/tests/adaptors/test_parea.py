@@ -82,6 +82,7 @@ def zen_parea_helper(parea: Parea):
     return ZenParea(parea)
 
 
+@pytest.mark.helpers
 def test_create_and_fetch_dataset(parea: Parea, zen_parea_helper: ZenParea):
     dataset_name = str(ksuid("gsm8k-test"))
     zen_parea_helper.create_dataset(dataset_name)
@@ -89,6 +90,7 @@ def test_create_and_fetch_dataset(parea: Parea, zen_parea_helper: ZenParea):
     assert fetched_dataset is not None
 
 
+@pytest.mark.helpers
 def test_create_and_add_examples(parea: Parea, zen_parea_helper: ZenParea):
     inputs = [{"question": "What is 1+1?"}, {"question": "What is 2+2?"}]
     outputs = [{"answer:": "2"}, {"answer": "4"}]
@@ -99,6 +101,7 @@ def test_create_and_add_examples(parea: Parea, zen_parea_helper: ZenParea):
     assert len(fetched_examples) == 2
 
 
+@pytest.mark.helpers
 def create_dataset_with_examples(zen_parea_helper: ZenParea, prefix: str, item_set):
     dataset_name = ksuid(prefix)
     zen_parea_helper.create_dataset(dataset_name)
