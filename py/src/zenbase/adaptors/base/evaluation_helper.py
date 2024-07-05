@@ -5,8 +5,12 @@ from zenbase.adaptors.base.adaptor import ZenAdaptor
 
 
 class BaseEvaluationHelper(ZenAdaptor):
-    @abstractmethod
-    def set_evaluator_kwargs(self, *args, **kwargs) -> None: ...
+    evaluator_args = tuple()
+    evaluator_kwargs = dict()
+
+    def set_evaluator_kwargs(self, *args, **kwargs) -> None:
+        self.evaluator_kwargs = kwargs
+        self.evaluator_args = args
 
     @abstractmethod
     def get_evaluator(self, data: Any): ...

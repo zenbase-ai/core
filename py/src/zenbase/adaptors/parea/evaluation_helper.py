@@ -40,10 +40,6 @@ class PareaEvaluationHelper(BaseEvaluationHelper):
         self.evaluator_args = None
         self.evaluator_kwargs = None
 
-    def set_evaluator_kwargs(self, *args, **kwargs) -> None:
-        self.evaluator_kwargs = kwargs
-        self.evaluator_args = args
-
     def get_evaluator(self, data: str):
         pass
 

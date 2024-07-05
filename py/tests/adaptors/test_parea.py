@@ -606,14 +606,6 @@ def test_zen_parea_helper_bootstrap_few_shot_load_args(
     best_lm = BootstrapFewShot.load_optimizer_and_function(
         optimizer_args_file=path_of_the_file, student_lm=solver, trace_manager=zenbase_manager
     )
-    zenbase_manager.all_traces = {}
-    best_lm({"question": "What is 2 + 2?"})
-
-    evaluator_kwargs = dict(p=parea, n_workers=1)
-    zen_parea_helper.set_evaluator_kwargs(**evaluator_kwargs)
-    test_set_evaluator = zen_parea_helper.get_evaluator(data=test_set)
-    test_set_evaluator(best_lm)
-
     assert best_lm is not None
 
     zenbase_manager.all_traces = {}

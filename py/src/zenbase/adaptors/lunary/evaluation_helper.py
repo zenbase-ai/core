@@ -2,6 +2,7 @@ from typing import Any, Callable
 
 import lunary
 
+from zenbase.adaptors.base.evaluation_helper import BaseEvaluationHelper
 from zenbase.optim.metric.types import (
     CandidateEvalResult,
     CandidateEvaluator,
@@ -12,7 +13,7 @@ from zenbase.types import LMDemo, LMFunction
 from zenbase.utils import pmap
 
 
-class ZenLunary:
+class LunaryEvaluationHelper(BaseEvaluationHelper):
     MetricEvaluator = Callable[[list[tuple[bool, Any]]], OverallEvalValue]
 
     @staticmethod
@@ -20,13 +21,60 @@ class ZenLunary:
         avg_pass = sum(int(passed) for passed, _ in batch_results) / len(batch_results)
         return {"score": avg_pass}
 
+    def get_evaluator(self, data: str):
+        raise NotImplementedError("This method should be implemented by the parent class as it needs access to data")
+
     @staticmethod
-    def data_to_demo(dataset_item: lunary.DatasetItem) -> LMDemo:
-        return LMDemo(inputs=dataset_item.input, outputs=dataset_item.ideal_output, original_object=dataset_item)
+    def _metric_evaluator_generator(
+        *args,
+        checklist: str,
+        data: list[LMDemo],
+        eval_metrics: MetricEvaluator = default_metric,
+        concurrency: int = 1,
+        **kwargs,
+    ) -> CandidateEvaluator:
+        # TODO: Should remove and deprecate
+        def evaluate_metric(function: LMFunction) -> CandidateEvalResult:
+            individual_evals = []
+
+            def run_and_evaluate(demo: LMDemo):
+                nonlocal individual_evals
+
+                response = function(demo.inputs)
+                result = lunary.evaluate(
+                    checklist,
+                    input=demo.inputs,
+                    output=response,
+                    ideal_output=demo.outputs,
+                    *args,
+                    **kwargs,
+                )
+
+                individual_evals.append(
+                    IndividualEvalValue(
+                        details=result[1][0]["details"],
+                        passed=result[0],
+                        response=response,
+                        demo=demo,
+                    )
+                )
+
+                return result
+
+            eval_results = pmap(
+                run_and_evaluate,
+                data,
+                concurrency=concurrency,
+            )
+
+            return CandidateEvalResult(function, eval_metrics(eval_results), individual_evals=individual_evals)
+
+        return evaluate_metric
 
     @classmethod
     def dataset_to_demos(cls, dataset: list[lunary.DatasetItem]) -> list[LMDemo]:
-        return [cls.data_to_demo(item) for item in dataset]
+        # TODO: Should remove and deprecate
+        return [LMDemo(inputs=item.input, outputs=item.ideal_output, original_object=item) for item in dataset]
 
     @classmethod
     def metric_evaluator(
@@ -38,6 +86,7 @@ class ZenLunary:
         concurrency: int = 20,
         **kwargs,
     ) -> CandidateEvaluator:
+        # TODO: Should remove and deprecate
         def evaluate_metric(function: LMFunction) -> CandidateEvalResult:
             individual_evals = []
 

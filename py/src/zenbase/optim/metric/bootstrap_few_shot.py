@@ -145,8 +145,10 @@ class BootstrapFewShot(LMOptim[Inputs, Outputs]):
 
                     # Sanitize input and output arguments by replacing curly braces with spaces.
                     # This prevents conflicts when using these arguments as keys in template rendering within LangChain.
-                    input_args = {k: str(v).replace("{", " ").replace("}", " ") for k, v in input_args.items()}
-                    output_args = {k: str(v).replace("{", " ").replace("}", " ") for k, v in output_args.items()}
+                    if isinstance(input_args, dict):
+                        input_args = {k: str(v).replace("{", " ").replace("}", " ") for k, v in input_args.items()}
+                    if isinstance(output_args, dict):
+                        output_args = {k: str(v).replace("{", " ").replace("}", " ") for k, v in output_args.items()}
 
                     each_function_inputs.setdefault(inside_functions, []).append(
                         LMDemo(inputs=input_args, outputs=output_args)
