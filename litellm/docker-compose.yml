@@ -1,0 +1,21 @@
+version: '3'
+
+services:
+  litellm:
+    image: ghcr.io/berriai/litellm:main-latest
+    ports:
+      - "4000:4000"
+    volumes:
+      - ./config.yaml:/app/config.yaml # Mount the local configuration file
+    command: [ "--config", "/app/config.yaml", "--port", "4000", "--num_workers", "8", "--detailed_debug"]
+    env_file:
+      - .env
+
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./redis-data:/data
+    command: redis-server --appendonly yes
+    restart: always
