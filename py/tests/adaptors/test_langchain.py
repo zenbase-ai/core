@@ -113,20 +113,6 @@ def test_set(gsm8k_dataset: DatasetDict, langsmith_helper: ZenLangSmith):
 
 
 @pytest.fixture(scope="module")
-def train_set_langsmith_dataset(langsmith: Client, train_set: list, langsmith_helper: ZenLangSmith):
-    # Generate dataset name
-    dataset_name = ksuid(prefix="GSM8K_train_set_langsmith_dataset")
-
-    # Create dataset
-    dataset = langsmith_helper.create_dataset(dataset_name, "GSM8K math reasoning dataset")
-    inputs = [{"question": example["question"]} for example in train_set]
-    outputs = [{"answer": example["answer"]} for example in train_set]
-    langsmith_helper.create_examples(dataset.id, inputs, outputs)
-
-    return dataset
-
-
-@pytest.fixture(scope="module")
 def evalset(gsm8k_dataset: DatasetDict, langsmith: Client):
     try:
         return list(langsmith.list_examples(dataset_name="gsm8k-test-examples"))

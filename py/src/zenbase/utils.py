@@ -1,6 +1,7 @@
 import asyncio
 import functools
 import inspect
+import json
 import logging
 import os
 from random import Random
@@ -142,3 +143,26 @@ def pmap(
 
 async def alist(aiterable: AsyncIterable[ReturnValue]) -> list[ReturnValue]:
     return [x async for x in aiterable]
+
+
+def expand_nested_json(d):
+    def recursive_expand(value):
+        if isinstance(value, str):
+            try:
+                # Try to parse the string value as JSON
+                parsed_value = json.loads(value)
+                # Recursively expand the parsed value in case it contains further nested JSON
+                return recursive_expand(parsed_value)
+            except json.JSONDecodeError:
+                # If parsing fails, return the original string
+                return value
+        elif isinstance(value, dict):
+            # Recursively expand each key-value pair in the dictionary
+            return {k: recursive_expand(v) for k, v in value.items()}
+        elif isinstance(value, list):
+            # Recursively expand each element in the list
+            return [recursive_expand(elem) for elem in value]
+        else:
+            return value
+
+    return recursive_expand(d)

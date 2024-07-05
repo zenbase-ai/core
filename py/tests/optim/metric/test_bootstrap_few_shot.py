@@ -1,4 +1,4 @@
-from unittest.mock import Mock, patch
+from unittest.mock import Mock, mock_open, patch
 
 import pytest
 
@@ -9,14 +9,14 @@ from zenbase.types import LMDemo, LMFunction, LMZenbase
 
 
 @pytest.fixture
-def mock_helper_class():
-    helper = Mock(spec=ZenLangSmith)
-    helper.fetch_dataset_demos.return_value = [
+def mock_zen_adaptor():
+    adaptor = Mock(spec=ZenLangSmith)
+    adaptor.fetch_dataset_demos.return_value = [
         LMDemo(inputs={"input": "test1"}, outputs={"output": "result1"}),
         LMDemo(inputs={"input": "test2"}, outputs={"output": "result2"}),
         LMDemo(inputs={"input": "test3"}, outputs={"output": "result3"}),
     ]
-    helper.get_evaluator.return_value = Mock(
+    adaptor.get_evaluator.return_value = Mock(
         return_value=Mock(
             individual_evals=[
                 Mock(passed=True, demo=LMDemo(inputs={"input": "test1"}, outputs={"output": "result1"})),
@@ -25,7 +25,7 @@ def mock_helper_class():
             ]
         )
     )
-    return helper
+    return adaptor
 
 
 @pytest.fixture
@@ -34,12 +34,13 @@ def mock_trace_manager():
 
 
 @pytest.fixture
-def bootstrap_few_shot(mock_helper_class):
+def bootstrap_few_shot(mock_zen_adaptor):
     return BootstrapFewShot(
-        training_set_demos=mock_helper_class.fetch_dataset_demos(),
         shots=2,
         training_set=Mock(),
         test_set=Mock(),
+        validation_set=Mock(),
+        zen_adaptor=mock_zen_adaptor,
     )
 
 
@@ -50,21 +51,21 @@ def test_init(bootstrap_few_shot):
 
 def test_init_invalid_shots():
     with pytest.raises(AssertionError):
-        BootstrapFewShot(training_set_demos=[LMDemo(inputs={}, outputs={})], shots=0)
+        BootstrapFewShot(shots=0, training_set=Mock(), test_set=Mock(), validation_set=Mock(), zen_adaptor=Mock())
 
 
-def test_create_teacher_model(bootstrap_few_shot, mock_helper_class):
+def test_create_teacher_model(bootstrap_few_shot, mock_zen_adaptor):
     mock_lmfn = Mock(spec=LMFunction)
     with patch("zenbase.optim.metric.bootstrap_few_shot.LabeledFewShot") as mock_labeled_few_shot:
         mock_labeled_few_shot.return_value.perform.return_value = (Mock(), None, None)
-        teacher_model = bootstrap_few_shot._create_teacher_model(mock_helper_class, mock_lmfn, 5, 1)
+        teacher_model = bootstrap_few_shot._create_teacher_model(mock_zen_adaptor, mock_lmfn, 5, 1)
         assert teacher_model is not None
         mock_labeled_few_shot.assert_called_once()
 
 
-def test_validate_demo_set(bootstrap_few_shot, mock_helper_class):
+def test_validate_demo_set(bootstrap_few_shot, mock_zen_adaptor):
     mock_teacher_lm = Mock(spec=LMFunction)
-    validated_demos = bootstrap_few_shot._validate_demo_set(mock_helper_class, mock_teacher_lm)
+    validated_demos = bootstrap_few_shot._validate_demo_set(mock_zen_adaptor, mock_teacher_lm)
     assert len(validated_demos) == 2
     assert all(demo.inputs["input"].startswith("test") for demo in validated_demos)
 
@@ -102,7 +103,7 @@ def test_create_optimized_function():
 
 
 @patch("zenbase.optim.metric.bootstrap_few_shot.partial")
-def test_perform(mock_partial, bootstrap_few_shot, mock_helper_class, mock_trace_manager):
+def test_perform(mock_partial, bootstrap_few_shot, mock_zen_adaptor, mock_trace_manager):
     mock_student_lm = Mock(spec=LMFunction)
     mock_teacher_lm = Mock(spec=LMFunction)
 
@@ -117,8 +118,49 @@ def test_perform(mock_partial, bootstrap_few_shot, mock_helper_class, mock_trace
                             samples=5,
                             rounds=1,
                             trace_manager=mock_trace_manager,
-                            helper_class=mock_helper_class,
                         )
 
     assert isinstance(result, BootstrapFewShot.Result)
     assert result.best_function is not None
+
+
+def test_set_and_get_optimizer_args(bootstrap_few_shot):
+    test_args = {"test": "args"}
+    bootstrap_few_shot.set_optimizer_args(test_args)
+    assert bootstrap_few_shot.get_optimizer_args() == test_args
+
+
+@patch("cloudpickle.dump")
+def test_save_optimizer_args(mock_dump, bootstrap_few_shot, tmp_path):
+    test_args = {"test": "args"}
+    bootstrap_few_shot.set_optimizer_args(test_args)
+    file_path = tmp_path / "test_optimizer_args.dill"
+    bootstrap_few_shot.save_optimizer_args(str(file_path))
+    mock_dump.assert_called_once()
+
+
+@patch("builtins.open", new_callable=mock_open, read_data="dummy data")
+@patch("cloudpickle.load")
+def test_load_optimizer_args(mock_load, mock_file):
+    test_args = {"test": "args"}
+    mock_load.return_value = test_args
+    loaded_args = BootstrapFewShot._load_optimizer_args("dummy_path")
+    mock_file.assert_called_once_with("dummy_path", "rb")
+    mock_load.assert_called_once()
+    assert loaded_args == test_args
+
+
+@patch("zenbase.optim.metric.bootstrap_few_shot.BootstrapFewShot._load_optimizer_args")
+@patch("zenbase.optim.metric.bootstrap_few_shot.BootstrapFewShot._create_optimized_function")
+def test_load_optimizer_and_function(mock_create_optimized_function, mock_load_optimizer_args):
+    mock_student_lm = Mock(spec=LMFunction)
+    mock_trace_manager = Mock(spec=TraceManager)
+    mock_load_optimizer_args.return_value = {"test": "args"}
+    mock_create_optimized_function.return_value = Mock(spec=LMFunction)
+
+    result = BootstrapFewShot.load_optimizer_and_function("dummy_path", mock_student_lm, mock_trace_manager)
+
+    mock_load_optimizer_args.assert_called_once_with("dummy_path")
+    mock_create_optimized_function.assert_called_once()
+    assert isinstance(result, Mock)
+    assert isinstance(result, LMFunction)

@@ -1,4 +1,5 @@
 from dataclasses import asdict
+from typing import TYPE_CHECKING
 
 from langsmith.evaluation._runner import ExperimentResults  # noqa
 
@@ -6,6 +7,9 @@ from zenbase.adaptors.base.evaluation_helper import BaseEvaluationHelper
 from zenbase.optim.metric.types import CandidateEvalResult, CandidateEvaluator, IndividualEvalValue, OverallEvalValue
 from zenbase.types import LMDemo, LMFunction
 from zenbase.utils import random_name_generator
+
+if TYPE_CHECKING:
+    from langsmith import schemas
 
 
 class LangsmithEvaluationHelper(BaseEvaluationHelper):
@@ -18,12 +22,10 @@ class LangsmithEvaluationHelper(BaseEvaluationHelper):
         self.evaluator_kwargs = kwargs
         self.evaluator_args = args
 
-    def get_evaluator(self, *args, **kwargs) -> CandidateEvaluator:
+    def get_evaluator(self, data: "schemas.Dataset") -> CandidateEvaluator:
         evaluator_kwargs_to_pass = self.evaluator_kwargs.copy()
-        evaluator_kwargs_to_pass.update(kwargs)
-        evaluator_args_to_pass = self.evaluator_args
-        evaluator_args_to_pass += args
-        return self._metric_evaluator_generator(*evaluator_args_to_pass, **evaluator_kwargs_to_pass)
+        evaluator_kwargs_to_pass.update({"data": data.name})
+        return self._metric_evaluator_generator(**evaluator_kwargs_to_pass)
 
     def _metric_evaluator_generator(self, threshold: float = 0.5, **evaluate_kwargs) -> CandidateEvaluator:
         from langsmith import evaluate

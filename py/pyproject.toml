@@ -53,6 +53,7 @@ dev-dependencies = [
     "autoevals>=0.0.68",
     "braintrust>=0.0.131",
     "pre-commit>=3.7.1",
+    "pytest-xdist>=3.6.1",
 ]
 
 [tool.hatch.metadata]
