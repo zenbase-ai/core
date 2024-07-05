@@ -1,4 +1,5 @@
 .env*
+!.env.sample
 .DS_Store
 
 .idea/
@@ -9,4 +10,4 @@
 .idea/**/dictionaries
 .idea/**/shelf
 
-litellm/redis-data/
+litellm/redis-data
