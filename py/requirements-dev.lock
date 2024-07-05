@@ -133,6 +133,8 @@ exceptiongroup==1.2.0
     # via cattrs
     # via ipython
     # via pytest
+execnet==2.1.1
+    # via pytest-xdist
 executing==2.0.1
     # via stack-data
 faker==25.4.0
@@ -531,7 +533,9 @@ pysbd==0.3.4
     # via parea-ai
 pytest==8.2.1
     # via pytest-recording
+    # via pytest-xdist
 pytest-recording==0.13.1
+pytest-xdist==3.6.1
 python-dateutil==2.9.0.post0
     # via arrow
     # via faker
