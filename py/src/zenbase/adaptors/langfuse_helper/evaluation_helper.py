@@ -39,6 +39,7 @@ class LangfuseEvaluationHelper(BaseEvaluationHelper):
         concurrency: int = 20,
         threshold: float = 0.5,
     ) -> CandidateEvaluator:
+        # TODO: this is not the way to run experiment in the langfuse, we should update with the new beta feature
         from langfuse import Langfuse
         from langfuse.decorators import observe
 
