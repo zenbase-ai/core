@@ -36,4 +36,4 @@ class LangsmithDatasetHelper(BaseDatasetHelper):
 
     @staticmethod
     def examples_to_demos(examples: Iterator["schemas.Example"]) -> list[LMDemo]:
-        return [LMDemo(inputs=e.inputs, outputs=e.outputs, original_object=e) for e in examples]
+        return [LMDemo(inputs=e.inputs, outputs=e.outputs, adaptor_object=e) for e in examples]

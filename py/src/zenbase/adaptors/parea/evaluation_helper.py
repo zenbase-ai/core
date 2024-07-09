@@ -160,7 +160,7 @@ class PareaEvaluationHelper(BaseEvaluationHelper):
                 IndividualEvalValue(
                     passed=score >= threshold,
                     response=outputs,
-                    demo=LMDemo(inputs=inputs, outputs=outputs, original_object=res),
+                    demo=LMDemo(inputs=inputs, outputs=outputs, adaptor_object=res),
                     score=score,
                 )
             )

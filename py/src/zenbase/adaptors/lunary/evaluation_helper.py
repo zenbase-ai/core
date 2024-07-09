@@ -74,7 +74,7 @@ class LunaryEvaluationHelper(BaseEvaluationHelper):
     @classmethod
     def dataset_to_demos(cls, dataset: list[lunary.DatasetItem]) -> list[LMDemo]:
         # TODO: Should remove and deprecate
-        return [LMDemo(inputs=item.input, outputs=item.ideal_output, original_object=item) for item in dataset]
+        return [LMDemo(inputs=item.input, outputs=item.ideal_output, adaptor_object=item) for item in dataset]
 
     @classmethod
     def metric_evaluator(
@@ -93,7 +93,7 @@ class LunaryEvaluationHelper(BaseEvaluationHelper):
             def run_and_evaluate(demo: LMDemo):
                 nonlocal individual_evals
 
-                item = demo.original_object
+                item = demo.adaptor_object
 
                 response = function(item.input)
                 result = lunary.evaluate(
