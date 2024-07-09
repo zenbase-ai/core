@@ -1,7 +1,7 @@
 import inspect
 from abc import ABC
 from contextlib import contextmanager
-from typing import Any, Callable
+from typing import Any, Callable, Union
 
 from zenbase.types import LMFunction, LMZenbase
 from zenbase.utils import ksuid
@@ -17,6 +17,24 @@ class ZenbaseTracer(BaseTracer):
         self.current_trace = None
         self.current_key = None
         self.optimized_args = {}
+
+    def __call__(self, function: Callable[[Any], Any] = None, zenbase: LMZenbase = None) -> Union[Callable, LMFunction]:
+        if function is None:
+            return lambda f: self.trace_function(f, zenbase)
+        return self.trace_function(function, zenbase)
+
+    def trace_function(self, function: Callable[[Any], Any] = None, zenbase: LMZenbase = None) -> LMFunction:
+        def wrapper(request, lm_function, *args, **kwargs):
+            func_name = function.__name__
+            run_timestamp = ksuid(func_name)
+
+            if self.current_trace is None:
+                with self.trace_context(func_name, run_timestamp):
+                    return self._execute_and_trace(function, func_name, request, lm_function, *args, **kwargs)
+            else:
+                return self._execute_and_trace(function, func_name, request, lm_function, *args, **kwargs)
+
+        return LMFunction(wrapper, zenbase)
 
     @contextmanager
     def trace_context(self, func_name, run_timestamp, optimized_args=None):
@@ -35,19 +53,6 @@ class ZenbaseTracer(BaseTracer):
                 self.current_trace = None
                 self.current_key = None
                 self.optimized_args = {}
-
-    def trace_function(self, function: Callable[[Any], Any] = None, zenbase: LMZenbase = None) -> LMFunction:
-        def wrapper(request, lm_function, *args, **kwargs):
-            func_name = function.__name__
-            run_timestamp = ksuid(func_name)
-
-            if self.current_trace is None:
-                with self.trace_context(func_name, run_timestamp):
-                    return self._execute_and_trace(function, func_name, request, lm_function, *args, **kwargs)
-            else:
-                return self._execute_and_trace(function, func_name, request, lm_function, *args, **kwargs)
-
-        return LMFunction(wrapper, zenbase)
 
     def _execute_and_trace(self, func, func_name, request, lm_function, *args, **kwargs):
         # Get the function signature
