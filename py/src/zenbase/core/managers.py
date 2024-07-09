@@ -7,11 +7,11 @@ from zenbase.types import LMFunction, LMZenbase
 from zenbase.utils import ksuid
 
 
-class BaseManager(ABC):
+class BaseTracer(ABC):
     pass
 
 
-class TraceManager:
+class ZenbaseTracer(BaseTracer):
     def __init__(self):
         self.all_traces = {}
         self.current_trace = None

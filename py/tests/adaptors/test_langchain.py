@@ -18,7 +18,7 @@ from tenacity import (
 )
 
 from zenbase.adaptors.langchain import ZenLangSmith
-from zenbase.core.managers import TraceManager
+from zenbase.core.managers import ZenbaseTracer
 from zenbase.optim.metric.bootstrap_few_shot import BootstrapFewShot
 from zenbase.optim.metric.labeled_few_shot import LabeledFewShot
 from zenbase.settings import TEST_DIR
@@ -141,7 +141,7 @@ def test_zenlanchain_metric_evaluator(
     langsmith: Client,
     evalset: list,
 ):
-    zenbase_manager = TraceManager()
+    zenbase_manager = ZenbaseTracer()
 
     @zenbase_manager.trace_function
     @traceable
@@ -190,7 +190,7 @@ def test_langsmith_lcel_labeled_few_shot(
     labeled_few_shot_optimizer: LabeledFewShot,
     evalset: list,
 ):
-    trace_manager = TraceManager()
+    trace_manager = ZenbaseTracer()
 
     @trace_manager.trace_function
     # @retry(
@@ -333,7 +333,7 @@ def test_bootstrap_few_shot_langchain_load_args(
     test_set: "schemas.Dataset",
     langsmith_helper: ZenLangSmith,
 ):
-    zenbase_manager = TraceManager()
+    zenbase_manager = ZenbaseTracer()
 
     @zenbase_manager.trace_function
     @retry(
@@ -497,7 +497,7 @@ def test_bootstrap_few_shot_langchain(
     test_set: "schemas.Dataset",
     langsmith_helper: ZenLangSmith,
 ):
-    zenbase_manager = TraceManager()
+    zenbase_manager = ZenbaseTracer()
 
     @zenbase_manager.trace_function
     @retry(
@@ -685,7 +685,7 @@ def test_bootstrap_few_shot_openai_langsmith(
     langsmith_helper: ZenLangSmith,
     openai: OpenAI,
 ):
-    zenbase_manager = TraceManager()
+    zenbase_manager = ZenbaseTracer()
 
     @zenbase_manager.trace_function
     @retry(

@@ -15,7 +15,7 @@ from tenacity import (
 )
 
 from zenbase.adaptors.parea import ZenParea
-from zenbase.core.managers import TraceManager
+from zenbase.core.managers import ZenbaseTracer
 from zenbase.optim.metric.bootstrap_few_shot import BootstrapFewShot
 from zenbase.optim.metric.labeled_few_shot import LabeledFewShot
 from zenbase.settings import TEST_DIR
@@ -146,7 +146,7 @@ def score_answer(log: Log) -> EvaluationResult:
 
 @pytest.mark.helpers
 def test_zen_parea_helper_evaluator(parea: Parea, evalset: list, chat_openai):
-    zenbase_manager = TraceManager()
+    zenbase_manager = ZenbaseTracer()
 
     @zenbase_manager.trace_function
     @trace(eval_funcs=[score_answer])
@@ -185,7 +185,7 @@ def test_zen_parea_helper_evaluator(parea: Parea, evalset: list, chat_openai):
 
 @pytest.mark.helpers
 def test_zen_parea_helper_get_evaluator(parea: Parea, test_set, zen_parea_helper: ZenParea, openai):
-    zenbase_manager = TraceManager()
+    zenbase_manager = ZenbaseTracer()
 
     def score_answer_with_json(log: Log) -> EvaluationResult:
         output = str(expand_nested_json(log.output)["answer"])
@@ -313,7 +313,7 @@ def test_parea_lcel_labeled_few_shot(
 def test_zen_parea_helper_bootstrap_few_shot(
     parea: Parea, evalset: list, zen_parea_helper: ZenParea, openai, train_set, test_set, validation_set
 ):
-    zenbase_manager = TraceManager()
+    zenbase_manager = ZenbaseTracer()
 
     def score_answer_with_json(log: Log) -> EvaluationResult:
         output = str(expand_nested_json(log.output)["answer"])
@@ -483,7 +483,7 @@ def test_zen_parea_helper_bootstrap_few_shot(
 def test_zen_parea_helper_bootstrap_few_shot_load_args(
     parea: Parea, evalset: list, zen_parea_helper: ZenParea, openai, train_set, test_set, validation_set
 ):
-    zenbase_manager = TraceManager()
+    zenbase_manager = ZenbaseTracer()
 
     def score_answer_with_json(log: Log) -> EvaluationResult:
         output = str(expand_nested_json(log.output)["answer"])

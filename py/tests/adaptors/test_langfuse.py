@@ -14,7 +14,7 @@ from tenacity import (
 )
 
 from zenbase.adaptors.langfuse_helper import ZenLangfuse
-from zenbase.core.managers import TraceManager
+from zenbase.core.managers import ZenbaseTracer
 from zenbase.optim.metric.bootstrap_few_shot import BootstrapFewShot
 from zenbase.optim.metric.labeled_few_shot import LabeledFewShot
 from zenbase.optim.metric.types import OverallEvalValue
@@ -121,7 +121,7 @@ def score_answer(answer: str, demo: LMDemo, langfuse: Langfuse) -> OverallEvalVa
 
 @pytest.mark.helpers
 def test_langfuse_lcel_labeled_few_shot(optim: LabeledFewShot, evalset: list):
-    trace_manager = TraceManager()
+    trace_manager = ZenbaseTracer()
 
     @trace_manager.trace_function
     @retry(
@@ -169,7 +169,7 @@ def test_langfuse_lcel_labeled_few_shot(optim: LabeledFewShot, evalset: list):
 
 @pytest.mark.helpers
 def test_zen_langfuse_metric_evaluator(langfuse: Langfuse, zen_langfuse_helper: ZenLangfuse, evalset: list):
-    zenbase_manager = TraceManager()
+    zenbase_manager = ZenbaseTracer()
 
     @zenbase_manager.trace_function
     @retry(
@@ -220,7 +220,7 @@ def test_bootstrap_few_shot_langfuse(
     test_set,
     zen_langfuse_helper: ZenLangfuse,
 ):
-    zenbase_manager = TraceManager()
+    zenbase_manager = ZenbaseTracer()
 
     def score_answer_with_json(answer: str, demo: LMDemo, langfuse: Langfuse) -> OverallEvalValue:
         """The first argument is the return value from the `langchain_chain` function above."""

@@ -3,7 +3,7 @@ from unittest.mock import Mock, mock_open, patch
 import pytest
 
 from zenbase.adaptors.langchain import ZenLangSmith
-from zenbase.core.managers import TraceManager
+from zenbase.core.managers import ZenbaseTracer
 from zenbase.optim.metric.bootstrap_few_shot import BootstrapFewShot
 from zenbase.types import LMDemo, LMFunction, LMZenbase
 
@@ -30,7 +30,7 @@ def mock_zen_adaptor():
 
 @pytest.fixture
 def mock_trace_manager():
-    return Mock(spec=TraceManager)
+    return Mock(spec=ZenbaseTracer)
 
 
 @pytest.fixture
@@ -95,7 +95,7 @@ def test_consolidate_traces_to_optimized_args(mock_trace_manager):
 
 def test_create_optimized_function():
     mock_student_lm = Mock(spec=LMFunction)
-    mock_trace_manager = Mock(spec=TraceManager)
+    mock_trace_manager = Mock(spec=ZenbaseTracer)
     optimized_args = {"func1": {"args": {"zenbase": LMZenbase(task_demos=[])}}}
 
     optimized_fn = BootstrapFewShot._create_optimized_function(mock_student_lm, optimized_args, mock_trace_manager)
@@ -154,7 +154,7 @@ def test_load_optimizer_args(mock_load, mock_file):
 @patch("zenbase.optim.metric.bootstrap_few_shot.BootstrapFewShot._create_optimized_function")
 def test_load_optimizer_and_function(mock_create_optimized_function, mock_load_optimizer_args):
     mock_student_lm = Mock(spec=LMFunction)
-    mock_trace_manager = Mock(spec=TraceManager)
+    mock_trace_manager = Mock(spec=ZenbaseTracer)
     mock_load_optimizer_args.return_value = {"test": "args"}
     mock_create_optimized_function.return_value = Mock(spec=LMFunction)
 

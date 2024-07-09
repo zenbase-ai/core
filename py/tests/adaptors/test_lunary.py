@@ -13,7 +13,7 @@ from tenacity import (
 )
 
 from zenbase.adaptors.lunary import ZenLunary
-from zenbase.core.managers import TraceManager
+from zenbase.core.managers import ZenbaseTracer
 from zenbase.optim.metric.bootstrap_few_shot import BootstrapFewShot
 from zenbase.optim.metric.labeled_few_shot import LabeledFewShot
 from zenbase.settings import TEST_DIR
@@ -52,7 +52,7 @@ def evalset():
 
 @pytest.mark.helpers
 def test_lunary_lcel_labeled_few_shot(optim: LabeledFewShot, evalset: list):
-    trace_manager = TraceManager()
+    trace_manager = ZenbaseTracer()
 
     @trace_manager.trace_function
     @retry(
@@ -113,7 +113,7 @@ def lunary_helper():
 
 @pytest.mark.helpers
 def test_lunary_openai_bootstrap_few_shot(optim: LabeledFewShot, lunary_helper: ZenLunary, openai):
-    zenbase_manager = TraceManager()
+    zenbase_manager = ZenbaseTracer()
 
     @zenbase_manager.trace_function
     # @retry(

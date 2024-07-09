@@ -7,7 +7,7 @@ from typing import Any, Dict, NamedTuple
 import cloudpickle
 
 from zenbase.adaptors.langchain import ZenLangSmith
-from zenbase.core.managers import TraceManager
+from zenbase.core.managers import ZenbaseTracer
 from zenbase.optim.base import LMOptim
 from zenbase.optim.metric.labeled_few_shot import LabeledFewShot
 from zenbase.optim.metric.types import CandidateEvalResult
@@ -46,7 +46,7 @@ class BootstrapFewShot(LMOptim[Inputs, Outputs]):
         teacher_lm: LMFunction[Inputs, Outputs] | None = None,
         samples: int = 5,
         rounds: int = 1,
-        trace_manager: TraceManager = None,
+        trace_manager: ZenbaseTracer = None,
     ) -> Result:
         """
         This function will perform the bootstrap few shot optimization on the given student_lm function.
@@ -128,7 +128,7 @@ class BootstrapFewShot(LMOptim[Inputs, Outputs]):
             teacher_lm(validated_demo.inputs)
 
     @staticmethod
-    def _consolidate_traces_to_optimized_args(trace_manager: TraceManager) -> dict[str, dict[str, dict[str, LMDemo]]]:
+    def _consolidate_traces_to_optimized_args(trace_manager: ZenbaseTracer) -> dict[str, dict[str, dict[str, LMDemo]]]:
         """
         Consolidate the traces to optimized args that will be used to optimize the student function
 
@@ -162,7 +162,7 @@ class BootstrapFewShot(LMOptim[Inputs, Outputs]):
 
     @staticmethod
     def _create_optimized_function(
-        student_lm: LMFunction, optimized_args: dict, trace_manager: TraceManager
+        student_lm: LMFunction, optimized_args: dict, trace_manager: ZenbaseTracer
     ) -> LMFunction:
         """
         Create the optimized function that will be used to optimize the student function
@@ -222,7 +222,7 @@ class BootstrapFewShot(LMOptim[Inputs, Outputs]):
 
     @classmethod
     def load_optimizer_and_function(
-        cls, optimizer_args_file: str, student_lm: LMFunction[Inputs, Outputs], trace_manager: TraceManager
+        cls, optimizer_args_file: str, student_lm: LMFunction[Inputs, Outputs], trace_manager: ZenbaseTracer
     ) -> LMFunction[Inputs, Outputs]:
         """
         Load optimizer arguments and create an optimized function.
