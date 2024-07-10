@@ -499,7 +499,7 @@ def test_bootstrap_few_shot_langchain(
 ):
     zenbase_manager = ZenbaseTracer()
 
-    @zenbase_manager.trace_function
+    @zenbase_manager
     @retry(
         stop=stop_after_attempt(3),
         wait=wait_exponential_jitter(max=8),
@@ -558,7 +558,7 @@ def test_bootstrap_few_shot_langchain(
         answer = chain.invoke(inputs_to_answer)
         return {"answer": answer}
 
-    @zenbase_manager.trace_function
+    @zenbase_manager
     @retry(
         stop=stop_after_attempt(3),
         wait=wait_exponential_jitter(max=8),
@@ -593,7 +593,7 @@ def test_bootstrap_few_shot_langchain(
         answer = chain.invoke(request.inputs)
         return {"plan": answer}
 
-    @zenbase_manager.trace_function
+    @zenbase_manager
     @retry(
         stop=stop_after_attempt(3),
         wait=wait_exponential_jitter(max=8),
