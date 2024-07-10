@@ -114,7 +114,7 @@ class LangsmithEvaluationHelper(BaseEvaluationHelper):
                 IndividualEvalValue(
                     passed=score >= threshold,
                     response=outputs,
-                    demo=LMDemo(inputs=inputs, outputs=outputs, original_object=res["example"]),
+                    demo=LMDemo(inputs=inputs, outputs=outputs, adaptor_object=res["example"]),
                     details=res,
                     score=score,
                 )

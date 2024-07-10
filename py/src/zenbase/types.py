@@ -76,7 +76,7 @@ Outputs = TypeVar("Outputs", covariant=True, bound=dict)
 class LMDemo(Dataclass, Generic[Inputs, Outputs]):
     inputs: Inputs
     outputs: Outputs
-    original_object: object | None = None
+    adaptor_object: object | None = None
 
     def __hash__(self):
         # TODO: Should revert.

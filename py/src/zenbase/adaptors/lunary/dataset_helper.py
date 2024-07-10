@@ -16,6 +16,6 @@ class LunaryDatasetHelper(BaseDatasetHelper):
 
     def fetch_dataset_demos(self, dataset_name: str) -> list[LMDemo]:
         return [
-            LMDemo(inputs=example.input, outputs=example.ideal_output, original_object=example)
+            LMDemo(inputs=example.input, outputs=example.ideal_output, adaptor_object=example)
             for example in self.client.get_dataset(dataset_name)
         ]
