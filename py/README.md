@@ -16,14 +16,32 @@ rye add zenbase
 
 Zenbase is designed to require minimal changes to your existing codebase and integrate seamlessly with your existing eval/observability platforms. It works with any AI SDK (OpenAI, Anthropic, Cohere, Langchain, etc.).
 
-| Cookbook                                       | Run in Colab                                                                                                                                                          |
-| ---------------------------------------------- |-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| [langsmith.ipynb](./cookbooks/langsmith.ipynb) | [<img align="center" src="https://colab.research.google.com/assets/colab-badge.svg" />](https://colab.research.google.com/drive/14Lh8Azk_Ocnm2GvGvFHFz_hJ1tFNvOJW?usp=sharing) |
-| [langfuse.ipynb](./cookbooks/langfuse.ipynb)   | [<img align="center" src="https://colab.research.google.com/assets/colab-badge.svg" />](https://colab.research.google.com/drive/1EMR_PQfsfawTvTjZSxcS_FQUr8s_gVwR?usp=sharing) |
-| [parea.ipynb](./cookbooks/parea.ipynb)         | [<img align="center" src="https://colab.research.google.com/assets/colab-badge.svg" />](https://colab.research.google.com/drive/1oBFD8MhHjHxCltuosFeXHkqOsdeXwJ_N?usp=sharing)   |
-| [lunary.ipynb](./cookbooks/lunary.ipynb)       | [<img align="center" src="https://colab.research.google.com/assets/colab-badge.svg" />](https://colab.research.google.com/drive/1HXpW6E7AgoBbVWiiUxxtzztU6Gxy6iEA?usp=sharing) |
 
-## Repo setup
+### Labeled Few-Shot Learning Cookbooks:
+
+LabeledFewShot will be useful for tasks that are just one layer of prompts.
+
+| Cookbook                                       | Run in Colab                                                                                                                                                                                              |
+| ---------------------------------------------- |-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| [langsmith.ipynb](cookbooks/labeled_few_shot/langsmith.ipynb) | [<img align="center" src="https://colab.research.google.com/assets/colab-badge.svg" />](https://colab.research.google.com/github/zenbase-ai/lib/blob/main/py/cookbooks/labeled_few_shot/langsmith.ipynb) |
+| [langfuse.ipynb](cookbooks/labeled_few_shot/langfuse.ipynb)   | [<img align="center" src="https://colab.research.google.com/assets/colab-badge.svg" />](https://colab.research.google.com/github/zenbase-ai/lib/blob/main/py/cookbooks/labeled_few_shot/langfuse.ipynb)   |
+| [parea.ipynb](cookbooks/labeled_few_shot/parea.ipynb)         | [<img align="center" src="https://colab.research.google.com/assets/colab-badge.svg" />](https://colab.research.google.com/github/zenbase-ai/lib/blob/main/py/cookbooks/labeled_few_shot/parea.ipynb)      |
+| [lunary.ipynb](cookbooks/labeled_few_shot/lunary.ipynb)       | [<img align="center" src="https://colab.research.google.com/assets/colab-badge.svg" />](https://colab.research.google.com/github/zenbase-ai/lib/blob/main/py/cookbooks/labeled_few_shot/lunary.ipynb)     |
+
+### Bootstrap Few-Shot Learning Cookbooks:
+
+BootstrapFewShot will be useful for tasks that are multiple layers of prompts.
+
+| Cookbook                                       | Run in Colab                                                                                                                                                                                              |
+| ---------------------------------------------- |-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| [langsmith.ipynb](cookbooks/bootstrap_few_shot/langsmith.ipynb) | [<img align="center" src="https://colab.research.google.com/assets/colab-badge.svg" />](https://colab.research.google.com/github/zenbase-ai/lib/blob/main/py/cookbooks/bootstrap_few_shot/langsmith.ipynb) |
+| [langfuse.ipynb](cookbooks/bootstrap_few_shot/langfuse.ipynb)   | [<img align="center" src="https://colab.research.google.com/assets/colab-badge.svg" />](https://colab.research.google.com/github/zenbase-ai/lib/blob/main/py/cookbooks/bootstrap_few_shot/langfuse.ipynb)  |
+| [parea.ipynb](cookbooks/bootstrap_few_shot/parea.ipynb)         | [<img align="center" src="https://colab.research.google.com/assets/colab-badge.svg" />](https://colab.research.google.com/github/zenbase-ai/lib/blob/main/py/cookbooks/bootstrap_few_shot/parea.ipynb)     |
+| [lunary.ipynb](cookbooks/bootstrap_few_shot/lunary.ipynb)       | [<img align="center" src="https://colab.research.google.com/assets/colab-badge.svg" />](https://colab.research.google.com/github/zenbase-ai/lib/blob/main/py/cookbooks/bootstrap_few_shot/lunary.ipynb)    |
+
+https://colab.research.google.com/github/zenbase-ai/lib/blob/amir/feat/bootstrapfewshot/eng-22-featbootstrapfewshot-cleanup-notebook-and-readme/py/cookbooks/bootstrap_few_shot/langfuse.ipynb
+
+## Development setup
 
 This repo uses Python 3.10 and [rye](https://rye.astral.sh/) to manage dependencies. Once you've gotten rye installed, you can install dependencies by running:
 
