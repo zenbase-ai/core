@@ -23,6 +23,6 @@ class LangfuseDatasetHelper(BaseDatasetHelper):
 
     def fetch_dataset_demos(self, dataset_name: str) -> list[LMDemo]:
         return [
-            LMDemo(inputs=example.input, outputs=example.expected_output, adaptor_object=example)
+            LMDemo(inputs=example.input, outputs=example.expected_output)
             for example in self.fetch_dataset_examples(dataset_name)
         ]
