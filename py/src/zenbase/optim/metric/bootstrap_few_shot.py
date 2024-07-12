@@ -6,6 +6,7 @@ from typing import Any, Dict, NamedTuple
 
 import cloudpickle
 
+from zenbase.adaptors.arize import ZenArizeAdaptor
 from zenbase.adaptors.langchain import ZenLangSmith
 from zenbase.core.managers import ZenbaseTracer
 from zenbase.optim.base import LMOptim
@@ -127,8 +128,9 @@ class BootstrapFewShot(LMOptim[Inputs, Outputs]):
         for validated_demo in validated_demo_set:
             teacher_lm(validated_demo.inputs)
 
-    @staticmethod
-    def _consolidate_traces_to_optimized_args(trace_manager: ZenbaseTracer) -> dict[str, dict[str, dict[str, LMDemo]]]:
+    def _consolidate_traces_to_optimized_args(
+        self, trace_manager: ZenbaseTracer
+    ) -> dict[str, dict[str, dict[str, LMDemo]]]:
         """
         Consolidate the traces to optimized args that will be used to optimize the student function
 
@@ -149,6 +151,12 @@ class BootstrapFewShot(LMOptim[Inputs, Outputs]):
                         input_args = {k: str(v).replace("{", " ").replace("}", " ") for k, v in input_args.items()}
                     if isinstance(output_args, dict):
                         output_args = {k: str(v).replace("{", " ").replace("}", " ") for k, v in output_args.items()}
+
+                    if isinstance(self.zen_adaptor, ZenArizeAdaptor):
+                        # TODO: Not the right place to do it, clean it up later, but arize needs to get inputs
+                        #  and outputs everywhere
+                        input_args = {"inputs": input_args}
+                        output_args = {"outputs": output_args}
 
                     each_function_inputs.setdefault(inside_functions, []).append(
                         LMDemo(inputs=input_args, outputs=output_args)

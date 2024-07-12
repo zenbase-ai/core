@@ -43,7 +43,11 @@ class LabeledFewShot(LMOptim[Inputs, Outputs]):
             nonlocal best_score, best_lmfn, best_candidate_result
 
             candidate_fn = lmfn.clean_and_duplicate(zenbase)
-            candidate_result = evaluator(candidate_fn)
+            try:
+                candidate_result = evaluator(candidate_fn)
+            except Exception as e:
+                log.error("candidate evaluation failed", error=e)
+                candidate_result = CandidateEvalResult(candidate_fn, {"score": float("-inf")})
 
             self.events.emit("candidate", candidate_result)
 
