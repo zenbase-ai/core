@@ -50,7 +50,7 @@ def create_dataset_with_examples(zen_arize_adaptor: ZenArizeAdaptor, prefix: str
     dataset_name = ksuid(prefix=prefix)
 
     inputs = [{"question": example["question"]} for example in item_set]
-    expected_outputs = [example["answer"] for example in item_set]
+    expected_outputs = [{"answer": example["answer"]} for example in item_set]
     zen_arize_adaptor.add_examples_to_dataset(dataset_name, inputs, expected_outputs)
     return dataset_name
 
@@ -340,7 +340,10 @@ def test_zen_arize_lcel_bootstrap_few_shot(
 
     @zenbase_tracer  # it is 1
     def solver(request: LMRequest):  # it is 2
-        request.inputs = request.inputs["inputs"]
+        if "inputs" in request.inputs.keys():
+            request.inputs = request.inputs["inputs"]
+        else:
+            pass
         messages = [
             (
                 "system",
@@ -350,20 +353,8 @@ def test_zen_arize_lcel_bootstrap_few_shot(
         ]
 
         for demo in request.zenbase.task_demos:  # it is 3
-            if "inputs" in demo.inputs.keys():
-                demo_input = demo.inputs["inputs"]
-            else:
-                demo_input = demo.inputs
-
-            if isinstance(demo_input, dict) and "question" in demo_input.keys():
-                demo_input = demo_input["question"]
-
-            if "outputs" in demo.outputs.keys():
-                demo_output = demo.outputs["outputs"]
-            else:
-                demo_output = demo.outputs
-            if isinstance(demo_output, dict) and "answer" in demo_output.keys():
-                demo_output = demo_output["answer"]
+            demo_input = demo.inputs["inputs"]["question"]
+            demo_output = demo.outputs["outputs"]["answer"]
 
             messages += [
                 ("user", f"Example Question: {demo_input}"),
@@ -406,8 +397,8 @@ def test_zen_arize_lcel_bootstrap_few_shot(
         if request.zenbase.task_demos:  # it is 3
             for demo in request.zenbase.task_demos[:2]:  # it is 4
                 messages += [
-                    ("user", demo.inputs["question"]),
-                    ("assistant", demo.outputs["plan"]),
+                    ("user", demo.inputs["inputs"]["question"]),
+                    ("assistant", demo.outputs["outputs"]["plan"]),
                 ]
 
         chain = ChatPromptTemplate.from_messages(messages) | ChatOpenAI(model="gpt-3.5-turbo") | StrOutputParser()
@@ -431,9 +422,9 @@ def test_zen_arize_lcel_bootstrap_few_shot(
         if request.zenbase.task_demos:  # it is 3
             for demo in request.zenbase.task_demos[:2]:  # it is 4
                 messages += [
-                    ("user", demo.inputs["question"]),
-                    ("user", demo.inputs["plan"]),
-                    ("assistant", demo.outputs["operation"]),
+                    ("user", demo.inputs["inputs"]["question"]),
+                    ("user", demo.inputs["inputs"]["plan"]),
+                    ("assistant", demo.outputs["outputs"]["operation"]),
                 ]
 
         chain = ChatPromptTemplate.from_messages(messages) | ChatOpenAI(model="gpt-3.5-turbo") | StrOutputParser()
@@ -447,8 +438,10 @@ def test_zen_arize_lcel_bootstrap_few_shot(
     # GIVEN you have a function that scores the answer
     def score_answer(output: str, expected: dict):
         """The first argument is the return value from the `langchain_chain` function above."""
-
-        score = int(output["answer"] == expected["outputs"].split("#### ")[-1])
+        try:
+            score = int(output["answer"] == expected["outputs"]["answer"].split("#### ")[-1])
+        except Exception as e:
+            raise e
         return score
 
     bootstrap_few_shot = BootstrapFewShot(

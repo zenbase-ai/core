@@ -80,7 +80,7 @@ def test_run_validated_demos():
     assert mock_teacher_lm.call_count == 2
 
 
-def test_consolidate_traces_to_optimized_args(mock_trace_manager):
+def test_consolidate_traces_to_optimized_args(mock_trace_manager, bootstrap_few_shot):
     mock_trace_manager.all_traces = {
         "trace1": {
             "func1": {
@@ -88,7 +88,7 @@ def test_consolidate_traces_to_optimized_args(mock_trace_manager):
             }
         }
     }
-    optimized_args = BootstrapFewShot._consolidate_traces_to_optimized_args(mock_trace_manager)
+    optimized_args = bootstrap_few_shot._consolidate_traces_to_optimized_args(mock_trace_manager)
     assert "inner_func1" in optimized_args
     assert isinstance(optimized_args["inner_func1"]["args"]["zenbase"], LMZenbase)
 
