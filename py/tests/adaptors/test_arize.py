@@ -137,7 +137,7 @@ def test_zen_arize_metric_evaluator(
     # GIVEN you have a function that scores the answer
     def score_answer(output: str, expected: dict):
         """The first argument is the return value from the `langchain_chain` function above."""
-        score = int(output == expected["outputs"].split("#### ")[-1])
+        score = int(output == expected["outputs"]["answer"].split("#### ")[-1])
         return score
 
     zen_arize_adaptor.set_evaluator_kwargs(
@@ -190,10 +190,10 @@ def test_zen_arize_lcel_labeled_few_shot_learning(
     def score_answer(output: str, expected: dict):
         """The first argument is the return value from the `langchain_chain` function above."""
         # if there is any #### in the output
-        if "####" in expected["outputs"]:
+        if "####" in expected["outputs"]["answer"]:
             output = output.split("#### ")[-1]
 
-        score = int(output == expected["outputs"].split("#### ")[-1])
+        score = int(output == expected["outputs"]["answer"].split("#### ")[-1])
         return score
 
     # WHEN you optimize the function with the labeled few-shot learning
@@ -314,7 +314,7 @@ def test_zen_arize_lcel_multiple_calls(
     def score_answer(output: str, expected: dict):
         """The first argument is the return value from the `langchain_chain` function above."""
 
-        score = int(output["answer"] == expected["outputs"].split("#### ")[-1])
+        score = int(output["answer"] == expected["outputs"]["answer"].split("#### ")[-1])
         return score
 
     zen_arize_adaptor.set_evaluator_kwargs(
