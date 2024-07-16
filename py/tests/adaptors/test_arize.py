@@ -432,7 +432,7 @@ def test_zen_arize_lcel_bootstrap_few_shot(
         return {"operation": operation}
 
     # GIVEN your langchain_chain function is defined and working
-    return_langchain = solver({"inputs": {"question": "What is 2 + 2?"}})
+    return_langchain = solver({"question": "What is 2 + 2?"})
     assert return_langchain is not None
 
     # GIVEN you have a function that scores the answer
