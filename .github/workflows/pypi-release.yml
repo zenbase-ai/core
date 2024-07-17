@@ -32,7 +32,7 @@ jobs:
       - name: Build package
         working-directory: py
         run: rye build
-      - name: Run Integration Tests
+      - name: Publish to PyPI
         working-directory: py
         env:
           PYPI_TOKEN: ${{ secrets.PYPI_TOKEN }}
