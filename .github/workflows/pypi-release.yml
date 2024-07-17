@@ -23,6 +23,8 @@ jobs:
       - name: Pin python-version ${{ matrix.python-version }}
         working-directory: py
         run: rye pin ${{ matrix.python-version }}
+      - name: Update Rye
+        run: rye self update
       - name: Install dependencies
         working-directory: py
         run: rye sync --no-lock
