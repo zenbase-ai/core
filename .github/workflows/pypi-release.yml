@@ -36,4 +36,5 @@ jobs:
         working-directory: py
         env:
           PYPI_TOKEN: ${{ secrets.PYPI_TOKEN }}
-        run: rye publish --token $PYPI_TOKEN
+        run: rye publish --token $PYPI_TOKEN --yes --skip-existing
+
