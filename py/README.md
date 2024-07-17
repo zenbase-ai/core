@@ -23,11 +23,11 @@ LabeledFewShot will be useful for tasks that are just one layer of prompts.
 
 | Cookbook                                                      | Run in Colab                                                                                                                                                                                             |
 |---------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| [langsmith.ipynb](cookbooks/labeled_few_shot/langsmith.ipynb) | [<img align="center" src="https://colab.research.google.com/assets/colab-badge.svg" />](https://colab.research.google.com/github/zenbase-ai/lib/blob/rc/py/cookbooks/labeled_few_shot/langsmith.ipynb) |
-| [arize.ipynb](cookbooks/labeled_few_shot/arize.ipynb)         | [<img align="center" src="https://colab.research.google.com/assets/colab-badge.svg" />](https://colab.research.google.com/github/zenbase-ai/lib/blob/rc/py/cookbooks/labeled_few_shot/arize.ipynb)     |
-| [langfuse.ipynb](cookbooks/labeled_few_shot/langfuse.ipynb)   | [<img align="center" src="https://colab.research.google.com/assets/colab-badge.svg" />](https://colab.research.google.com/github/zenbase-ai/lib/blob/rc/py/cookbooks/labeled_few_shot/langfuse.ipynb)  |
-| [parea.ipynb](cookbooks/labeled_few_shot/parea.ipynb)         | [<img align="center" src="https://colab.research.google.com/assets/colab-badge.svg" />](https://colab.research.google.com/github/zenbase-ai/lib/blob/rc/py/cookbooks/labeled_few_shot/parea.ipynb)     |
-| [lunary.ipynb](cookbooks/labeled_few_shot/lunary.ipynb)       | [<img align="center" src="https://colab.research.google.com/assets/colab-badge.svg" />](https://colab.research.google.com/github/zenbase-ai/lib/blob/rc/py/cookbooks/labeled_few_shot/lunary.ipynb)    |
+| [langsmith.ipynb](cookbooks/labeled_few_shot/langsmith.ipynb) | [<img align="center" src="https://colab.research.google.com/assets/colab-badge.svg" />](https://colab.research.google.com/github/zenbase-ai/lib/blob/main/py/cookbooks/labeled_few_shot/langsmith.ipynb) |
+| [arize.ipynb](cookbooks/labeled_few_shot/arize.ipynb)         | [<img align="center" src="https://colab.research.google.com/assets/colab-badge.svg" />](https://colab.research.google.com/github/zenbase-ai/lib/blob/main/py/cookbooks/labeled_few_shot/arize.ipynb)     |
+| [langfuse.ipynb](cookbooks/labeled_few_shot/langfuse.ipynb)   | [<img align="center" src="https://colab.research.google.com/assets/colab-badge.svg" />](https://colab.research.google.com/github/zenbase-ai/lib/blob/main/py/cookbooks/labeled_few_shot/langfuse.ipynb)  |
+| [parea.ipynb](cookbooks/labeled_few_shot/parea.ipynb)         | [<img align="center" src="https://colab.research.google.com/assets/colab-badge.svg" />](https://colab.research.google.com/github/zenbase-ai/lib/blob/main/py/cookbooks/labeled_few_shot/parea.ipynb)     |
+| [lunary.ipynb](cookbooks/labeled_few_shot/lunary.ipynb)       | [<img align="center" src="https://colab.research.google.com/assets/colab-badge.svg" />](https://colab.research.google.com/github/zenbase-ai/lib/blob/main/py/cookbooks/labeled_few_shot/lunary.ipynb)    |
 
 ### Bootstrap Few-Shot Learning Cookbooks:
 
@@ -35,11 +35,11 @@ BootstrapFewShot will be useful for tasks that are multiple layers of prompts.
 
 | Cookbook                                                        | Run in Colab                                                                                                                                                                                               |
 |-----------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| [langsmith.ipynb](cookbooks/bootstrap_few_shot/langsmith.ipynb) | [<img align="center" src="https://colab.research.google.com/assets/colab-badge.svg" />](https://colab.research.google.com/github/zenbase-ai/lib/blob/rc/py/cookbooks/bootstrap_few_shot/langsmith.ipynb) |
-| [arize.ipynb](cookbooks/bootstrap_few_shot/arize.ipynb)         | [<img align="center" src="https://colab.research.google.com/assets/colab-badge.svg" />](https://colab.research.google.com/github/zenbase-ai/lib/blob/rc/py/cookbooks/bootstrap_few_shot/arize.ipynb)     |
-| [langfuse.ipynb](cookbooks/bootstrap_few_shot/langfuse.ipynb)   | [<img align="center" src="https://colab.research.google.com/assets/colab-badge.svg" />](https://colab.research.google.com/github/zenbase-ai/lib/blob/rc/py/cookbooks/bootstrap_few_shot/langfuse.ipynb)  |
-| [parea.ipynb](cookbooks/bootstrap_few_shot/parea.ipynb)         | [<img align="center" src="https://colab.research.google.com/assets/colab-badge.svg" />](https://colab.research.google.com/github/zenbase-ai/lib/blob/rc/py/cookbooks/bootstrap_few_shot/parea.ipynb)     |
-| [lunary.ipynb](cookbooks/bootstrap_few_shot/lunary.ipynb)       | [<img align="center" src="https://colab.research.google.com/assets/colab-badge.svg" />](https://colab.research.google.com/github/zenbase-ai/lib/blob/rc/py/cookbooks/bootstrap_few_shot/lunary.ipynb)    |
+| [langsmith.ipynb](cookbooks/bootstrap_few_shot/langsmith.ipynb) | [<img align="center" src="https://colab.research.google.com/assets/colab-badge.svg" />](https://colab.research.google.com/github/zenbase-ai/lib/blob/main/py/cookbooks/bootstrap_few_shot/langsmith.ipynb) |
+| [arize.ipynb](cookbooks/bootstrap_few_shot/arize.ipynb)         | [<img align="center" src="https://colab.research.google.com/assets/colab-badge.svg" />](https://colab.research.google.com/github/zenbase-ai/lib/blob/main/py/cookbooks/bootstrap_few_shot/arize.ipynb)     |
+| [langfuse.ipynb](cookbooks/bootstrap_few_shot/langfuse.ipynb)   | [<img align="center" src="https://colab.research.google.com/assets/colab-badge.svg" />](https://colab.research.google.com/github/zenbase-ai/lib/blob/main/py/cookbooks/bootstrap_few_shot/langfuse.ipynb)  |
+| [parea.ipynb](cookbooks/bootstrap_few_shot/parea.ipynb)         | [<img align="center" src="https://colab.research.google.com/assets/colab-badge.svg" />](https://colab.research.google.com/github/zenbase-ai/lib/blob/main/py/cookbooks/bootstrap_few_shot/parea.ipynb)     |
+| [lunary.ipynb](cookbooks/bootstrap_few_shot/lunary.ipynb)       | [<img align="center" src="https://colab.research.google.com/assets/colab-badge.svg" />](https://colab.research.google.com/github/zenbase-ai/lib/blob/main/py/cookbooks/bootstrap_few_shot/lunary.ipynb)    |
 
 ## Development setup
 
