@@ -1,4 +1,3 @@
-import pandas as pd
 from phoenix.experiments.types import Dataset, Example
 
 from zenbase.adaptors.base.dataset_helper import BaseDatasetHelper
@@ -13,15 +12,10 @@ class ArizeDatasetHelper(BaseDatasetHelper):
         )
 
     def add_examples_to_dataset(self, dataset_name: str, inputs: list, outputs: list) -> Dataset:
-        list_of_examples = []
-        for inputs, outputs in zip(inputs, outputs):
-            list_of_examples.append({"inputs": inputs, "outputs": outputs})
-        df = pd.DataFrame(list_of_examples)
         return self.client.upload_dataset(
             dataset_name=dataset_name,
-            dataframe=df,
-            input_keys=["inputs"],
-            output_keys=["outputs"],
+            inputs=inputs,
+            outputs=outputs,
         )
 
     def fetch_dataset_examples(self, dataset_name: str) -> list[Example]:
