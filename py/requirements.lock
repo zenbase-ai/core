@@ -17,6 +17,8 @@ certifi==2024.6.2
     # via requests
 charset-normalizer==3.3.2
     # via requests
+cloudpickle==3.0.0
+    # via zenbase
 deprecated==1.2.14
     # via opentelemetry-api
 exceptiongroup==1.2.1

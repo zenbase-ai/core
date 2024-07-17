@@ -7,6 +7,7 @@ on:
   pull_request:
     branches:
       - main
+      - rc*
 
 jobs:
   build:
@@ -33,10 +34,10 @@ jobs:
         run: ls -la py
       - name: Run Tests
         working-directory: py
-        run: rye run pytest -v
+        run: rye run pytest -v -n auto
       - name: Run Integration Tests
         working-directory: py
-        run: rye run pytest -v -m helpers
+        run: rye run pytest -v -m helpers -n auto
         env:
           LANGCHAIN_API_KEY: ${{ secrets.LANGCHAIN_API_KEY }}
           LANGCHAIN_TRACING_V2: ${{ secrets.LANGCHAIN_TRACING_V2 }}

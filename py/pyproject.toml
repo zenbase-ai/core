@@ -1,6 +1,6 @@
 [project]
 name = "zenbase"
-version = "0.0.3"
+version = "0.0.4rc6"
 description = "LLMs made Zen"
 authors = [{ name = "Cyrus Nouroozi", email = "cyrus@zenbase.ai" }]
 dependencies = [
@@ -12,9 +12,11 @@ dependencies = [
     "structlog>=24.2.0",
     "pyee>=11.1.0",
     "posthog>=3.5.0",
+    "cloudpickle>=3.0.0",
 ]
 readme = "README.md"
 requires-python = ">= 3.10"
+lisence = "MIT"
 
 [build-system]
 requires = ["hatchling"]
@@ -41,7 +43,7 @@ dev-dependencies = [
     "pytest-recording>=0.13.1",
     "python-dotenv>=1.0.1",
     "vcrpy>=6.0.1",
-    "arize-phoenix[evals]>=4.2.4",
+    "arize-phoenix[evals]>=4.9.0",
     "nest-asyncio>=1.6.0",
     "langchain-openai>=0.1.8",
     "langchain-core>=0.2.3",
@@ -52,6 +54,7 @@ dev-dependencies = [
     "autoevals>=0.0.68",
     "braintrust>=0.0.131",
     "pre-commit>=3.7.1",
+    "pytest-xdist>=3.6.1",
 ]
 
 [tool.hatch.metadata]

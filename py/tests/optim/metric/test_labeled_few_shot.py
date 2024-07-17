@@ -3,7 +3,7 @@ from random import Random, random
 import pytest
 
 from zenbase.optim.metric.labeled_few_shot import LabeledFewShot
-from zenbase.optim.metric.types import CandidateMetricResult
+from zenbase.optim.metric.types import CandidateEvalResult
 from zenbase.types import LMDemo, LMFunction, LMRequest, deflm
 
 lmfn = deflm(lambda x: x)
@@ -63,12 +63,12 @@ def dummy_lmfn(_: LMRequest):
 
 
 def dummy_evalfn(fn: LMFunction):
-    return CandidateMetricResult(fn, {"score": random()})
+    return CandidateEvalResult(fn, {"score": random()})
 
 
 def test_training(optim: LabeledFewShot):
     # Train the dummy function
-    trained_lmfn, candidates = optim.perform(
+    trained_lmfn, candidates, best_candidate_result = optim.perform(
         dummy_lmfn,
         dummy_evalfn,
         rounds=1,
@@ -86,7 +86,7 @@ def test_training(optim: LabeledFewShot):
 @pytest.mark.anyio
 async def test_async_training(optim: LabeledFewShot):
     # Train the dummy function
-    trained_dummy_lmfn, candidates = await optim.aperform(
+    trained_dummy_lmfn, candidates, best_candidate_result = await optim.aperform(
         dummy_lmfn,
         dummy_evalfn,
         rounds=1,

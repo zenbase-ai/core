@@ -2,12 +2,12 @@ from datetime import datetime
 
 import pytest
 
-from zenbase.core.managers import TraceManager
+from zenbase.core.managers import ZenbaseTracer
 
 
 @pytest.fixture
 def zenbase_manager():
-    return TraceManager()
+    return ZenbaseTracer()
 
 
 @pytest.fixture
