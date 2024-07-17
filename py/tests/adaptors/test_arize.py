@@ -127,17 +127,17 @@ def test_zen_arize_metric_evaluator(
         chain = ChatPromptTemplate.from_messages(messages) | ChatOpenAI(model="gpt-3.5-turbo") | StrOutputParser()
 
         print("Mathing...")
-        answer = chain.invoke(request.inputs["inputs"])
+        answer = chain.invoke(request.inputs)
         return answer
 
     # GIVEN your langchain_chain function is defined and working
-    return_langchain = langchain_chain({"inputs": {"question": "What is 2 + 2?"}})
+    return_langchain = langchain_chain({"question": "What is 2 + 2?"})
     assert return_langchain is not None
 
     # GIVEN you have a function that scores the answer
     def score_answer(output: str, expected: dict):
         """The first argument is the return value from the `langchain_chain` function above."""
-        score = int(output == expected["outputs"]["answer"].split("#### ")[-1])
+        score = int(output == expected["answer"].split("#### ")[-1])
         return score
 
     zen_arize_adaptor.set_evaluator_kwargs(
@@ -179,21 +179,21 @@ def test_zen_arize_lcel_labeled_few_shot_learning(
         chain = ChatPromptTemplate.from_messages(messages) | ChatOpenAI(model="gpt-3.5-turbo") | StrOutputParser()
 
         print("Mathing...")
-        answer = chain.invoke(request.inputs["inputs"])
+        answer = chain.invoke(request.inputs)
         return answer
 
     # GIVEN your langchain_chain function is defined and working
-    return_langchain = langchain_chain({"inputs": {"question": "What is 2 + 2?"}})
+    return_langchain = langchain_chain({"question": "What is 2 + 2?"})
     assert return_langchain is not None
 
     # GIVEN you have a function that scores the answer
     def score_answer(output: str, expected: dict):
         """The first argument is the return value from the `langchain_chain` function above."""
         # if there is any #### in the output
-        if "####" in expected["outputs"]["answer"]:
+        if "####" in expected["answer"]:
             output = output.split("#### ")[-1]
 
-        score = int(output == expected["outputs"]["answer"].split("#### ")[-1])
+        score = int(output == expected["answer"].split("#### ")[-1])
         return score
 
     # WHEN you optimize the function with the labeled few-shot learning
@@ -221,7 +221,6 @@ def test_zen_arize_lcel_multiple_calls(
 
     @zenbase_tracer  # it is 1
     def solver(request: LMRequest):  # it is 2
-        request.inputs = request.inputs["inputs"]
         messages = [
             (
                 "system",
@@ -307,14 +306,14 @@ def test_zen_arize_lcel_multiple_calls(
         return {"operation": operation}
 
     # GIVEN your langchain_chain function is defined and working
-    return_langchain = solver({"inputs": {"question": "What is 2 + 2?"}})
+    return_langchain = solver({"question": "What is 2 + 2?"})
     assert return_langchain is not None
 
     # GIVEN you have a function that scores the answer
     def score_answer(output: str, expected: dict):
         """The first argument is the return value from the `langchain_chain` function above."""
 
-        score = int(output["answer"] == expected["outputs"]["answer"].split("#### ")[-1])
+        score = int(output["answer"] == expected["answer"].split("#### ")[-1])
         return score
 
     zen_arize_adaptor.set_evaluator_kwargs(
@@ -340,10 +339,6 @@ def test_zen_arize_lcel_bootstrap_few_shot(
 
     @zenbase_tracer  # it is 1
     def solver(request: LMRequest):  # it is 2
-        if "inputs" in request.inputs.keys():
-            request.inputs = request.inputs["inputs"]
-        else:
-            pass
         messages = [
             (
                 "system",
@@ -353,8 +348,8 @@ def test_zen_arize_lcel_bootstrap_few_shot(
         ]
 
         for demo in request.zenbase.task_demos:  # it is 3
-            demo_input = demo.inputs["inputs"]["question"]
-            demo_output = demo.outputs["outputs"]["answer"]
+            demo_input = demo.inputs["question"]
+            demo_output = demo.outputs["answer"]
 
             messages += [
                 ("user", f"Example Question: {demo_input}"),
@@ -397,8 +392,8 @@ def test_zen_arize_lcel_bootstrap_few_shot(
         if request.zenbase.task_demos:  # it is 3
             for demo in request.zenbase.task_demos[:2]:  # it is 4
                 messages += [
-                    ("user", demo.inputs["inputs"]["question"]),
-                    ("assistant", demo.outputs["outputs"]["plan"]),
+                    ("user", demo.inputs["question"]),
+                    ("assistant", demo.outputs["plan"]),
                 ]
 
         chain = ChatPromptTemplate.from_messages(messages) | ChatOpenAI(model="gpt-3.5-turbo") | StrOutputParser()
@@ -422,9 +417,9 @@ def test_zen_arize_lcel_bootstrap_few_shot(
         if request.zenbase.task_demos:  # it is 3
             for demo in request.zenbase.task_demos[:2]:  # it is 4
                 messages += [
-                    ("user", demo.inputs["inputs"]["question"]),
-                    ("user", demo.inputs["inputs"]["plan"]),
-                    ("assistant", demo.outputs["outputs"]["operation"]),
+                    ("user", demo.inputs["question"]),
+                    ("user", demo.inputs["plan"]),
+                    ("assistant", demo.outputs["operation"]),
                 ]
 
         chain = ChatPromptTemplate.from_messages(messages) | ChatOpenAI(model="gpt-3.5-turbo") | StrOutputParser()
@@ -432,14 +427,14 @@ def test_zen_arize_lcel_bootstrap_few_shot(
         return {"operation": operation}
 
     # GIVEN your langchain_chain function is defined and working
-    return_langchain = solver({"inputs": {"question": "What is 2 + 2?"}})
+    return_langchain = solver({"question": "What is 2 + 2?"})
     assert return_langchain is not None
 
     # GIVEN you have a function that scores the answer
     def score_answer(output: str, expected: dict):
         """The first argument is the return value from the `langchain_chain` function above."""
         try:
-            score = int(output["answer"] == expected["outputs"]["answer"].split("#### ")[-1])
+            score = int(output["answer"] == expected["answer"].split("#### ")[-1])
         except Exception as e:
             raise e
         return score
@@ -463,7 +458,7 @@ def test_zen_arize_lcel_bootstrap_few_shot(
     assert teacher_lm is not None
 
     zenbase_tracer.all_traces = {}
-    teacher_lm({"inputs": {"question": "What is 2 + 2?"}})
+    teacher_lm({"question": "What is 2 + 2?"})
 
     assert [v for k, v in zenbase_tracer.all_traces.items()][0]["optimized"]["planner_chain"]["args"][
         "request"
