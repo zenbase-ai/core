@@ -23,5 +23,4 @@ def fix_notebooks_in_directory(directory):
                 print(f"Fixed notebook: {notebook_path}")
 
 
-# Replace 'your_directory_path' with the path to your directory
 fix_notebooks_in_directory("../../cookbooks")
