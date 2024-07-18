@@ -6,9 +6,9 @@
   </div>
 </div>
 
-# Zenbase AI SDK —  Prompt engineering, automated.
+# Zenbase Core —  Prompt engineering, automated.
 
-The Zenbase AI SDK is the library for programming — not prompting — AI in production. It is a spin-out of [Stanford NLP's DSPy](https://github.com/stanfordnlp/dspy) project started by key contributors. DSPy is an excellent framework for R&D. Zenbase strives to be its brother for software engineering.
+Zenbase Core is the library for programming — not prompting — AI in production. It is a spin-out of [Stanford NLP's DSPy](https://github.com/stanfordnlp/dspy) project started by key contributors. DSPy is an excellent framework for R&D. Zenbase strives to be its brother for software engineering.
 
 ## Key Points
 
@@ -21,7 +21,7 @@ The Zenbase AI SDK is the library for programming — not prompting — AI in p
 pip install zenbase
 ```
 
-For more information take a look at the [Zenbase Python SDK README](./py/README.md). 
+For more information take a look at the [Zenbase Core Python README](./py/README.md). 
 
 ## License
 
