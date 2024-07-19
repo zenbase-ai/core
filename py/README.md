@@ -41,6 +41,17 @@ BootstrapFewShot will be useful for tasks that are multiple layers of prompts.
 | [parea.ipynb](cookbooks/bootstrap_few_shot/parea.ipynb)         | [<img align="center" src="https://colab.research.google.com/assets/colab-badge.svg" />](https://colab.research.google.com/github/zenbase-ai/lib/blob/main/py/cookbooks/bootstrap_few_shot/parea.ipynb)     |
 | [lunary.ipynb](cookbooks/bootstrap_few_shot/lunary.ipynb)       | [<img align="center" src="https://colab.research.google.com/assets/colab-badge.svg" />](https://colab.research.google.com/github/zenbase-ai/lib/blob/main/py/cookbooks/bootstrap_few_shot/lunary.ipynb)    |
 
+
+### Predifined Prompts Cookbooks:
+
+PredefinedPrompts will be useful for tasks that are multiple layers of prompts.
+
+| Cookbook                                                                              | Run in Colab                                                                                                                                                                                                              |
+|---------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| [Single Class Classifier](cookbooks/predefined_prompts/single_class_classifier.ipynb) | [<img align="center" src="https://colab.research.google.com/assets/colab-badge.svg" />](https://colab.research.google.com/github/zenbase-ai/lib/blob/main/py/cookbooks/predefined_prompts/single_class_classifier.ipynb)  |
+
+
+
 ## Development setup
 
 This repo uses Python 3.10 and [rye](https://rye.astral.sh/) to manage dependencies. Once you've gotten rye installed, you can install dependencies by running:
