@@ -13,6 +13,7 @@ dependencies = [
     "pyee>=11.1.0",
     "posthog>=3.5.0",
     "cloudpickle>=3.0.0",
+    "instructor>=1.3.5",
 ]
 readme = "README.md"
 requires-python = ">= 3.10"
@@ -55,6 +56,7 @@ dev-dependencies = [
     "braintrust>=0.0.131",
     "pre-commit>=3.7.1",
     "pytest-xdist>=3.6.1",
+    "openai-responses>=0.8.1",
 ]
 
 [tool.hatch.metadata]

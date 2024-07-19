@@ -12,6 +12,7 @@
 aiohttp==3.9.5
     # via datasets
     # via fsspec
+    # via instructor
     # via langchain
     # via lunary
 aioitertools==0.11.0
@@ -93,6 +94,7 @@ chevron==0.14.0
 cleo==2.1.0
     # via poetry
 click==8.1.7
+    # via typer
     # via uvicorn
 cloudpickle==3.0.0
     # via zenbase
@@ -125,6 +127,8 @@ distlib==0.3.8
     # via virtualenv
 distro==1.9.0
     # via openai
+docstring-parser==0.16
+    # via instructor
 dulwich==0.21.7
     # via poetry
 exceptiongroup==1.2.0
@@ -202,6 +206,8 @@ iniconfig==2.0.0
     # via pytest
 installer==0.7.0
     # via poetry
+instructor==1.3.5
+    # via zenbase
 ipdb==0.13.13
 ipykernel==6.29.4
     # via jupyter
@@ -227,6 +233,8 @@ jinja2==3.1.4
     # via jupyterlab
     # via jupyterlab-server
     # via nbconvert
+jiter==0.4.2
+    # via instructor
 joblib==1.4.2
     # via hdbscan
     # via pynndescent
@@ -311,6 +319,8 @@ llvmlite==0.42.0
 lunary==1.0.30
 mako==1.3.5
     # via alembic
+markdown-it-py==3.0.0
+    # via rich
 markupsafe==2.1.5
     # via jinja2
     # via mako
@@ -318,6 +328,8 @@ markupsafe==2.1.5
 matplotlib-inline==0.1.7
     # via ipykernel
     # via ipython
+mdurl==0.1.2
+    # via markdown-it-py
 mistune==3.0.2
     # via nbconvert
 monotonic==1.6
@@ -365,6 +377,7 @@ numpy==1.26.4
     # via scipy
     # via umap-learn
 openai==1.30.5
+    # via instructor
     # via langchain-openai
     # via parea-ai
 openinference-instrumentation==0.1.7
@@ -507,13 +520,15 @@ pybase62==0.4.3
     # via pksuid
 pycparser==2.22
     # via cffi
-pydantic==2.7.3
+pydantic==2.8.2
+    # via instructor
     # via langchain
     # via langchain-core
     # via langfuse
     # via langsmith
     # via openai
-pydantic-core==2.18.4
+pydantic-core==2.20.1
+    # via instructor
     # via pydantic
 pyee==11.1.0
     # via zenbase
@@ -522,6 +537,7 @@ pygments==2.18.0
     # via jupyter-console
     # via nbconvert
     # via qtconsole
+    # via rich
 pyhumps==3.8.0
     # via lunary
 pynndescent==0.5.12
@@ -607,6 +623,9 @@ rfc3339-validator==0.1.4
 rfc3986-validator==0.1.1
     # via jsonschema
     # via jupyter-events
+rich==13.7.1
+    # via instructor
+    # via typer
 rpds-py==0.18.1
     # via jsonschema
     # via referencing
@@ -629,6 +648,7 @@ setuptools==67.8.0
     # via opentelemetry-instrumentation
 shellingham==1.5.4
     # via poetry
+    # via typer
 six==1.16.0
     # via asttokens
     # via bleach
@@ -657,7 +677,8 @@ strawberry-graphql==0.235.0
     # via arize-phoenix
 structlog==24.2.0
     # via zenbase
-tenacity==8.3.0
+tenacity==8.5.0
+    # via instructor
     # via langchain
     # via langchain-core
     # via lunary
@@ -714,6 +735,8 @@ traitlets==5.14.3
     # via qtconsole
 trove-classifiers==2024.5.22
     # via poetry
+typer==0.12.3
+    # via instructor
 types-python-dateutil==2.9.0.20240316
     # via arrow
 typing-extensions==4.12.0
@@ -735,6 +758,7 @@ typing-extensions==4.12.0
     # via pyee
     # via sqlalchemy
     # via strawberry-graphql
+    # via typer
     # via uvicorn
 tzdata==2024.1
     # via pandas
