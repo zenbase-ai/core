@@ -1,38 +1,58 @@
+"""
+This module provides a SingleClassClassifierLMFunctionGenerator for generating language model functions.
+"""
+
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Optional, Type
+from typing import Dict, Optional, Type
 
 from instructor.client import AsyncInstructor, Instructor
 from pydantic import BaseModel
 
 from zenbase.core.managers import ZenbaseTracer
 from zenbase.predefined.base.function_generator import BaseLMFunctionGenerator
-from zenbase.types import LMRequest
+from zenbase.types import LMFunction, LMRequest
 
 
 @dataclass(kw_only=True)
 class SingleClassClassifierLMFunctionGenerator(BaseLMFunctionGenerator):
+    """
+    A generator for creating single-class classifier language model functions.
+    """
+
     instructor_client: Instructor | AsyncInstructor
     prompt: str
-    class_dict: Optional[dict[str, str]] = field(default=None)
+    class_dict: Optional[Dict[str, str]] = field(default=None)
     class_enum: Optional[Enum] = field(default=None)
     prediction_class: Optional[Type[BaseModel]] = field(default=None)
     model: str
     zenbase_tracer: ZenbaseTracer
 
     def __post_init__(self):
+        """Initialize the generator after creation."""
+        self._initialize_class_enum()
+        self._initialize_prediction_class()
+
+    def _initialize_class_enum(self):
+        """Initialize the class enum if not provided."""
         if not self.class_enum and self.class_dict:
             self.class_enum = self._generate_class_enum()
+
+    def _initialize_prediction_class(self):
+        """Initialize the prediction class if not provided."""
         if not self.prediction_class and self.class_enum:
             self.prediction_class = self._generate_prediction_class()
 
-    def generate(self):
+    def generate(self) -> LMFunction:
+        """Generate the classifier language model function."""
         return self._generate_classifier_prompt_lm_function()
 
     def _generate_class_enum(self) -> Enum:
+        """Generate the class enum from the class dictionary."""
         return Enum("Labels", self.class_dict)
 
     def _generate_prediction_class(self) -> Type[BaseModel]:
+        """Generate the prediction class based on the class enum."""
         class_enum = self.class_enum
 
         class SinglePrediction(BaseModel):
@@ -40,8 +60,9 @@ class SingleClassClassifierLMFunctionGenerator(BaseLMFunctionGenerator):
 
         return SinglePrediction
 
-    def _generate_classifier_prompt_lm_function(self):
-        @self.zenbase_tracer
+    def _generate_classifier_prompt_lm_function(self) -> LMFunction:
+        """Generate the classifier prompt language model function."""
+
         def classifier_function(request: LMRequest):
             categories = "\n".join([f"- {key.upper()}: {value}" for key, value in self.class_dict.items()])
             messages = [
@@ -85,4 +106,4 @@ class SingleClassClassifierLMFunctionGenerator(BaseLMFunctionGenerator):
                 model=self.model, response_model=self.prediction_class, messages=messages
             )
 
-        return classifier_function
+        return self.zenbase_tracer.trace_function(classifier_function)
