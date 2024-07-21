@@ -2,7 +2,7 @@ __all__ = ["SingleClassClassifier"]
 
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Any, Dict, List, NamedTuple, Optional, Type, TypedDict
+from typing import Any, Dict, List, NamedTuple, Optional, Type
 
 from instructor.client import AsyncInstructor, Instructor
 from pydantic import BaseModel
@@ -22,10 +22,6 @@ class SingleClassClassifier(BasePredefinedOptimizer):
     A single-class classifier that optimizes and evaluates language model functions.
     """
 
-    class DatasetItem(TypedDict):
-        inputs: Dict[str, Any]
-        outputs: Dict[str, Any]
-
     class Result(NamedTuple):
         best_function: LMFunction[Inputs, Outputs]
         candidate_results: List[CandidateEvalResult]
@@ -39,9 +35,9 @@ class SingleClassClassifier(BasePredefinedOptimizer):
     model: str
     zenbase_tracer: ZenbaseTracer
     lm_function: Optional[LMFunction] = field(default=None)
-    training_set: List[DatasetItem]
-    test_set: List[DatasetItem]
-    validation_set: List[DatasetItem]
+    training_set: list
+    test_set: list
+    validation_set: list
     shots: int = 5
     samples: int = 10
     best_evaluation: Optional[CandidateEvalResult] = field(default=None)
@@ -67,7 +63,7 @@ class SingleClassClassifier(BasePredefinedOptimizer):
         ).generate()
 
     @staticmethod
-    def _convert_dataset_to_demos(dataset: List[DatasetItem]) -> List[LMDemo]:
+    def _convert_dataset_to_demos(dataset: list) -> list[LMDemo]:
         """Convert a dataset to a list of LMDemo objects."""
         return [LMDemo(inputs={"question": item["inputs"]}, outputs={"answer": item["outputs"]}) for item in dataset]
 

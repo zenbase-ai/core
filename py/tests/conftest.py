@@ -115,6 +115,13 @@ def arxiv_dataset():
 
 
 @pytest.fixture(scope="session")
+def news_dataset():
+    import datasets
+
+    return datasets.load_dataset("SetFit/20_newsgroups")
+
+
+@pytest.fixture(scope="session")
 def gsm8k_demoset(gsm8k_dataset: DatasetDict) -> list[LMDemo]:
     return [
         LMDemo(
