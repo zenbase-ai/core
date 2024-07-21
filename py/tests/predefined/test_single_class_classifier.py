@@ -235,10 +235,16 @@ def single_class_classifier(
 
 
 @pytest.mark.helpers
-def test_single_class_classifier_perform(single_class_classifier: SingleClassClassifier):
+def test_single_class_classifier_perform(single_class_classifier: SingleClassClassifier, sample_news_article):
     result = single_class_classifier.perform()
     assert all(
         [result.best_function, result.candidate_results, result.best_candidate_result]
     ), "Assertions failed for result properties"
     traces = single_class_classifier.zenbase_tracer.all_traces
     assert traces, "No traces found"
+    assert result is not None, "Result should not be None"
+    assert hasattr(result, "best_function"), "Result should have a best_function attribute"
+    best_fn = result.best_function
+    assert callable(best_fn), "best_function should be callable"
+    output = best_fn(sample_news_article)
+    assert output is not None, "output should not be None"

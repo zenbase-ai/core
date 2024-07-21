@@ -2,7 +2,7 @@ __all__ = ["SingleClassClassifier"]
 
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Any, Dict, List, NamedTuple, Optional, Type
+from typing import Any, Dict, NamedTuple, Type
 
 from instructor.client import AsyncInstructor, Instructor
 from pydantic import BaseModel
@@ -24,24 +24,24 @@ class SingleClassClassifier(BasePredefinedOptimizer):
 
     class Result(NamedTuple):
         best_function: LMFunction[Inputs, Outputs]
-        candidate_results: List[CandidateEvalResult]
-        best_candidate_result: Optional[CandidateEvalResult]
+        candidate_results: list[CandidateEvalResult]
+        best_candidate_result: CandidateEvalResult | None
 
     instructor_client: Instructor | AsyncInstructor
     prompt: str
-    class_dict: Optional[Dict[str, str]] = field(default=None)
-    class_enum: Optional[Enum] = field(default=None)
-    prediction_class: Optional[Type[BaseModel]] = field(default=None)
+    class_dict: Dict[str, str] | None = field(default=None)
+    class_enum: Enum | None = field(default=None)
+    prediction_class: Type[BaseModel] | None = field(default=None)
     model: str
     zenbase_tracer: ZenbaseTracer
-    lm_function: Optional[LMFunction] = field(default=None)
+    lm_function: LMFunction | None = field(default=None)
     training_set: list
     test_set: list
     validation_set: list
     shots: int = 5
     samples: int = 10
-    best_evaluation: Optional[CandidateEvalResult] = field(default=None)
-    base_evaluation: Optional[CandidateEvalResult] = field(default=None)
+    best_evaluation: CandidateEvalResult | None = field(default=None)
+    base_evaluation: CandidateEvalResult | None = field(default=None)
 
     def __post_init__(self):
         """Initialize the SingleClassClassifier after creation."""
@@ -91,7 +91,8 @@ class SingleClassClassifier(BasePredefinedOptimizer):
 
         return optimizer_result
 
-    def _create_evaluator(self):
+    @staticmethod
+    def _create_evaluator():
         """Create the evaluation function."""
 
         def evaluator(output: Any, ideal_output: Dict[str, Any]) -> Dict[str, int]:
