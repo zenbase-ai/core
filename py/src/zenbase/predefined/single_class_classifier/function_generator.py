@@ -2,16 +2,25 @@
 This module provides a SingleClassClassifierLMFunctionGenerator for generating language model functions.
 """
 
+import logging
 from dataclasses import dataclass, field
 from enum import Enum
 from typing import Dict, Optional, Type
 
 from instructor.client import AsyncInstructor, Instructor
 from pydantic import BaseModel
+from tenacity import (
+    before_sleep_log,
+    retry,
+    stop_after_attempt,
+    wait_exponential_jitter,
+)
 
 from zenbase.core.managers import ZenbaseTracer
 from zenbase.predefined.base.function_generator import BaseLMFunctionGenerator
 from zenbase.types import LMFunction, LMRequest
+
+log = logging.getLogger(__name__)
 
 
 @dataclass(kw_only=True)
@@ -63,6 +72,11 @@ class SingleClassClassifierLMFunctionGenerator(BaseLMFunctionGenerator):
     def _generate_classifier_prompt_lm_function(self) -> LMFunction:
         """Generate the classifier prompt language model function."""
 
+        @retry(
+            stop=stop_after_attempt(3),
+            wait=wait_exponential_jitter(max=8),
+            before_sleep=before_sleep_log(log, logging.WARN),
+        )
         def classifier_function(request: LMRequest):
             categories = "\n".join([f"- {key.upper()}: {value}" for key, value in self.class_dict.items()])
             messages = [
