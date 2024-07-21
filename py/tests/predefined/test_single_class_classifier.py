@@ -81,6 +81,7 @@ def single_class_classifier_generator(
     )
 
 
+@pytest.mark.helpers
 def test_single_class_classifier_lm_function_generator_initialization(
     single_class_classifier_generator: SingleClassClassifierLMFunctionGenerator,
 ):
