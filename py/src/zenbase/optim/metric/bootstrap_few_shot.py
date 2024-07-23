@@ -61,19 +61,22 @@ class BootstrapFewShot(LMOptim[Inputs, Outputs]):
         :param helper_class: The helper class that will be used to fetch the dataset and evaluator
         """
         assert trace_manager is not None, "Zenbase is required for this operation"
+        # Clean up traces
+        trace_manager.flush()
 
         test_set_evaluator = self.zen_adaptor.get_evaluator(data=self.test_set)
         self.base_evaluation = test_set_evaluator(student_lm)
 
         if not teacher_lm:
             # Create the base LabeledFewShot teacher model
-            teacher_lm = self._create_teacher_model(self.zen_adaptor, student_lm, samples, rounds)
+            trace_manager.flush()
+            teacher_lm = self._create_teacher_model(self.zen_adaptor, student_lm, samples, rounds, trace_manager)
 
         # Evaluate and validate the demo set
         validated_training_set_demos = self._validate_demo_set(self.zen_adaptor, teacher_lm)
 
         # Run each validated demo to fill up the traces
-        trace_manager.all_traces = {}
+        trace_manager.flush()
         self._run_validated_demos(teacher_lm, validated_training_set_demos)
 
         # Consolidate the traces to optimized args
@@ -86,6 +89,7 @@ class BootstrapFewShot(LMOptim[Inputs, Outputs]):
         # Evaluate the optimized function
         self.best_evaluation = test_set_evaluator(optimized_fn)
 
+        trace_manager.flush()
         return self.Result(best_function=optimized_fn)
 
     def _create_teacher_model(

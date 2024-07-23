@@ -23,6 +23,9 @@ class ZenbaseTracer(BaseTracer):
             return lambda f: self.trace_function(f, zenbase)
         return self.trace_function(function, zenbase)
 
+    def flush(self):
+        self.all_traces = {}
+
     def trace_function(self, function: Callable[[Any], Any] = None, zenbase: LMZenbase = None) -> LMFunction:
         def wrapper(request, lm_function, *args, **kwargs):
             func_name = function.__name__
