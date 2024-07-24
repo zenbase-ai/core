@@ -392,7 +392,7 @@ def test_bootstrap_few_shot_langfuse(
 
     assert teacher_lm is not None
 
-    zenbase_manager.all_traces = {}
+    zenbase_manager.flush()
     teacher_lm({"question": "What is 2 + 2?"})
 
     assert [v for k, v in zenbase_manager.all_traces.items()][0]["optimized"]["planner_chain"]["args"][
