@@ -70,7 +70,7 @@ class BootstrapFewShot(LMOptim[Inputs, Outputs]):
         if not teacher_lm:
             # Create the base LabeledFewShot teacher model
             trace_manager.flush()
-            teacher_lm = self._create_teacher_model(self.zen_adaptor, student_lm, samples, rounds, trace_manager)
+            teacher_lm = self._create_teacher_model(self.zen_adaptor, student_lm, samples, rounds)
 
         # Evaluate and validate the demo set
         validated_training_set_demos = self._validate_demo_set(self.zen_adaptor, teacher_lm)

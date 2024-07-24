@@ -1,5 +1,6 @@
 import inspect
 from abc import ABC
+from collections import OrderedDict
 from contextlib import contextmanager
 from typing import Any, Callable, Union
 
@@ -12,8 +13,9 @@ class BaseTracer(ABC):
 
 
 class ZenbaseTracer(BaseTracer):
-    def __init__(self):
-        self.all_traces = {}
+    def __init__(self, max_traces=1000):
+        self.all_traces = OrderedDict()
+        self.max_traces = max_traces
         self.current_trace = None
         self.current_key = None
         self.optimized_args = {}
@@ -24,7 +26,15 @@ class ZenbaseTracer(BaseTracer):
         return self.trace_function(function, zenbase)
 
     def flush(self):
-        self.all_traces = {}
+        self.all_traces.clear()
+
+    def add_trace(self, run_timestamp: str, func_name: str, trace_data: dict):
+        if run_timestamp not in self.all_traces:
+            if len(self.all_traces) >= self.max_traces:
+                self.all_traces.popitem(last=False)  # Remove the oldest item
+            self.all_traces[run_timestamp] = OrderedDict()
+        self.all_traces[run_timestamp][func_name] = trace_data
+        self.all_traces.move_to_end(run_timestamp)  # Move this trace to the end (most recent)
 
     def trace_function(self, function: Callable[[Any], Any] = None, zenbase: LMZenbase = None) -> LMFunction:
         def wrapper(request, lm_function, *args, **kwargs):
@@ -50,9 +60,7 @@ class ZenbaseTracer(BaseTracer):
             yield
         finally:
             if self.current_key == run_timestamp:
-                if run_timestamp not in self.all_traces:
-                    self.all_traces[run_timestamp] = {}
-                self.all_traces[run_timestamp][func_name] = self.current_trace
+                self.add_trace(run_timestamp, func_name, self.current_trace)
                 self.current_trace = None
                 self.current_key = None
                 self.optimized_args = {}
