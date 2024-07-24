@@ -457,7 +457,7 @@ def test_zen_arize_lcel_bootstrap_few_shot(
     )
     assert teacher_lm is not None
 
-    zenbase_tracer.all_traces = {}
+    zenbase_tracer.flush()
     teacher_lm({"question": "What is 2 + 2?"})
 
     assert [v for k, v in zenbase_tracer.all_traces.items()][0]["optimized"]["planner_chain"]["args"][

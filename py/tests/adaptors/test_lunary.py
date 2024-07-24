@@ -273,7 +273,7 @@ def test_lunary_openai_bootstrap_few_shot(optim: LabeledFewShot, lunary_helper: 
     )
     assert teacher_lm is not None
 
-    zenbase_manager.all_traces = {}
+    zenbase_manager.flush()
     teacher_lm("What is 2 + 2?")
 
     assert [v for k, v in zenbase_manager.all_traces.items()][0]["optimized"]["planner_chain"]["args"][
