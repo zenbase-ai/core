@@ -13,6 +13,7 @@ from zenbase.optim.metric.labeled_few_shot import LabeledFewShot
 from zenbase.optim.metric.types import CandidateEvalResult
 from zenbase.predefined.base.optimizer import BasePredefinedOptimizer
 from zenbase.predefined.single_class_classifier.function_generator import SingleClassClassifierLMFunctionGenerator
+from zenbase.predefined.syntethic_data.single_class_classifier import SingleClassClassifierSyntheticDataExample
 from zenbase.types import Inputs, LMDemo, LMFunction, Outputs
 
 
@@ -65,7 +66,13 @@ class SingleClassClassifier(BasePredefinedOptimizer):
     @staticmethod
     def _convert_dataset_to_demos(dataset: list) -> list[LMDemo]:
         """Convert a dataset to a list of LMDemo objects."""
-        return [LMDemo(inputs={"question": item["inputs"]}, outputs={"answer": item["outputs"]}) for item in dataset]
+        if dataset:
+            if isinstance(dataset[0], dict):
+                return [
+                    LMDemo(inputs={"question": item["inputs"]}, outputs={"answer": item["outputs"]}) for item in dataset
+                ]
+            elif isinstance(dataset[0], SingleClassClassifierSyntheticDataExample):
+                return [LMDemo(inputs={"question": item.inputs}, outputs={"answer": item.outputs}) for item in dataset]
 
     def perform(self) -> Result:
         """
