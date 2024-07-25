@@ -42,14 +42,15 @@ BootstrapFewShot will be useful for tasks that are multiple layers of prompts.
 | [lunary.ipynb](cookbooks/bootstrap_few_shot/lunary.ipynb)       | [<img align="center" src="https://colab.research.google.com/assets/colab-badge.svg" />](https://colab.research.google.com/github/zenbase-ai/lib/blob/main/py/cookbooks/bootstrap_few_shot/lunary.ipynb)    |
 
 
-### Predifined Prompts Cookbooks:
+### Predefined Prompts Cookbooks:
 
 PredefinedPrompts will be useful for tasks that are multiple layers of prompts.
 
-| Cookbook                                                                              | Run in Colab                                                                                                                                                                                                              |
-|---------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| [Single Class Classifier](cookbooks/predefined_prompts/single_class_classifier.ipynb) | [<img align="center" src="https://colab.research.google.com/assets/colab-badge.svg" />](https://colab.research.google.com/github/zenbase-ai/lib/blob/main/py/cookbooks/predefined_prompts/single_class_classifier.ipynb)  |
-
+| Cookbook                                                                                            | Description                                                               | Run in Colab                                                                                                                                                                                                              |
+|-----------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| [Single Class Classifier](cookbooks/predefined_prompts/single_class_classifier.ipynb)               | Basic implementation of a single class classifier                        | [<img align="center" src="https://colab.research.google.com/assets/colab-badge.svg" />](https://colab.research.google.com/github/zenbase-ai/lib/blob/main/py/cookbooks/predefined_prompts/single_class_classifier.ipynb)  |
+| [Synthetic Data Generation](cookbooks/predefined_prompts/single_class_classifier_syn_data.ipynb)    | Generate synthetic data for single class classification                  | [<img align="center" src="https://colab.research.google.com/assets/colab-badge.svg" />](https://colab.research.google.com/github/zenbase-ai/lib/blob/main/py/cookbooks/predefined_prompts/single_class_classifier_syn_data.ipynb)  |
+| [Classifier with Synthetic Data](cookbooks/predefined_prompts/single_class_classifier_trained_with_syn_data.ipynb) | Train and test a single class classifier using synthetic data | [<img align="center" src="https://colab.research.google.com/assets/colab-badge.svg" />](https://colab.research.google.com/github/zenbase-ai/lib/blob/main/py/cookbooks/predefined_prompts/single_class_classifier_trained_with_syn_data.ipynb)  |
 
 
 ## Development setup
