@@ -141,8 +141,12 @@ execnet==2.1.1
     # via pytest-xdist
 executing==2.0.1
     # via stack-data
-faker==25.4.0
+faker==24.14.1
+    # via faker-openai-api-provider
+    # via openai-responses
     # via zenbase
+faker-openai-api-provider==0.2.0
+    # via openai-responses
 fastjsonschema==2.19.1
     # via nbformat
     # via poetry
@@ -186,6 +190,7 @@ httpx==0.27.0
     # via langfuse
     # via openai
     # via parea-ai
+    # via respx
 huggingface-hub==0.23.2
     # via datasets
 identify==2.5.36
@@ -376,10 +381,12 @@ numpy==1.26.4
     # via scikit-learn
     # via scipy
     # via umap-learn
-openai==1.30.5
+openai==1.37.0
     # via instructor
     # via langchain-openai
+    # via openai-responses
     # via parea-ai
+openai-responses==0.8.3
 openinference-instrumentation==0.1.7
     # via arize-phoenix
     # via openinference-instrumentation-langchain
@@ -616,7 +623,10 @@ requests==2.32.3
     # via requests-toolbelt
     # via tiktoken
 requests-toolbelt==1.0.0
+    # via openai-responses
     # via poetry
+respx==0.20.2
+    # via openai-responses
 rfc3339-validator==0.1.4
     # via jsonschema
     # via jupyter-events

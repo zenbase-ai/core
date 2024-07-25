@@ -43,7 +43,7 @@ docstring-parser==0.16
     # via instructor
 exceptiongroup==1.2.1
     # via anyio
-faker==25.4.0
+faker==26.0.0
     # via zenbase
 frozenlist==1.4.1
     # via aiohttp
