@@ -44,7 +44,7 @@ BootstrapFewShot will be useful for tasks that are multiple layers of prompts.
 
 ### Predefined Prompts Cookbooks:
 
-PredefinedPrompts will be useful for tasks that are multiple layers of prompts.
+PredefinedPrompts will be useful for tasks that wants predefined prompts.
 
 | Cookbook                                                                                            | Description                                                               | Run in Colab                                                                                                                                                                                                              |
 |-----------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
