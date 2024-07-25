@@ -476,7 +476,7 @@ def test_bootstrap_few_shot_langchain_load_args(
 
     assert teacher_lm is not None
 
-    zenbase_manager.all_traces = {}
+    zenbase_manager.flush()
     teacher_lm({"question": "What is 2 + 2?"})
 
     assert [v for k, v in zenbase_manager.all_traces.items()][0]["optimized"]["planner_chain"]["args"][
@@ -656,7 +656,7 @@ def test_bootstrap_few_shot_langchain(
 
     assert teacher_lm is not None
 
-    zenbase_manager.all_traces = {}
+    zenbase_manager.flush()
     teacher_lm({"question": "What is 2 + 2?"})
 
     assert [v for k, v in zenbase_manager.all_traces.items()][0]["optimized"]["planner_chain"]["args"][
@@ -836,7 +836,7 @@ def test_bootstrap_few_shot_openai_langsmith(
 
     assert teacher_lm is not None
 
-    zenbase_manager.all_traces = {}
+    zenbase_manager.flush()
     teacher_lm({"question": "What is 2 + 2?"})
 
     assert [v for k, v in zenbase_manager.all_traces.items()][0]["optimized"]["planner_chain"]["args"][

@@ -465,7 +465,7 @@ def test_zen_parea_helper_bootstrap_few_shot(
 
     assert best_lm is not None
 
-    zenbase_manager.all_traces = {}
+    zenbase_manager.flush()
     best_lm({"question": "What is 2 + 2?"})
 
     assert [v for k, v in zenbase_manager.all_traces.items()][0]["optimized"]["planner_chain"]["args"][
@@ -608,7 +608,7 @@ def test_zen_parea_helper_bootstrap_few_shot_load_args(
     )
     assert best_lm is not None
 
-    zenbase_manager.all_traces = {}
+    zenbase_manager.flush()
     best_lm({"question": "What is 2 + 2?"})
 
     assert [v for k, v in zenbase_manager.all_traces.items()][0]["optimized"]["planner_chain"]["args"][
