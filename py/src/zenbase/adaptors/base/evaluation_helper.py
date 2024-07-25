@@ -17,6 +17,6 @@ class BaseEvaluationHelper(ZenAdaptor):
 
     @classmethod
     @abstractmethod
-    def metric_evaluator(cls, threshold: float = 0.5, **evaluate_kwargs): ...
+    def metric_evaluator(cls, *args, **evaluate_kwargs): ...
 
     # TODO: Should remove and deprecate
