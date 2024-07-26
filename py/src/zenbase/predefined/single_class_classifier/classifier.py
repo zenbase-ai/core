@@ -74,7 +74,7 @@ class SingleClassClassifier(BasePredefinedOptimizer):
             elif isinstance(dataset[0], SingleClassClassifierSyntheticDataExample):
                 return [LMDemo(inputs={"question": item.inputs}, outputs={"answer": item.outputs}) for item in dataset]
 
-    def perform(self) -> Result:
+    def optimize(self) -> Result:
         """
         Perform the optimization and evaluation of the language model function.
 
