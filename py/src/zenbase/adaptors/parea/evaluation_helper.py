@@ -58,7 +58,7 @@ class PareaEvaluationHelper(BaseEvaluationHelper):
         assert isinstance(p, Parea)
 
         base_metadata = kwargs.pop("metadata", {})
-        gen_random_name = random_name_generator(kwargs.pop("name", None))
+        random_name = random_name_generator(kwargs.pop("name", None))()
 
         @retry(
             stop=stop_after_attempt(3),
@@ -83,7 +83,7 @@ class PareaEvaluationHelper(BaseEvaluationHelper):
                 func=function_with_default,
                 *args,
                 **kwargs,
-                name=gen_random_name(),
+                name=random_name,
                 metadata={
                     **base_metadata,
                 },
