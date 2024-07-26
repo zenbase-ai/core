@@ -237,7 +237,7 @@ def single_class_classifier(
 
 @pytest.mark.helpers
 def test_single_class_classifier_perform(single_class_classifier: SingleClassClassifier, sample_news_article):
-    result = single_class_classifier.perform()
+    result = single_class_classifier.optimize()
     assert all(
         [result.best_function, result.candidate_results, result.best_candidate_result]
     ), "Assertions failed for result properties"
