@@ -96,7 +96,7 @@ def test_generic_optimizer_evaluations(generic_optimizer):
     assert generic_optimizer.best_evaluation is not None
 
     # Check that best evaluation is at least as good as base evaluation
-    assert generic_optimizer.base_evalution.evals["score"] >= generic_optimizer.best_evaluation.evals["score"]
+    assert generic_optimizer.base_evaluation.evals["score"] >= generic_optimizer.best_evaluation.evals["score"]
 
     # Additional checks to ensure the structure of the result
     assert isinstance(result, GenericLMFunctionOptimizer.Result)
