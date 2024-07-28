@@ -1,0 +1,110 @@
+from dataclasses import dataclass, field
+from typing import Any, Callable, List, NamedTuple, Type
+
+from instructor.client import Instructor
+from pydantic import BaseModel
+
+from zenbase.adaptors.json.adaptor import JSONAdaptor
+from zenbase.core.managers import ZenbaseTracer
+from zenbase.optim.metric.labeled_few_shot import LabeledFewShot
+from zenbase.optim.metric.types import CandidateEvalResult
+from zenbase.types import LMDemo, LMFunction
+
+
+@dataclass
+class GenericLMFunctionOptimizer:
+    class Result(NamedTuple):
+        best_function: LMFunction
+        candidate_results: list[CandidateEvalResult]
+        best_candidate_result: CandidateEvalResult | None
+
+    instructor_client: Instructor
+    prompt: str
+    input_model: Type[BaseModel]
+    output_model: Type[BaseModel]
+    model: str
+    zenbase_tracer: ZenbaseTracer
+    training_set: List[dict]
+    validation_set: List[dict]
+    test_set: List[dict]
+    custom_evaluator: Callable[[Any, dict], dict] = field(default=None)
+    shots: int = 5
+    samples: int = 10
+
+    lm_function: LMFunction = field(init=False)
+    training_set_demos: List[LMDemo] = field(init=False)
+    validation_set_demos: List[LMDemo] = field(init=False)
+    test_set_demos: List[LMDemo] = field(init=False)
+    best_evaluation: CandidateEvalResult | None = field(default=None)
+    base_evaluation: CandidateEvalResult | None = field(default=None)
+
+    def __post_init__(self):
+        self.lm_function = self._generate_lm_function()
+        self.training_set_demos = self._convert_dataset_to_demos(self.training_set)
+        self.validation_set_demos = self._convert_dataset_to_demos(self.validation_set)
+        self.test_set_demos = self._convert_dataset_to_demos(self.test_set)
+
+    def _generate_lm_function(self) -> LMFunction:
+        @self.zenbase_tracer.trace_function
+        def generic_function(request):
+            messages = [
+                {"role": "system", "content": self.prompt},
+                {"role": "user", "content": str(request.inputs)},
+            ]
+            return self.instructor_client.chat.completions.create(
+                model=self.model, response_model=self.output_model, messages=messages
+            )
+
+        return generic_function
+
+    def _convert_dataset_to_demos(self, dataset: List[dict]) -> List[LMDemo]:
+        return [LMDemo(inputs=item["inputs"], outputs=item["outputs"]) for item in dataset]
+
+    def optimize(self) -> Result:
+        evaluator = self.custom_evaluator or self._create_default_evaluator()
+        test_evaluator = self._create_test_evaluator(evaluator)
+
+        # Perform base evaluation
+        self.base_evaluation = self._perform_base_evaluation(test_evaluator)
+
+        optimizer = LabeledFewShot(demoset=self.training_set_demos, shots=self.shots)
+        optimizer_result = optimizer.perform(
+            self.lm_function,
+            evaluator=JSONAdaptor.metric_evaluator(
+                data=self.validation_set_demos,
+                eval_function=evaluator,
+            ),
+            samples=self.samples,
+            rounds=1,
+        )
+
+        # Evaluate best function
+        self.best_evaluation = self._evaluate_best_function(test_evaluator, optimizer_result)
+
+        return self.Result(
+            best_function=optimizer_result.best_function,
+            candidate_results=optimizer_result.candidate_results,
+            best_candidate_result=optimizer_result.best_candidate_result,
+        )
+
+    def _create_default_evaluator(self):
+        def evaluator(output: BaseModel, ideal_output: dict) -> dict:
+            return {
+                "passed": int(output.dict() == ideal_output),
+            }
+
+        return evaluator
+
+    def _create_test_evaluator(self, evaluator):
+        return JSONAdaptor.metric_evaluator(
+            data=self.test_set_demos,
+            eval_function=evaluator,
+        )
+
+    def _perform_base_evaluation(self, test_evaluator):
+        """Perform the base evaluation of the LM function."""
+        return test_evaluator(self.lm_function)
+
+    def _evaluate_best_function(self, test_evaluator, optimizer_result):
+        """Evaluate the best function from the optimization result."""
+        return test_evaluator(optimizer_result.best_function)
