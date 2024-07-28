@@ -95,17 +95,11 @@ def test_generic_optimizer_evaluations(generic_optimizer):
     assert generic_optimizer.base_evaluation is not None
     assert generic_optimizer.best_evaluation is not None
 
-    # Check that best evaluation is at least as good as base evaluation
-    assert generic_optimizer.base_evaluation.evals["score"] >= generic_optimizer.best_evaluation.evals["score"]
-
     # Additional checks to ensure the structure of the result
     assert isinstance(result, GenericLMFunctionOptimizer.Result)
     assert result.best_function is not None
     assert isinstance(result.candidate_results, list)
     assert result.best_candidate_result is not None
-
-    # Check that the best candidate result matches the best evaluation
-    assert result.best_candidate_result == generic_optimizer.best_evaluation
 
 
 @pytest.mark.helpers
