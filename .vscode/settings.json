@@ -11,5 +11,12 @@
     "py/.pytest_cache/": true
   },
   "python.defaultInterpreterPath": "py/.venv/bin/python",
-  "python.analysis.extraPaths": ["./py/src"]
+  "python.analysis.extraPaths": [
+    "./py/src"
+  ],
+  "python.testing.pytestArgs": [
+    "py"
+  ],
+  "python.testing.unittestEnabled": false,
+  "python.testing.pytestEnabled": true
 }
