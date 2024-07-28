@@ -89,6 +89,7 @@ class JSONEvaluationHelper(BaseEvaluationHelper):
                         passed=result["passed"],
                         response=response,
                         demo=demo,
+                        details=result,
                     )
                 )
 
