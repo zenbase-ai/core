@@ -108,3 +108,28 @@ class GenericLMFunctionOptimizer:
     def _evaluate_best_function(self, test_evaluator, optimizer_result):
         """Evaluate the best function from the optimization result."""
         return test_evaluator(optimizer_result.best_function)
+
+    def create_lm_function_with_demos(self, prompt: str, demos: List[dict]) -> LMFunction:
+        @self.zenbase_tracer.trace_function
+        def lm_function_with_demos(request):
+            messages = [
+                {"role": "system", "content": prompt},
+            ]
+
+            # Add demos to the messages
+            for demo in demos:
+                messages.extend(
+                    [
+                        {"role": "user", "content": str(demo["inputs"])},
+                        {"role": "assistant", "content": str(demo["outputs"])},
+                    ]
+                )
+
+            # Add the actual request
+            messages.append({"role": "user", "content": str(request.inputs)})
+
+            return self.instructor_client.chat.completions.create(
+                model=self.model, response_model=self.output_model, messages=messages
+            )
+
+        return lm_function_with_demos

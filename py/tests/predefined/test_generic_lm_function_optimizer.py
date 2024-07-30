@@ -144,3 +144,30 @@ def test_generic_optimizer_custom_evaluator(instructor_client, zenbase_tracer):
     eval_result = custom_evaluator(output, {"answer": "10"})
     assert "passed" in eval_result
     assert "length" in eval_result
+
+
+@pytest.mark.helpers
+def test_create_lm_function_with_demos(generic_optimizer):
+    prompt = "You are a helpful assistant. Answer the user's question concisely."
+    demos = [
+        {"inputs": {"question": "What is the capital of France?"}, "outputs": {"answer": "Paris"}},
+        {"inputs": {"question": "Who wrote Romeo and Juliet?"}, "outputs": {"answer": "William Shakespeare"}},
+    ]
+
+    lm_function = generic_optimizer.create_lm_function_with_demos(prompt, demos)
+
+    # Test that the function is created and can be called
+    test_input = InputModel(question="What is the capital of Italy?")
+    result = lm_function(test_input)
+
+    assert isinstance(result, OutputModel)
+    assert isinstance(result.answer, str)
+    assert result.answer.strip().lower() == "rome"
+
+    # Test with a question from the demos
+    test_input_demo = InputModel(question="What is the capital of France?")
+    result_demo = lm_function(test_input_demo)
+
+    assert isinstance(result_demo, OutputModel)
+    assert isinstance(result_demo.answer, str)
+    assert result_demo.answer.strip().lower() == "paris"
