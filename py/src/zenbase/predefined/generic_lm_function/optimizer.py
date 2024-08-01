@@ -90,7 +90,7 @@ class GenericLMFunctionOptimizer:
     def _create_default_evaluator(self):
         def evaluator(output: BaseModel, ideal_output: dict) -> dict:
             return {
-                "passed": int(output.dict() == ideal_output),
+                "passed": int(output.model_dump(mode="json") == ideal_output),
             }
 
         return evaluator
