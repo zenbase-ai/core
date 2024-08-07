@@ -42,9 +42,7 @@ BootstrapFewShot will be useful for tasks that are multiple layers of prompts.
 | [lunary.ipynb](cookbooks/bootstrap_few_shot/lunary.ipynb)       | [<img align="center" src="https://colab.research.google.com/assets/colab-badge.svg" />](https://colab.research.google.com/github/zenbase-ai/core/blob/main/py/cookbooks/bootstrap_few_shot/lunary.ipynb)    |
 
 
-### Predefined Prompts Cookbooks:
-
-PredefinedPrompts will be useful for tasks that wants predefined prompts.
+### Predefined Cookbooks:
 
 | Cookbook                                                                            | Description                                                               | Run in Colab                                                                                                                                                                                                              |
 |-------------------------------------------------------------------------------------|---------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
