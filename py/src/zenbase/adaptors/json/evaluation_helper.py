@@ -1,3 +1,4 @@
+import inspect
 from typing import Any, Callable
 
 from zenbase.adaptors.base.evaluation_helper import BaseEvaluationHelper
@@ -34,13 +35,24 @@ class JSONEvaluationHelper(BaseEvaluationHelper):
                 nonlocal individual_evals
 
                 response = function(demo.inputs)
-                result = eval_function(
-                    input=demo.inputs,
-                    output=response,
-                    ideal_output=demo.outputs,
-                    *args,
-                    **kwargs,
-                )
+
+                # Check if eval_function accepts 'input' parameter
+                eval_params = inspect.signature(eval_function).parameters
+                if "input" in eval_params:
+                    result = eval_function(
+                        input=demo.inputs,
+                        output=response,
+                        ideal_output=demo.outputs,
+                        *args,
+                        **kwargs,
+                    )
+                else:
+                    result = eval_function(
+                        output=response,
+                        ideal_output=demo.outputs,
+                        *args,
+                        **kwargs,
+                    )
 
                 individual_evals.append(
                     IndividualEvalValue(
@@ -77,12 +89,21 @@ class JSONEvaluationHelper(BaseEvaluationHelper):
 
             def run_and_evaluate(demo: LMDemo):
                 nonlocal individual_evals
-
                 response = function(demo.inputs)
-                result = eval_function(
-                    output=response,
-                    ideal_output=demo.outputs,
-                )
+
+                # Check if eval_function accepts 'input' parameter
+                eval_params = inspect.signature(eval_function).parameters
+                if "input" in eval_params:
+                    result = eval_function(
+                        input=demo.inputs,
+                        output=response,
+                        ideal_output=demo.outputs,
+                    )
+                else:
+                    result = eval_function(
+                        output=response,
+                        ideal_output=demo.outputs,
+                    )
 
                 individual_evals.append(
                     IndividualEvalValue(
