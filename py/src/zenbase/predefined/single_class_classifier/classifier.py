@@ -4,6 +4,7 @@ from dataclasses import dataclass, field
 from enum import Enum
 from typing import Any, Dict, NamedTuple, Type
 
+import cloudpickle
 from instructor.client import AsyncInstructor, Instructor
 from pydantic import BaseModel
 
@@ -43,6 +44,7 @@ class SingleClassClassifier(BasePredefinedOptimizer):
     samples: int = 10
     best_evaluation: CandidateEvalResult | None = field(default=None)
     base_evaluation: CandidateEvalResult | None = field(default=None)
+    optimizer_result: Result | None = field(default=None)
 
     def __post_init__(self):
         """Initialize the SingleClassClassifier after creation."""
@@ -74,6 +76,11 @@ class SingleClassClassifier(BasePredefinedOptimizer):
             elif isinstance(dataset[0], SingleClassClassifierSyntheticDataExample):
                 return [LMDemo(inputs={"question": item.inputs}, outputs={"answer": item.outputs}) for item in dataset]
 
+    def load_classifier(self, filename: str):
+        with open(filename, "rb") as f:
+            lm_zenbase = cloudpickle.load(f)
+            return self.lm_function.clean_and_duplicate(lm_zenbase)
+
     def optimize(self) -> Result:
         """
         Perform the optimization and evaluation of the language model function.
@@ -96,6 +103,9 @@ class SingleClassClassifier(BasePredefinedOptimizer):
         # Evaluate best function
         self.best_evaluation = self._evaluate_best_function(test_evaluator, optimizer_result)
 
+        # Save last optimizer_result
+        self.optimizer_result = optimizer_result
+
         return optimizer_result
 
     @staticmethod
@@ -112,7 +122,7 @@ class SingleClassClassifier(BasePredefinedOptimizer):
     def _create_test_evaluator(self, evaluator):
         """Create the test evaluator using JSONAdaptor."""
         return JSONAdaptor.metric_evaluator(
-            data=self.test_set_demos,
+            data=self.validation_set_demos,
             eval_function=evaluator,
         )
 

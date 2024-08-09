@@ -65,6 +65,7 @@ class SingleClassClassifierLMFunctionGenerator(BaseLMFunctionGenerator):
         class_enum = self.class_enum
 
         class SinglePrediction(BaseModel):
+            reasoning: str
             class_label: class_enum
 
         return SinglePrediction
