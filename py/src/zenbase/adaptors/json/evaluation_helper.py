@@ -15,8 +15,10 @@ class JSONEvaluationHelper(BaseEvaluationHelper):
         avg_pass = sum(int(result["passed"]) for result in batch_results) / len(batch_results)
         return {"score": avg_pass}
 
-    def get_evaluator(self, data: str):
-        raise NotImplementedError("This method should be implemented by the parent class as it needs access to data")
+    def get_evaluator(self, data: list[LMDemo]):
+        evaluator_kwargs_to_pass = self.evaluator_kwargs.copy()
+        evaluator_kwargs_to_pass.update({"data": data})
+        return self._metric_evaluator_generator(**evaluator_kwargs_to_pass)
 
     @staticmethod
     def _metric_evaluator_generator(
