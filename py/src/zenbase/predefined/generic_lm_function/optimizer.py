@@ -30,6 +30,7 @@ class GenericLMFunctionOptimizer:
     custom_evaluator: Callable[[Any, dict], dict] = field(default=None)
     shots: int = 5
     samples: int = 10
+    last_result: Result | None = field(default=None)
 
     lm_function: LMFunction = field(init=False)
     training_set_demos: List[LMDemo] = field(init=False)
@@ -49,8 +50,18 @@ class GenericLMFunctionOptimizer:
         def generic_function(request):
             messages = [
                 {"role": "system", "content": self.prompt},
-                {"role": "user", "content": str(request.inputs)},
             ]
+
+            if request.zenbase.task_demos:
+                for demo in request.zenbase.task_demos:
+                    messages.extend(
+                        [
+                            {"role": "user", "content": str(demo.inputs)},
+                            {"role": "assistant", "content": str(demo.outputs)},
+                        ]
+                    )
+
+            messages.append({"role": "user", "content": str(request.inputs)})
             return self.instructor_client.chat.completions.create(
                 model=self.model, response_model=self.output_model, messages=messages
             )
@@ -81,11 +92,13 @@ class GenericLMFunctionOptimizer:
         # Evaluate best function
         self.best_evaluation = self._evaluate_best_function(test_evaluator, optimizer_result)
 
-        return self.Result(
+        self.last_result = self.Result(
             best_function=optimizer_result.best_function,
             candidate_results=optimizer_result.candidate_results,
             best_candidate_result=optimizer_result.best_candidate_result,
         )
+
+        return self.last_result
 
     def _create_default_evaluator(self):
         def evaluator(output: BaseModel, ideal_output: dict) -> dict:
@@ -133,3 +146,59 @@ class GenericLMFunctionOptimizer:
             )
 
         return lm_function_with_demos
+
+    def generate_csv_report(self):
+        if not self.last_result:
+            raise ValueError("No results to generate report from")
+
+        best_candidate_result = self.last_result.best_candidate_result
+        base_evaluation = self.base_evaluation
+        best_evaluation = self.best_evaluation
+
+        list_of_rows = [("type", "input", "ideal_output", "output", "passed", "score", "details")]
+
+        for eval_item in best_candidate_result.individual_evals:
+            list_of_rows.append(
+                (
+                    "best_candidate_result",
+                    eval_item.demo.inputs,
+                    eval_item.demo.outputs,
+                    eval_item.response,
+                    eval_item.passed,
+                    eval_item.score,
+                    eval_item.details,
+                )
+            )
+
+        for eval_item in base_evaluation.individual_evals:
+            list_of_rows.append(
+                (
+                    "base_evaluation",
+                    eval_item.demo.inputs,
+                    eval_item.demo.outputs,
+                    eval_item.response,
+                    eval_item.passed,
+                    eval_item.score,
+                    eval_item.details,
+                )
+            )
+
+        for eval_item in best_evaluation.individual_evals:
+            list_of_rows.append(
+                (
+                    "best_evaluation",
+                    eval_item.demo.inputs,
+                    eval_item.demo.outputs,
+                    eval_item.response,
+                    eval_item.passed,
+                    eval_item.score,
+                    eval_item.details,
+                )
+            )
+
+        # save to csv
+        import csv
+
+        with open("report.csv", "w", newline="") as file:
+            writer = csv.writer(file)
+            writer.writerows(list_of_rows)

@@ -142,11 +142,7 @@ execnet==2.1.1
 executing==2.0.1
     # via stack-data
 faker==24.14.1
-    # via faker-openai-api-provider
-    # via openai-responses
     # via zenbase
-faker-openai-api-provider==0.2.0
-    # via openai-responses
 fastjsonschema==2.19.1
     # via nbformat
     # via poetry
@@ -240,6 +236,7 @@ jinja2==3.1.4
     # via nbconvert
 jiter==0.4.2
     # via instructor
+    # via openai
 joblib==1.4.2
     # via hdbscan
     # via pynndescent
@@ -381,12 +378,12 @@ numpy==1.26.4
     # via scikit-learn
     # via scipy
     # via umap-learn
-openai==1.37.0
+openai==1.43.0
     # via instructor
     # via langchain-openai
     # via openai-responses
     # via parea-ai
-openai-responses==0.8.3
+openai-responses==0.10.1
 openinference-instrumentation==0.1.7
     # via arize-phoenix
     # via openinference-instrumentation-langchain

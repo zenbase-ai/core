@@ -65,6 +65,7 @@ instructor==1.3.5
     # via zenbase
 jiter==0.4.2
     # via instructor
+    # via openai
 markdown-it-py==3.0.0
     # via rich
 mdurl==0.1.2
@@ -74,7 +75,7 @@ monotonic==1.6
 multidict==6.0.5
     # via aiohttp
     # via yarl
-openai==1.35.15
+openai==1.43.0
     # via instructor
 opentelemetry-api==1.25.0
     # via opentelemetry-sdk
