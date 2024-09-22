@@ -53,6 +53,8 @@ class GenericLMFunctionOptimizer:
             ]
 
             if request.zenbase.task_demos:
+                messages.append({"role": "system", "content": "Here are some examples:"})
+                messages.append({"role": "system", "content": "Here are some examples:"})
                 for demo in request.zenbase.task_demos:
                     messages.extend(
                         [
@@ -60,6 +62,7 @@ class GenericLMFunctionOptimizer:
                             {"role": "assistant", "content": str(demo.outputs)},
                         ]
                     )
+                messages.append({"role": "system", "content": "Now, please answer the following question:"})
 
             messages.append({"role": "user", "content": str(request.inputs)})
             return self.instructor_client.chat.completions.create(
@@ -130,13 +133,16 @@ class GenericLMFunctionOptimizer:
             ]
 
             # Add demos to the messages
-            for demo in demos:
-                messages.extend(
-                    [
-                        {"role": "user", "content": str(demo["inputs"])},
-                        {"role": "assistant", "content": str(demo["outputs"])},
-                    ]
-                )
+            if demos:
+                messages.append({"role": "system", "content": "Here are some examples:"})
+                for demo in demos:
+                    messages.extend(
+                        [
+                            {"role": "user", "content": str(demo["inputs"])},
+                            {"role": "assistant", "content": str(demo["outputs"])},
+                        ]
+                    )
+                messages.append({"role": "system", "content": "Now, please answer the following question:"})
 
             # Add the actual request
             messages.append({"role": "user", "content": str(request.inputs)})
