@@ -54,7 +54,6 @@ class GenericLMFunctionOptimizer:
 
             if request.zenbase.task_demos:
                 messages.append({"role": "system", "content": "Here are some examples:"})
-                messages.append({"role": "system", "content": "Here are some examples:"})
                 for demo in request.zenbase.task_demos:
                     messages.extend(
                         [
