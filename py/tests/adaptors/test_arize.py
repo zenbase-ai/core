@@ -124,7 +124,7 @@ def test_zen_arize_metric_evaluator(
 
         messages.append(("user", "{question}"))
 
-        chain = ChatPromptTemplate.from_messages(messages) | ChatOpenAI(model="gpt-3.5-turbo") | StrOutputParser()
+        chain = ChatPromptTemplate.from_messages(messages) | ChatOpenAI(model="gpt-4o-mini") | StrOutputParser()
 
         print("Mathing...")
         answer = chain.invoke(request.inputs)
@@ -176,7 +176,7 @@ def test_zen_arize_lcel_labeled_few_shot_learning(
 
         messages.append(("user", "{question}"))
 
-        chain = ChatPromptTemplate.from_messages(messages) | ChatOpenAI(model="gpt-3.5-turbo") | StrOutputParser()
+        chain = ChatPromptTemplate.from_messages(messages) | ChatOpenAI(model="gpt-4o-mini") | StrOutputParser()
 
         print("Mathing...")
         answer = chain.invoke(request.inputs)
@@ -244,7 +244,7 @@ def test_zen_arize_lcel_multiple_calls(
             ]
         )
 
-        chain = ChatPromptTemplate.from_messages(messages) | ChatOpenAI(model="gpt-3.5-turbo") | StrOutputParser()
+        chain = ChatPromptTemplate.from_messages(messages) | ChatOpenAI(model="gpt-4o-mini") | StrOutputParser()
 
         plan = planner_chain(request.inputs)
         operation = operation_finder({"plan": plan["plan"], "question": request.inputs["question"]})
@@ -275,7 +275,7 @@ def test_zen_arize_lcel_multiple_calls(
                     ("assistant", demo.outputs["plan"]),
                 ]
 
-        chain = ChatPromptTemplate.from_messages(messages) | ChatOpenAI(model="gpt-3.5-turbo") | StrOutputParser()
+        chain = ChatPromptTemplate.from_messages(messages) | ChatOpenAI(model="gpt-4o-mini") | StrOutputParser()
         plan = chain.invoke(request.inputs)
         return {"plan": plan}
 
@@ -301,7 +301,7 @@ def test_zen_arize_lcel_multiple_calls(
                     ("assistant", demo.outputs["operation"]),
                 ]
 
-        chain = ChatPromptTemplate.from_messages(messages) | ChatOpenAI(model="gpt-3.5-turbo") | StrOutputParser()
+        chain = ChatPromptTemplate.from_messages(messages) | ChatOpenAI(model="gpt-4o-mini") | StrOutputParser()
         operation = chain.invoke(request.inputs)
         return {"operation": operation}
 
@@ -365,7 +365,7 @@ def test_zen_arize_lcel_bootstrap_few_shot(
             ]
         )
 
-        chain = ChatPromptTemplate.from_messages(messages) | ChatOpenAI(model="gpt-3.5-turbo") | StrOutputParser()
+        chain = ChatPromptTemplate.from_messages(messages) | ChatOpenAI(model="gpt-4o-mini") | StrOutputParser()
 
         plan = planner_chain(request.inputs)
         operation = operation_finder({"plan": plan["plan"], "question": request.inputs["question"]})
@@ -396,7 +396,7 @@ def test_zen_arize_lcel_bootstrap_few_shot(
                     ("assistant", demo.outputs["plan"]),
                 ]
 
-        chain = ChatPromptTemplate.from_messages(messages) | ChatOpenAI(model="gpt-3.5-turbo") | StrOutputParser()
+        chain = ChatPromptTemplate.from_messages(messages) | ChatOpenAI(model="gpt-4o-mini") | StrOutputParser()
         plan = chain.invoke(request.inputs)
         return {"plan": plan}
 
@@ -422,7 +422,7 @@ def test_zen_arize_lcel_bootstrap_few_shot(
                     ("assistant", demo.outputs["operation"]),
                 ]
 
-        chain = ChatPromptTemplate.from_messages(messages) | ChatOpenAI(model="gpt-3.5-turbo") | StrOutputParser()
+        chain = ChatPromptTemplate.from_messages(messages) | ChatOpenAI(model="gpt-4o-mini") | StrOutputParser()
         operation = chain.invoke(request.inputs)
         return {"operation": operation}
 

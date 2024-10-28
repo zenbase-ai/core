@@ -76,7 +76,7 @@ def single_class_classifier_generator(
         instructor_client=instructor_client,
         prompt=prompt_definition,
         class_dict=class_dict,
-        model="gpt-3.5-turbo",
+        model="gpt-4o-mini",
         zenbase_tracer=zenbase_tracer,
     )
 

@@ -46,7 +46,7 @@ def generic_optimizer(instructor_client, zenbase_tracer):
         prompt="You are a helpful assistant. Answer the user's question concisely.",
         input_model=InputModel,
         output_model=OutputModel,
-        model="gpt-3.5-turbo",
+        model="gpt-4o-mini",
         zenbase_tracer=zenbase_tracer,
         training_set=training_set,
         validation_set=[
@@ -120,7 +120,7 @@ def test_generic_optimizer_custom_evaluator(instructor_client, zenbase_tracer):
         prompt="You are a helpful assistant. Answer the user's question concisely.",
         input_model=InputModel,
         output_model=OutputModel,
-        model="gpt-3.5-turbo",
+        model="gpt-4o-mini",
         zenbase_tracer=zenbase_tracer,
         training_set=training_set,
         validation_set=[{"inputs": {"question": "What is 3+3?"}, "outputs": {"answer": "6"}}],

@@ -55,7 +55,7 @@ def openai():
 def chat_openai():
     from langchain_openai import ChatOpenAI
 
-    return ChatOpenAI(model="gpt-3.5-turbo")
+    return ChatOpenAI(model="gpt-4o-mini")
 
 
 @pytest.fixture(scope="module")
@@ -166,7 +166,7 @@ def test_zenlanchain_metric_evaluator(
 
         messages.append(("user", "{question}"))
 
-        chain = ChatPromptTemplate.from_messages(messages) | ChatOpenAI(model="gpt-3.5-turbo") | StrOutputParser()
+        chain = ChatPromptTemplate.from_messages(messages) | ChatOpenAI(model="gpt-4o-mini") | StrOutputParser()
 
         print("Mathing...")
         answer = chain.invoke(request.inputs)
@@ -222,7 +222,7 @@ def test_langsmith_lcel_labeled_few_shot(
 
         messages.append(("user", "{question}"))
 
-        chain = ChatPromptTemplate.from_messages(messages) | ChatOpenAI(model="gpt-3.5-turbo") | StrOutputParser()
+        chain = ChatPromptTemplate.from_messages(messages) | ChatOpenAI(model="gpt-4o-mini") | StrOutputParser()
 
         print("Mathing...")
         answer = chain.invoke(request.inputs)
@@ -256,7 +256,7 @@ def test_langsmith_lcel_labeled_few_shot(
 
         messages.append(("user", "{question}"))
 
-        chain = ChatPromptTemplate.from_messages(messages) | ChatOpenAI(model="gpt-3.5-turbo") | StrOutputParser()
+        chain = ChatPromptTemplate.from_messages(messages) | ChatOpenAI(model="gpt-4o-mini") | StrOutputParser()
 
         print("Mathing...")
         answer = chain.invoke(request.inputs)
@@ -375,7 +375,7 @@ def test_bootstrap_few_shot_langchain_load_args(
             ("user", "Now come with the answer as number, just return the number, nothing else, just NUMBERS.")
         )
 
-        chain = ChatPromptTemplate.from_messages(messages) | ChatOpenAI(model="gpt-3.5-turbo") | StrOutputParser()
+        chain = ChatPromptTemplate.from_messages(messages) | ChatOpenAI(model="gpt-4o-mini") | StrOutputParser()
 
         print("Mathing...")
         plan = planner_chain(request.inputs)
@@ -423,7 +423,7 @@ def test_bootstrap_few_shot_langchain_load_args(
 
         messages.append(("user", "{question}"))
 
-        chain = ChatPromptTemplate.from_messages(messages) | ChatOpenAI(model="gpt-3.5-turbo") | StrOutputParser()
+        chain = ChatPromptTemplate.from_messages(messages) | ChatOpenAI(model="gpt-4o-mini") | StrOutputParser()
 
         print("Mathing...")
         answer = chain.invoke(request.inputs)
@@ -462,7 +462,7 @@ def test_bootstrap_few_shot_langchain_load_args(
         messages.append(("user", "{question}"))
         messages.append(("user", "{plan}"))
 
-        chain = ChatPromptTemplate.from_messages(messages) | ChatOpenAI(model="gpt-3.5-turbo") | StrOutputParser()
+        chain = ChatPromptTemplate.from_messages(messages) | ChatOpenAI(model="gpt-4o-mini") | StrOutputParser()
 
         print("Mathing...")
         answer = chain.invoke(request.inputs)
@@ -539,7 +539,7 @@ def test_bootstrap_few_shot_langchain(
             ("user", "Now come with the answer as number, just return the number, nothing else, just NUMBERS.")
         )
 
-        chain = ChatPromptTemplate.from_messages(messages) | ChatOpenAI(model="gpt-3.5-turbo") | StrOutputParser()
+        chain = ChatPromptTemplate.from_messages(messages) | ChatOpenAI(model="gpt-4o-mini") | StrOutputParser()
 
         print("Mathing...")
         plan = planner_chain(request.inputs)
@@ -587,7 +587,7 @@ def test_bootstrap_few_shot_langchain(
 
         messages.append(("user", "{question}"))
 
-        chain = ChatPromptTemplate.from_messages(messages) | ChatOpenAI(model="gpt-3.5-turbo") | StrOutputParser()
+        chain = ChatPromptTemplate.from_messages(messages) | ChatOpenAI(model="gpt-4o-mini") | StrOutputParser()
 
         print("Mathing...")
         answer = chain.invoke(request.inputs)
@@ -626,7 +626,7 @@ def test_bootstrap_few_shot_langchain(
         messages.append(("user", "{question}"))
         messages.append(("user", "{plan}"))
 
-        chain = ChatPromptTemplate.from_messages(messages) | ChatOpenAI(model="gpt-3.5-turbo") | StrOutputParser()
+        chain = ChatPromptTemplate.from_messages(messages) | ChatOpenAI(model="gpt-4o-mini") | StrOutputParser()
 
         print("Mathing...")
         answer = chain.invoke(request.inputs)
@@ -731,7 +731,7 @@ def test_bootstrap_few_shot_openai_langsmith(
         )
 
         response = openai.chat.completions.create(
-            model="gpt-3.5-turbo",
+            model="gpt-4o-mini",
             messages=messages,
             response_format={"type": "json_object"},
         )
@@ -766,7 +766,7 @@ def test_bootstrap_few_shot_openai_langsmith(
         messages.append({"role": "user", "content": request.inputs["question"]})
 
         response = openai.chat.completions.create(
-            model="gpt-3.5-turbo",
+            model="gpt-4o-mini",
             messages=messages,
             response_format={"type": "json_object"},
         )
@@ -803,7 +803,7 @@ def test_bootstrap_few_shot_openai_langsmith(
         messages.append({"role": "user", "content": f"Plan: {request.inputs['plan']}"})
 
         response = openai.chat.completions.create(
-            model="gpt-3.5-turbo",
+            model="gpt-4o-mini",
             messages=messages,
             response_format={"type": "json_object"},
         )

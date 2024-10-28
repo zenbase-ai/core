@@ -54,7 +54,7 @@ def openai(parea: Parea):
 def chat_openai(parea: Parea):
     from langchain_openai import ChatOpenAI
 
-    client = ChatOpenAI(model="gpt-3.5-turbo", temperature=1, top_p=1, frequency_penalty=0, presence_penalty=0)
+    client = ChatOpenAI(model="gpt-4o-mini", temperature=1, top_p=1, frequency_penalty=0, presence_penalty=0)
     return client
 
 
@@ -217,7 +217,7 @@ def test_zen_parea_helper_get_evaluator(parea: Parea, test_set, zen_parea_helper
         )
         messages.append({"role": "user", "content": request.inputs["question"]})
         response = openai.chat.completions.create(
-            model="gpt-3.5-turbo",
+            model="gpt-4o-mini",
             messages=messages,
             response_format={"type": "json_object"},
             temperature=1,
@@ -269,7 +269,7 @@ def test_parea_lcel_labeled_few_shot(
 
         messages.append(("user", "{question}"))
 
-        chain = ChatPromptTemplate.from_messages(messages) | ChatOpenAI(model="gpt-3.5-turbo") | StrOutputParser()
+        chain = ChatPromptTemplate.from_messages(messages) | ChatOpenAI(model="gpt-4o-mini") | StrOutputParser()
 
         print("Mathing...")
         answer = chain.invoke(request.inputs)
@@ -287,7 +287,7 @@ def test_parea_lcel_labeled_few_shot(
                     ),
                 ]
             )
-            | ChatOpenAI(model="gpt-3.5-turbo")
+            | ChatOpenAI(model="gpt-4o-mini")
             | StrOutputParser()
         )
 
@@ -364,7 +364,7 @@ def test_zen_parea_helper_bootstrap_few_shot(
         )
 
         response = openai.chat.completions.create(
-            model="gpt-3.5-turbo",
+            model="gpt-4o-mini",
             messages=messages,
             response_format={"type": "json_object"},
         )
@@ -401,7 +401,7 @@ def test_zen_parea_helper_bootstrap_few_shot(
             messages.append({"role": "user", "content": request.inputs["question"]})
 
         response = openai.chat.completions.create(
-            model="gpt-3.5-turbo",
+            model="gpt-4o-mini",
             messages=messages,
             response_format={"type": "json_object"},
         )
@@ -437,7 +437,7 @@ def test_zen_parea_helper_bootstrap_few_shot(
         messages.append({"role": "user", "content": f"Plan: {request.inputs['plan']}"})
 
         response = openai.chat.completions.create(
-            model="gpt-3.5-turbo",
+            model="gpt-4o-mini",
             messages=messages,
             response_format={"type": "json_object"},
         )
@@ -529,7 +529,7 @@ def test_zen_parea_helper_bootstrap_few_shot_load_args(
         )
 
         response = openai.chat.completions.create(
-            model="gpt-3.5-turbo",
+            model="gpt-4o-mini",
             messages=messages,
             response_format={"type": "json_object"},
         )
@@ -561,7 +561,7 @@ def test_zen_parea_helper_bootstrap_few_shot_load_args(
             messages.append({"role": "user", "content": request.inputs["question"]})
 
         response = openai.chat.completions.create(
-            model="gpt-3.5-turbo",
+            model="gpt-4o-mini",
             messages=messages,
             response_format={"type": "json_object"},
         )
@@ -592,7 +592,7 @@ def test_zen_parea_helper_bootstrap_few_shot_load_args(
         messages.append({"role": "user", "content": f"Plan: {request.inputs['plan']}"})
 
         response = openai.chat.completions.create(
-            model="gpt-3.5-turbo",
+            model="gpt-4o-mini",
             messages=messages,
             response_format={"type": "json_object"},
         )

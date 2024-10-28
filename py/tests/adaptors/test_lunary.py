@@ -84,7 +84,7 @@ def test_lunary_lcel_labeled_few_shot(optim: LabeledFewShot, evalset: list):
 
         messages.append(("user", "{question}"))
 
-        chain = ChatPromptTemplate.from_messages(messages) | ChatOpenAI(model="gpt-3.5-turbo") | StrOutputParser()
+        chain = ChatPromptTemplate.from_messages(messages) | ChatOpenAI(model="gpt-4o-mini") | StrOutputParser()
 
         print("Mathing...")
         answer = chain.invoke(request.inputs)
@@ -160,7 +160,7 @@ def test_lunary_openai_bootstrap_few_shot(optim: LabeledFewShot, lunary_helper: 
         )
 
         response = openai.chat.completions.create(
-            model="gpt-3.5-turbo",
+            model="gpt-4o-mini",
             messages=messages,
             response_format={"type": "json_object"},
         )
@@ -193,7 +193,7 @@ def test_lunary_openai_bootstrap_few_shot(optim: LabeledFewShot, lunary_helper: 
         messages.append({"role": "user", "content": request.inputs})
 
         response = openai.chat.completions.create(
-            model="gpt-3.5-turbo",
+            model="gpt-4o-mini",
             messages=messages,
             response_format={"type": "json_object"},
         )
@@ -229,7 +229,7 @@ def test_lunary_openai_bootstrap_few_shot(optim: LabeledFewShot, lunary_helper: 
         messages.append({"role": "user", "content": f"Plan: {request.inputs['plan']}"})
 
         response = openai.chat.completions.create(
-            model="gpt-3.5-turbo",
+            model="gpt-4o-mini",
             messages=messages,
             response_format={"type": "json_object"},
         )
