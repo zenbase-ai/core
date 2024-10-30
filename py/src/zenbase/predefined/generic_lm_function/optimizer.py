@@ -67,7 +67,7 @@ class GenericLMFunctionOptimizer:
 
             messages.append({"role": "user", "content": str(request.inputs)})
             return self.instructor_client.chat.completions.create(
-                model=self.model, response_model=self.output_model, messages=messages
+                model=self.model, response_model=self.output_model, messages=messages, max_retries=3
             )
 
         return generic_function
@@ -149,7 +149,7 @@ class GenericLMFunctionOptimizer:
             messages.append({"role": "user", "content": str(request.inputs)})
 
             return self.instructor_client.chat.completions.create(
-                model=self.model, response_model=self.output_model, messages=messages
+                model=self.model, response_model=self.output_model, messages=messages, max_retries=3
             )
 
         return lm_function_with_demos
