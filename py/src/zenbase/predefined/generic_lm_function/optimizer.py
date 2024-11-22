@@ -48,12 +48,13 @@ class GenericLMFunctionOptimizer:
     def _generate_lm_function(self) -> LMFunction:
         @self.zenbase_tracer.trace_function
         def generic_function(request):
+            system_role = "assistant" if self.model.startswith("o1") else "system"
             messages = [
-                {"role": "system", "content": self.prompt},
+                {"role": system_role, "content": self.prompt},
             ]
 
             if request.zenbase.task_demos:
-                messages.append({"role": "system", "content": "Here are some examples:"})
+                messages.append({"role": system_role, "content": "Here are some examples:"})
                 for demo in request.zenbase.task_demos:
                     if demo.inputs == request.inputs:
                         continue
@@ -63,17 +64,26 @@ class GenericLMFunctionOptimizer:
                             {"role": "assistant", "content": str(demo.outputs)},
                         ]
                     )
-                messages.append({"role": "system", "content": "Now, please answer the following question:"})
+                messages.append({"role": system_role, "content": "Now, please answer the following question:"})
 
             messages.append({"role": "user", "content": str(request.inputs)})
-            return self.instructor_client.chat.completions.create(
-                model=self.model,
-                response_model=self.output_model,
-                messages=messages,
-                max_retries=3,
-                logprobs=True,
-                top_logprobs=5,
-            )
+
+            kwargs = {
+                "model": self.model,
+                "response_model": self.output_model,
+                "messages": messages,
+                "max_retries": 3,
+            }
+
+            if not self.model.startswith("o1"):
+                kwargs.update(
+                    {
+                        "logprobs": True,
+                        "top_logprobs": 5,
+                    }
+                )
+
+            return self.instructor_client.chat.completions.create(**kwargs)
 
         return generic_function
 
@@ -134,13 +144,14 @@ class GenericLMFunctionOptimizer:
     def create_lm_function_with_demos(self, prompt: str, demos: List[dict]) -> LMFunction:
         @self.zenbase_tracer.trace_function
         def lm_function_with_demos(request):
+            system_role = "assistant" if self.model.startswith("o1") else "system"
             messages = [
-                {"role": "system", "content": prompt},
+                {"role": system_role, "content": prompt},
             ]
 
             # Add demos to the messages
             if demos:
-                messages.append({"role": "system", "content": "Here are some examples:"})
+                messages.append({"role": system_role, "content": "Here are some examples:"})
                 for demo in demos:
                     messages.extend(
                         [
@@ -148,19 +159,27 @@ class GenericLMFunctionOptimizer:
                             {"role": "assistant", "content": str(demo["outputs"])},
                         ]
                     )
-                messages.append({"role": "system", "content": "Now, please answer the following question:"})
+                messages.append({"role": system_role, "content": "Now, please answer the following question:"})
 
             # Add the actual request
             messages.append({"role": "user", "content": str(request.inputs)})
 
-            return self.instructor_client.chat.completions.create(
-                model=self.model,
-                response_model=self.output_model,
-                messages=messages,
-                max_retries=3,
-                logprobs=True,
-                top_logprobs=5,
-            )
+            kwargs = {
+                "model": self.model,
+                "response_model": self.output_model,
+                "messages": messages,
+                "max_retries": 3,
+            }
+
+            if not self.model.startswith("o1"):
+                kwargs.update(
+                    {
+                        "logprobs": True,
+                        "top_logprobs": 5,
+                    }
+                )
+
+            return self.instructor_client.chat.completions.create(**kwargs)
 
         return lm_function_with_demos
 
