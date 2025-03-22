@@ -79,8 +79,16 @@ class LMDemo(Dataclass, Generic[Inputs, Outputs]):
     adaptor_object: object | None = None
 
     def __hash__(self):
-        # TODO: Should revert.
-        return hash((frozenset(self.inputs), frozenset(self.outputs)))
+        def make_hashable(obj):
+            if isinstance(obj, dict):
+                return tuple(sorted((k, make_hashable(v)) for k, v in obj.items()))
+            elif isinstance(obj, list):
+                return tuple(make_hashable(x) for x in obj)
+            elif isinstance(obj, set):
+                return tuple(sorted(make_hashable(x) for x in obj))
+            else:
+                return obj
+        return hash((make_hashable(self.inputs), make_hashable(self.outputs)))
 
 
 @dataclasses.dataclass(frozen=True)
