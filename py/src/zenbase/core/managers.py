@@ -29,12 +29,13 @@ class ZenbaseTracer(BaseTracer):
         self.all_traces.clear()
 
     def add_trace(self, run_timestamp: str, func_name: str, trace_data: dict):
-        if run_timestamp not in self.all_traces:
-            if len(self.all_traces) >= self.max_traces:
-                self.all_traces.popitem(last=False)  # Remove the oldest item
-            self.all_traces[run_timestamp] = OrderedDict()
-        self.all_traces[run_timestamp][func_name] = trace_data
-        self.all_traces.move_to_end(run_timestamp)  # Move this trace to the end (most recent)
+        is_new_key = run_timestamp not in self.all_traces
+        if is_new_key and len(self.all_traces) >= self.max_traces:
+            self.all_traces.popitem(last=False)
+        traces_for_timestamp = self.all_traces.setdefault(run_timestamp, OrderedDict())
+        traces_for_timestamp[func_name] = trace_data
+        if not is_new_key:
+            self.all_traces.move_to_end(run_timestamp)
 
     def trace_function(self, function: Callable[[Any], Any] = None, zenbase: LMZenbase = None) -> LMFunction:
         def wrapper(request, lm_function, *args, **kwargs):
